@@ -322,7 +322,7 @@ u-boot.lzimg: lzma_host $(obj)u-boot.bin System.map
 	           -n '$(call ih_name)' -d $(obj)u-boot.bin.lzma $@
 
 bootstrap.bin: #bootstrap
-	@cp bootstrap.bin.prebuild bootstrap.bin
+	@cp spl/bootstrap.bin.prebuild bootstrap.bin
 	#$(OBJCOPY) ${OBJCFLAGS} -O binary $< $@
 
 bootstrap: depend version $(SUBDIRS) $(OBJS_BOOTSTRAP) $(LIBS_BOOTSTRAP) $(LIBS_SHARED) $(LDSCRIPT_BOOTSTRAP)
