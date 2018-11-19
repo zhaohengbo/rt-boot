@@ -226,6 +226,7 @@ LIBS += common/libcommon.a
 LIBS += kernel/libkernel.a
 LIBS += finsh/libfinsh.a
 LIBS += net/uip/libuip.a
+LIBS += net/uip-httpd/libuip-httpd.a
 
 LIBS_SHARED  = 
 ifdef SOC

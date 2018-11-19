@@ -3,6 +3,8 @@
 #include <net/uip/uip.h>
 #include <net/uip/uip_arp.h>
 
+#include <net/uip-httpd/httpd.h>
+
 #include <board/network.h>
 
 ALIGN(RT_ALIGN_SIZE)
@@ -44,7 +46,7 @@ static void arp_timer_timeout(void* parameter)
 static void rt_thread_uip_thread_entry(void *parameter)
 {
 	int i;
-    u16_t ipaddr[2];
+    uip_ipaddr_t ipaddr;
     struct uip_eth_addr eaddr;
 	rt_uint32_t length = 0;
 	rt_uint32_t uip_event_flag;
@@ -73,7 +75,9 @@ static void rt_thread_uip_thread_entry(void *parameter)
 	board_eth_recv_register_event(&uip_event,UIP_EVENT_RECV_ID);
 	board_eth_send_register_event(&uip_send_event,UIP_EVENT_RECV_ID);
 
-    eaddr.addr[0] = 22;
+	uip_init();
+	
+	eaddr.addr[0] = 22;
     eaddr.addr[1] = 22;
     eaddr.addr[2] = 22;
     eaddr.addr[3] = 22;
@@ -82,14 +86,15 @@ static void rt_thread_uip_thread_entry(void *parameter)
 
     // set MAC address
     uip_setethaddr(eaddr);
-
-	uip_init();
+	
     uip_ipaddr(ipaddr, 192,168,1,1);
     uip_sethostaddr(ipaddr);
     uip_ipaddr(ipaddr, 192,168,1,1);
     uip_setdraddr(ipaddr);
     uip_ipaddr(ipaddr, 255,255,255,0);
     uip_setnetmask(ipaddr);
+	
+	httpd_init();
 	
 	if (periodic_timer != RT_NULL)
         rt_timer_start(periodic_timer);

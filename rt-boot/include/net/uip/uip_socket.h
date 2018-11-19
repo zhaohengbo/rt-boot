@@ -9,18 +9,27 @@
 void udp_appcall(void);
 void tcp_appcall(void);
 
-struct tcp_state {
-	u8_t state;
-	u16_t count;
+struct tcp_socket_state {
+	void * pdata;
 };
+
+struct udp_socket_state {
+	void * pdata;
+};
+
+typedef struct tcp_socket_state uip_tcp_appstate_t;
+typedef struct udp_socket_state uip_udp_appstate_t;
 
 #ifndef UIP_APPCALL
 #define UIP_APPCALL		tcp_appcall
 #endif
 
-#ifndef UIP_APPSTATE_SIZE
-#define UIP_APPSTATE_SIZE (sizeof(struct tcp_state))
+#ifndef UIP_UDP_APPCALL
+#define UIP_UDP_APPCALL  udp_appcall
 #endif
+
+rt_int32_t register_udp_appcall(void (*callback)(void));
+rt_int32_t register_tcp_appcall(void (*callback)(void));
 
 #endif /* __UIP_H__ */
 
