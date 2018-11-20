@@ -54,12 +54,6 @@
 #define NULL (void *)0
 #include "fsdata.c"
 
-#ifdef FS_STATISTICS
-#if FS_STATISTICS == 1
-static u16_t count[FS_NUMFILES];
-#endif /* FS_STATISTICS */
-#endif /* FS_STATISTICS */
-
 /*-----------------------------------------------------------------------------------*/
 static u8_t fs_strcmp(const char *str1, const char *str2) {
 	u8_t i;
@@ -79,65 +73,33 @@ static u8_t fs_strcmp(const char *str1, const char *str2) {
 }
 /*-----------------------------------------------------------------------------------*/
 int fs_open(const char *name, struct fs_file *file) {
-#ifdef FS_STATISTICS
-#if FS_STATISTICS == 1
-	u16_t i = 0;
-#endif /* FS_STATISTICS */
-#endif /* FS_STATISTICS */
 	struct fsdata_file *f;
 
 	for (f = (struct fsdata_file *) FS_ROOT; f != NULL ; f =
 			(struct fsdata_file *) f->next) {
 
 		if (fs_strcmp(name, f->name) == 0) {
-			file->data = f->data;
-			file->len = f->len;
-#ifdef FS_STATISTICS
-#if FS_STATISTICS == 1
-			++count[i];
-#endif /* FS_STATISTICS */
-#endif /* FS_STATISTICS */
-			return 1;
+			
+			if(f->file_type == FS_STATIC_FILE)
+			{
+				file->data = f->data;
+				file->len = f->len;
+				return 1;
+			}
+			else if(f->file_type == FS_DYNAMIC_FILE)
+			{
+				u16_t dynamic_len = 0;
+				if(f->dynamic_caller)
+					dynamic_len = f->dynamic_caller(&(f->data[f->static_len]),f->len-f->static_len);
+				file->data = f->data;
+				file->len = f->static_len + dynamic_len;
+				return 1;
+			}
 		}
-#ifdef FS_STATISTICS
-#if FS_STATISTICS == 1
-		++i;
-#endif /* FS_STATISTICS */
-#endif /* FS_STATISTICS */
-
 	}
 	return 0;
 }
 /*-----------------------------------------------------------------------------------*/
 void fs_init(void) {
 	fsdata_init();
-#ifdef FS_STATISTICS
-#if FS_STATISTICS == 1
-	u16_t i;
-	for (i = 0; i < FS_NUMFILES; i++) {
-		count[i] = 0;
-	}
-#endif /* FS_STATISTICS */
-#endif /* FS_STATISTICS */
 }
-/*-----------------------------------------------------------------------------------*/
-#ifdef FS_STATISTICS
-#if FS_STATISTICS == 1  
-u16_t fs_count(char *name) {
-	struct fsdata_file *f;
-	u16_t i;
-
-	i = 0;
-	for (f = (struct fsdata_file *) FS_ROOT; f != NULL ; f =
-			(struct fsdata_file *) f->next) {
-
-		if (fs_strcmp(name, f->name) == 0) {
-			return count[i];
-		}
-		++i;
-	}
-	return 0;
-}
-#endif /* FS_STATISTICS */
-#endif /* FS_STATISTICS */
-/*-----------------------------------------------------------------------------------*/

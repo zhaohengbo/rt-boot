@@ -126,7 +126,7 @@ find_entry(uip_ipaddr_t ipaddr)
       return &entries[i];
     }
   }
-  return NULL;
+  return RT_NULL;
 }
 /*---------------------------------------------------------------------------*/
 void
@@ -135,7 +135,7 @@ uip_neighbor_update(uip_ipaddr_t ipaddr)
   struct neighbor_entry *e;
 
   e = find_entry(ipaddr);
-  if(e != NULL) {
+  if(e != RT_NULL) {
     e->time = 0;
   }
 }
@@ -146,13 +146,13 @@ uip_neighbor_lookup(uip_ipaddr_t ipaddr)
   struct neighbor_entry *e;
 
   e = find_entry(ipaddr);
-  if(e != NULL) {
+  if(e != RT_NULL) {
     /*    printf("Lookup neighbor with link address %02x:%02x:%02x:%02x:%02x:%02x\n",
 	   e->addr.addr.addr[0], e->addr.addr.addr[1], e->addr.addr.addr[2], e->addr.addr.addr[3],
 	   e->addr.addr.addr[4], e->addr.addr.addr[5]);*/
 
     return &e->addr;
   }
-  return NULL;
+  return RT_NULL;
 }
 /*---------------------------------------------------------------------------*/

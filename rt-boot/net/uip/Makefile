@@ -11,6 +11,7 @@ OBJS	+= uip_arch.o
 OBJS	+= uip_arp.o
 OBJS	+= uip_socket.o
 OBJS	+= uip_main.o
+OBJS	+= uip-neighbor.o
 
 all:	.depend $(START) $(LIB)
 

@@ -88,18 +88,13 @@
 #include <net/uip-httpd/httpd.h>
 #include <net/uip-httpd/fs.h>
 #include <net/uip-httpd/fsdata.h>
-#include <net/uip-httpd/cgi.h>
 
 #define NULL (void *)0
 
 /* The HTTP server states: */
 #define HTTP_NOGET        0
 #define HTTP_FILE         1
-#define HTTP_TEXT         2
-#define HTTP_FUNC         3
-#define HTTP_END          4
-
-//#define HTTPD_DEBUG
+#define HTTP_END          2
 
 #ifdef HTTPD_DEBUG
 #define PRINT(x) rt_kprintf("%s", x)
@@ -111,11 +106,8 @@
 
 struct httpd_state *hs;
 
-extern const struct fsdata_file file_index_html;
-extern const struct fsdata_file file_404_html;
-
-static void next_scriptline(void);
-static void next_scriptstate(void);
+extern const struct fsdata_file file_index_htm;
+extern const struct fsdata_file file_404_htm;
 
 #define ISO_G        0x47
 #define ISO_E        0x45
@@ -140,8 +132,6 @@ void httpd_appcall(void) {
 
     if (uip_conn->lport == HTONS(80)) {
 	/* This is the web server: */
-		/* Pick out the application state from the uip_conn structure. */
-		hs = (struct httpd_state *)(uip_conn->appstate.pdata);
 
 		/* We use the uip_ test functions to deduce why we were
 		 called. If uip_connected() is non-zero, we were called
@@ -157,13 +147,16 @@ void httpd_appcall(void) {
 			 remote host, and the ->state is set to HTTP_NOGET to signal
 			 that we haven't received any HTTP GET request for this
 			 connection yet. */
-			hs = rt_calloc(sizeof(struct httpd_state),1);
-			if(hs != (void *)0)
+			if(uip_conn->appstate.pdata)
 			{
-				uip_conn->appstate.pdata = hs;
+				PRINTLN("Httpd:Memory overflow!!!");
 			}
-			else
+			
+			uip_conn->appstate.pdata = rt_calloc(sizeof(struct httpd_state),1);
+			hs = (struct httpd_state *)(uip_conn->appstate.pdata);
+			if(hs == (void *)0)
 			{
+				uip_abort();
 				return;
 			}
 			hs->state = HTTP_NOGET;
@@ -171,7 +164,11 @@ void httpd_appcall(void) {
 			return;
 
 		} 
-		else if(hs == (void *)0)
+		
+		/* Pick out the application state from the uip_conn structure. */
+		hs = (struct httpd_state *)(uip_conn->appstate.pdata);
+		
+		if(hs == (void *)0)
 		{
 			uip_abort();
 			return;
@@ -214,36 +211,24 @@ void httpd_appcall(void) {
 
 			/* Check for a request for "/". */
 			if (((char *) uip_appdata)[4] == ISO_slash && ((char *) uip_appdata)[5] == 0) {
-				fs_open(file_index_html.name, &fsfile);
+				fs_open(file_index_htm.name, &fsfile);
 			} else {
 				if (!fs_open((const char *) &((char *) uip_appdata)[4], &fsfile)) {
 					PRINTLN("couldn't open file");
-					fs_open(file_404_html.name, &fsfile);
+					fs_open(file_404_htm.name, &fsfile);
 				}
 			}
-
-			if (((char *) uip_appdata)[4] == ISO_slash && ((char *) uip_appdata)[5] == ISO_c
-					&& ((char *) uip_appdata)[6] == ISO_g && ((char *) uip_appdata)[7] == ISO_i
-					&& ((char *) uip_appdata)[8] == ISO_slash) {
-				/* If the request is for a file that starts with "/cgi/", we
-				 prepare for invoking a script. */
-				hs->script = fsfile.data;
-				next_scriptstate();
-			} else {
-				hs->script = NULL;
-				/* The web server is now no longer in the HTTP_NOGET state, but
-				 in the HTTP_FILE state since is has now got the GET from
-				 the client and will start transmitting the file. */
-				hs->state = HTTP_FILE;
-
-				/* Point the file pointers in the connection state to point to
-				 the first byte of the file. */
-				hs->dataptr = fsfile.data;
-				hs->count = fsfile.len;
-			}
+			/* The web server is now no longer in the HTTP_NOGET state, but
+			 in the HTTP_FILE state since is has now got the GET from
+			 the client and will start transmitting the file. */
+			hs->state = HTTP_FILE;
+			/* Point the file pointers in the connection state to point to
+			 the first byte of the file. */
+			hs->dataptr = fsfile.data;
+			hs->count = fsfile.len;
 		}
 
-		if (hs->state != HTTP_FUNC) {
+		if (hs->state == HTTP_FILE) {
 			/* Check if the client (remote end) has acknowledged any data that
 			 we've previously sent. If so, we move the file pointer further
 			 into the file and send back more data. If we are out of data to
@@ -253,36 +238,23 @@ void httpd_appcall(void) {
 				{
 					hs->count = 0;
 				}
-				else if (hs->count >= uip_conn->len) {
-					hs->count -= uip_conn->len;
-					hs->dataptr += uip_conn->len;
+				else if (hs->count > uip_mss()) {
+					hs->count -= uip_mss();
+					hs->dataptr += uip_mss();
 				} else {
 					hs->count = 0;
 				}
 				
 				if (hs->count == 0) {
-					if (hs->script != NULL) {
-						next_scriptline();
-						next_scriptstate();
-					} else {
-						rt_free(hs);
-						uip_conn->appstate.pdata = (void *)0;
-						uip_close();
-						return;
-					}
+					rt_free(hs);
+					uip_conn->appstate.pdata = (void *)0;
+					uip_close();
+					return;
 				}
-			}
-		} else {
-			/* Call the CGI function. */
-			if (cgitab[hs->script[2] - ISO_a](uip_acked())) {
-				/* If the function returns non-zero, we jump to the next line
-				 in the script. */
-				next_scriptline();
-				next_scriptstate();
 			}
 		}
 
-		if (hs->state != HTTP_FUNC && !uip_poll()) {
+		if (hs->state == HTTP_FILE && !uip_poll()) {
 			/* Send a piece of data, but not more than the MSS of the
 			 connection. */
 			uip_send(hs->dataptr, (hs->count > uip_mss() ? uip_mss() : hs->count));
@@ -327,71 +299,6 @@ void httpd_init(void) {
 	/* Listen to port 80. */
 	uip_listen(HTONS(80));
 	register_tcp_appcall(httpd_appcall);
-}
-
-/*-----------------------------------------------------------------------------------*/
-/* next_scriptline():
- *
- * Reads the script until it finds a newline. */
-static void next_scriptline(void) {
-	/* Loop until we find a newline character. */
-	do {
-		++(hs->script);
-	} while (hs->script[0] != ISO_nl);
-
-	/* Eat up the newline as well. */
-	++(hs->script);
-}
-/*-----------------------------------------------------------------------------------*/
-/* next_sciptstate:
- *
- * Reads one line of script and decides what to do next.
- */
-static void next_scriptstate(void) {
-	struct fs_file fsfile;
-	u8_t i;
-
-	again: switch (hs->script[0]) {
-	case ISO_t:
-		/* Send a text string. */
-		hs->state = HTTP_TEXT;
-		hs->dataptr = &hs->script[2];
-
-		/* Calculate length of string. */
-		for (i = 0; hs->dataptr[i] != ISO_nl; ++i)
-			;
-		hs->count = i;
-		break;
-	case ISO_c:
-		/* Call a function. */
-		hs->state = HTTP_FUNC;
-		hs->dataptr = NULL;
-		hs->count = 0;
-		cgitab[hs->script[2] - ISO_a](0);
-		break;
-	case ISO_i:
-		/* Include a file. */
-		hs->state = HTTP_FILE;
-		if (!fs_open(&hs->script[2], &fsfile)) {
-			uip_abort();
-		}
-		hs->dataptr = fsfile.data;
-		hs->count = fsfile.len;
-		break;
-	case ISO_hash:
-		/* Comment line. */
-		next_scriptline();
-		goto again;
-		break;
-	case ISO_period:
-		/* End of script. */
-		hs->state = HTTP_END;
-		uip_close();
-		break;
-	default:
-		uip_abort();
-		break;
-	}
 }
 /*-----------------------------------------------------------------------------------*/
 /** @} */

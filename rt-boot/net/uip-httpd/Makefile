@@ -6,7 +6,6 @@ START	=
 OBJS	=
 SOBJS	=
 
-OBJS	+= cgi.o
 OBJS	+= fs.o
 OBJS	+= httpd.o
 

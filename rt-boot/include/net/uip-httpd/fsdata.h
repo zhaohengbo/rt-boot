@@ -37,16 +37,17 @@
 
 #include <net/uip/uipopt.h>
 
+#define FS_STATIC_FILE 0
+#define FS_DYNAMIC_FILE 1
+
 struct fsdata_file {
 	struct fsdata_file *next;
 	char *name;
 	char *data;
 	int len;
-#ifdef FS_STATISTICS
-#if FS_STATISTICS == 1
-	u16_t count;
-#endif /* FS_STATISTICS */
-#endif /* FS_STATISTICS */
+	char file_type;
+	int static_len;
+	int (*dynamic_caller)(char *data,u16_t len);
 };
 
 void fsdata_init(void);
