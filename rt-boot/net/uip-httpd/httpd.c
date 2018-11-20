@@ -89,8 +89,6 @@
 #include <net/uip-httpd/fs.h>
 #include <net/uip-httpd/fsdata.h>
 
-#define NULL (void *)0
-
 /* The HTTP server states: */
 #define HTTP_NOGET        0
 #define HTTP_FILE         1
@@ -154,7 +152,7 @@ void httpd_appcall(void) {
 			
 			uip_conn->appstate.pdata = rt_calloc(sizeof(struct httpd_state),1);
 			hs = (struct httpd_state *)(uip_conn->appstate.pdata);
-			if(hs == (void *)0)
+			if(hs == RT_NULL)
 			{
 				uip_abort();
 				return;
@@ -168,7 +166,7 @@ void httpd_appcall(void) {
 		/* Pick out the application state from the uip_conn structure. */
 		hs = (struct httpd_state *)(uip_conn->appstate.pdata);
 		
-		if(hs == (void *)0)
+		if(hs == RT_NULL)
 		{
 			uip_abort();
 			return;
@@ -180,7 +178,7 @@ void httpd_appcall(void) {
 			 the system. */
 			if (hs->count++ >= 10) {
 				rt_free(hs);
-				uip_conn->appstate.pdata = (void *)0;
+				uip_conn->appstate.pdata = RT_NULL;
 				uip_abort();
 			}
 			return;
@@ -193,7 +191,7 @@ void httpd_appcall(void) {
 					|| ((char *) uip_appdata)[2] != ISO_T || ((char *) uip_appdata)[3] != ISO_space) {
 				/* If it isn't a GET, we abort the connection. */
 				rt_free(hs);
-				uip_conn->appstate.pdata = (void *)0;
+				uip_conn->appstate.pdata = RT_NULL;
 				uip_abort();
 				return;
 			}
@@ -247,7 +245,7 @@ void httpd_appcall(void) {
 				
 				if (hs->count == 0) {
 					rt_free(hs);
-					uip_conn->appstate.pdata = (void *)0;
+					uip_conn->appstate.pdata = RT_NULL;
 					uip_close();
 					return;
 				}
@@ -268,14 +266,14 @@ void httpd_appcall(void) {
 		if(uip_closed() | uip_timedout())
 		{
 			rt_free(hs);
-			uip_conn->appstate.pdata = (void *)0;
+			uip_conn->appstate.pdata = RT_NULL;
 			uip_close();
 			return;
 		}
 		else if(uip_aborted())
 		{
 			rt_free(hs);
-			uip_conn->appstate.pdata = (void *)0;
+			uip_conn->appstate.pdata = RT_NULL;
 			uip_abort();
 			return;
 		}

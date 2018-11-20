@@ -55,8 +55,6 @@ struct httpd_state {
 	char *script;
 };
 
-#define FS_STATISTICS 1
-
 extern struct httpd_state *hs;
 
 #endif /* __HTTPD_H__ */

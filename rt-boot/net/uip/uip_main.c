@@ -4,6 +4,7 @@
 #include <net/uip/uip_arp.h>
 
 #include <net/uip-httpd/httpd.h>
+#include <net/uip-break/bootbreak.h>
 
 #include <board/network.h>
 
@@ -95,6 +96,7 @@ static void rt_thread_uip_thread_entry(void *parameter)
     uip_setnetmask(ipaddr);
 	
 	httpd_init();
+	bootbreak_init();
 	
 	if (periodic_timer != RT_NULL)
         rt_timer_start(periodic_timer);

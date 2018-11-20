@@ -687,6 +687,7 @@ uip_process(u8_t flag)
   register struct uip_conn *uip_connr = uip_conn;
 
 #if UIP_UDP
+  u16_t udp_listen = 0;
   if(flag == UIP_UDP_SEND_CONN) {
     goto udp_send;
   }
@@ -1119,6 +1120,12 @@ uip_process(u8_t flag)
        (uip_ipaddr_cmp(uip_udp_conn->ripaddr, all_zeroes_addr) ||
 	uip_ipaddr_cmp(uip_udp_conn->ripaddr, all_ones_addr) ||
 	uip_ipaddr_cmp(BUF->srcipaddr, uip_udp_conn->ripaddr))) {
+      if(uip_udp_conn->rport == 0)
+	  {
+	    udp_listen = 1;
+	    uip_udp_conn->rport = UDPBUF->srcport;
+	    rt_memcpy(uip_udp_conn->ripaddr,UDPBUF->srcipaddr,sizeof(uip_ipaddr_t));
+	  }
       goto udp_found;
     }
   }
@@ -1158,7 +1165,12 @@ uip_process(u8_t flag)
 
   uip_ipaddr_copy(BUF->srcipaddr, uip_hostaddr);
   uip_ipaddr_copy(BUF->destipaddr, uip_udp_conn->ripaddr);
-   
+  
+  if(udp_listen)
+  {
+    uip_udp_conn->rport = 0;
+  }
+  
   uip_appdata = &uip_buf[UIP_LLH_LEN + UIP_IPTCPH_LEN];
 
 #if UIP_UDP_CHECKSUMS
