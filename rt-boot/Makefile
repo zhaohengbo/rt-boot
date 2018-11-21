@@ -224,10 +224,12 @@ LIBS += soc/qcom.$(ARCH)/libsoc.a
 LIBS += board/libboard.a
 LIBS += common/libcommon.a
 LIBS += kernel/libkernel.a
+LIBS += drivers/libdrivers.a
 LIBS += finsh/libfinsh.a
 LIBS += net/uip/libuip.a
 LIBS += net/uip-httpd/libuip-httpd.a
 LIBS += net/uip-break/libuip-break.a
+LIBS += net/uip-udpshell/libuip-udpshell.a
 
 LIBS_SHARED  = 
 ifdef SOC

@@ -5,6 +5,7 @@
 
 #include <net/uip-httpd/httpd.h>
 #include <net/uip-break/bootbreak.h>
+#include <net/uip-udpshell/udpshell.h>
 
 #include <board/network.h>
 
@@ -19,6 +20,14 @@ struct rt_thread uip_thread;
 #define UIP_EVENT_RECV_ID 0
 #define UIP_EVENT_PEDC_ID 1
 #define UIP_EVENT_ARP_ID 2
+#define UIP_EVENT_UPOLL_ID 3
+
+struct rt_event uip_event;
+
+void uip_udp_active_poll(void)
+{
+	rt_event_send(&uip_event, (1 << UIP_EVENT_UPOLL_ID));
+}
 
 static void uip_block_send(struct rt_event *event)
 {
@@ -32,15 +41,13 @@ static void uip_block_send(struct rt_event *event)
 /* 定时器1超时函数 */
 static void periodic_timer_timeout(void* parameter)
 {
-	struct rt_event *event = parameter;
-    rt_event_send(event, (1 << UIP_EVENT_PEDC_ID));
+    rt_event_send(&uip_event, (1 << UIP_EVENT_PEDC_ID));
 }
 
 /* 定时器2超时函数 */
 static void arp_timer_timeout(void* parameter)
 {
-	struct rt_event *event = parameter;
-    rt_event_send(event, (1 << UIP_EVENT_ARP_ID));
+    rt_event_send(&uip_event, (1 << UIP_EVENT_ARP_ID));
 }
 
 
@@ -52,7 +59,6 @@ static void rt_thread_uip_thread_entry(void *parameter)
 	rt_uint32_t length = 0;
 	rt_uint32_t uip_event_flag;
 	
-	struct rt_event uip_event;
 	struct rt_event uip_send_event;
 	
 	rt_timer_t periodic_timer;
@@ -60,13 +66,13 @@ static void rt_thread_uip_thread_entry(void *parameter)
 	
 	periodic_timer = rt_timer_create("uip_periodic_timer",
         periodic_timer_timeout,
-        (void *)&uip_event,
+        (void *)0,
         RT_TICK_PER_SECOND/2,
         RT_TIMER_FLAG_PERIODIC);
 	
 	arp_timer = rt_timer_create("uip_arp_timer",
         arp_timer_timeout,
-        (void *)&uip_event,
+        (void *)0,
         RT_TICK_PER_SECOND*20,
         RT_TIMER_FLAG_PERIODIC);
 	
@@ -97,6 +103,7 @@ static void rt_thread_uip_thread_entry(void *parameter)
 	
 	httpd_init();
 	bootbreak_init();
+	udpshell_init();
 	
 	if (periodic_timer != RT_NULL)
         rt_timer_start(periodic_timer);
@@ -105,8 +112,9 @@ static void rt_thread_uip_thread_entry(void *parameter)
 	
 	while (1) 
 	{
-		rt_event_recv(&uip_event, (1 << UIP_EVENT_RECV_ID) | (1 << UIP_EVENT_PEDC_ID) | (1 << UIP_EVENT_ARP_ID),
-					  RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,RT_WAITING_FOREVER, &uip_event_flag);
+		rt_event_recv(&uip_event, (1 << UIP_EVENT_RECV_ID) | (1 << UIP_EVENT_PEDC_ID) | (1 << UIP_EVENT_ARP_ID)
+					  | (1 << UIP_EVENT_UPOLL_ID),RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,RT_WAITING_FOREVER, 
+					  &uip_event_flag);
 		
 		if(uip_event_flag & (1 << UIP_EVENT_RECV_ID))
 		{
@@ -176,6 +184,24 @@ static void rt_thread_uip_thread_entry(void *parameter)
 			}
 #endif /* UIP_UDP */
 		}
+		
+#if UIP_UDP		
+		if(uip_event_flag & (1 << UIP_EVENT_UPOLL_ID))
+		{
+			for(i = 0; i < UIP_UDP_CONNS; i++) 
+			{
+				uip_udp_periodic(i);
+				/* If the above function invocation resulted in data that
+				 should be sent out on the network, the global variable
+				 uip_len is set to a value > 0. */
+				if(uip_len > 0) 
+				{
+					uip_arp_out();
+                    uip_block_send(&uip_send_event);
+				}
+			}
+		}
+#endif /* UIP_UDP */
 		
 		/* Call the ARP timer function every 10 seconds. */
 		if(uip_event_flag & (1 << UIP_EVENT_ARP_ID))

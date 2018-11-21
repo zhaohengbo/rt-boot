@@ -5,6 +5,7 @@
 #define __UIP_MAIN_H__
 
 void network_init(void);
+void uip_udp_active_poll(void);
 
 #endif /* __UIP_H__ */
 
