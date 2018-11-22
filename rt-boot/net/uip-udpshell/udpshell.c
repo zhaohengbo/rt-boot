@@ -15,12 +15,12 @@ struct udpshell_session
 
     rt_mutex_t rx_ringbuffer_lock;
     rt_mutex_t tx_ringbuffer_lock;
+	rt_mutex_t deamon_status_lock;
 	
     struct rt_device device;
 	
 	rt_uint8_t status;
-	
-	rt_sem_t read_notice;
+
 	rt_sem_t deamon_notice;
 };
 
@@ -32,14 +32,30 @@ struct udpshell_session shell_session;
 static rt_uint8_t udpshell_rx_buffer[RX_BUFFER_SIZE];
 static rt_uint8_t udpshell_tx_buffer[TX_BUFFER_SIZE];
 
+static uip_ipaddr_t remote_ipaddr;
+
 void udpshell_appcall(void) {
-    if ((uip_udp_conn->lport == HTONS(6666)) && (uip_udp_conn->rport == HTONS(6666))) {
-		if (uip_newdata()) 
+    if (uip_udp_conn->lport == HTONS(6666)) {
+		if (uip_newdata() && (uip_udp_conn->rport == HTONS(6666))) 
 		{
+			uip_ipaddr_copy(remote_ipaddr, uip_udp_conn->ripaddr);
+			
 			rt_mutex_take(shell_session.rx_ringbuffer_lock, RT_WAITING_FOREVER);
             rt_ringbuffer_put(&(shell_session.rx_ringbuffer), (rt_uint8_t *)uip_appdata, uip_datalen());
     		rt_mutex_release(shell_session.rx_ringbuffer_lock);
-            rt_sem_release(shell_session.read_notice);
+			
+			rt_mutex_take(shell_session.deamon_status_lock, RT_WAITING_FOREVER);
+			if(!shell_session.status)
+			{
+				shell_session.status = 1;
+    			rt_mutex_release(shell_session.deamon_status_lock);
+				rt_sem_release(shell_session.deamon_notice);
+			}
+			else
+			{
+				rt_mutex_release(shell_session.deamon_status_lock);
+			}
+			
 			if (shell_session.device.rx_indicate != RT_NULL)
     		{
         		shell_session.device.rx_indicate(&shell_session.device, 1);
@@ -49,12 +65,14 @@ void udpshell_appcall(void) {
         {
 			rt_uint8_t *buffer;
 			rt_size_t result;
-			buffer = rt_calloc(TX_BUFFER_SIZE,1);
+			buffer = rt_calloc(1000,1);
 			rt_mutex_take(shell_session.tx_ringbuffer_lock, RT_WAITING_FOREVER);
-    		result = rt_ringbuffer_get(&(shell_session.tx_ringbuffer), buffer, TX_BUFFER_SIZE);
+    		result = rt_ringbuffer_get(&(shell_session.tx_ringbuffer), buffer, 1000);
     		rt_mutex_release(shell_session.tx_ringbuffer_lock);
 			if(result != 0)
-				uip_send(buffer,result);
+				uip_udp_send(remote_ipaddr,6666,buffer,result);
+			if(rt_ringbuffer_data_len(&(shell_session.tx_ringbuffer)))
+				uip_udp_active_poll();
 			rt_free(buffer);
 		}
 	}
@@ -68,11 +86,27 @@ static rt_err_t udpshell_device_init(rt_device_t dev)
 
 static rt_err_t udpshell_device_open(rt_device_t dev, rt_uint16_t oflag)
 {
+	rt_mutex_take(shell_session.rx_ringbuffer_lock, RT_WAITING_FOREVER);
+    rt_ringbuffer_reset(&(shell_session.rx_ringbuffer));
+    rt_mutex_release(shell_session.rx_ringbuffer_lock);
+	
+	rt_mutex_take(shell_session.tx_ringbuffer_lock, RT_WAITING_FOREVER);
+    rt_ringbuffer_reset(&(shell_session.tx_ringbuffer));
+    rt_mutex_release(shell_session.tx_ringbuffer_lock);
+	
     return RT_EOK;
 }
 
 static rt_err_t udpshell_device_close(rt_device_t dev)
 {
+	rt_mutex_take(shell_session.rx_ringbuffer_lock, RT_WAITING_FOREVER);
+    rt_ringbuffer_reset(&(shell_session.rx_ringbuffer));
+    rt_mutex_release(shell_session.rx_ringbuffer_lock);
+	
+	rt_mutex_take(shell_session.tx_ringbuffer_lock, RT_WAITING_FOREVER);
+    rt_ringbuffer_reset(&(shell_session.tx_ringbuffer));
+    rt_mutex_release(shell_session.tx_ringbuffer_lock);
+	
     return RT_EOK;
 }
 
@@ -135,21 +169,52 @@ static void rt_thread_udpshell_deamon_thread_entry(void *parameter)
 	
 	while(1)
 	{
-		rt_uint32_t level;
-		rt_sem_take(shell_session.read_notice, RT_WAITING_FOREVER);
+		rt_uint8_t echo_mode;
 		
-		shell_session.status = 1;
+		while(1)
+		{
+			rt_mutex_take(shell_session.deamon_status_lock, RT_WAITING_FOREVER);
+			if(!shell_session.status)
+			{
+				rt_mutex_release(shell_session.deamon_status_lock);
+				rt_sem_take(shell_session.deamon_notice, RT_WAITING_FOREVER);
+			}
+			else
+			{
+				rt_mutex_release(shell_session.deamon_status_lock);
+				break;
+			}
+		}
 		
+		echo_mode = finsh_get_echo();
 		rt_console_set_device("udpshell");
 		finsh_set_device("udpshell");
+		finsh_set_echo(0);
 		
+		rt_kprintf("\nNow Starting UDP Shell...\n");
 		rt_kprintf(FINSH_PROMPT);
 		
-		while(shell_session.status)
-			rt_sem_take(shell_session.deamon_notice, RT_WAITING_FOREVER);
+		while(1)
+		{
+			rt_mutex_take(shell_session.deamon_status_lock, RT_WAITING_FOREVER);
+			if(shell_session.status)
+			{
+				rt_mutex_release(shell_session.deamon_status_lock);
+				rt_sem_take(shell_session.deamon_notice, RT_WAITING_FOREVER);
+			}
+			else
+			{
+				rt_mutex_release(shell_session.deamon_status_lock);
+				break;
+			}
+		}
 		
 		rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 		finsh_set_device(RT_CONSOLE_DEVICE_NAME);
+		
+		rt_kprintf("\nNow Recover TTL Shell...\n");
+		rt_kprintf(FINSH_PROMPT);
+		finsh_set_echo(echo_mode);
 	}
 }
 
@@ -164,26 +229,33 @@ static void udpshell(uint8_t argc, char **argv)
 		const char *operator = argv[1];
 		if(!rt_strcmp(operator, "start"))
 		{
+			rt_mutex_take(shell_session.deamon_status_lock, RT_WAITING_FOREVER);
 			if(!shell_session.status)
 			{
+				shell_session.status = 1;
+    			rt_mutex_release(shell_session.deamon_status_lock);
 				rt_kprintf("Starting UDP Shell...\n");
-				rt_sem_release(shell_session.read_notice);
+				rt_sem_release(shell_session.deamon_notice);
 			}
 			else
 			{
+				rt_mutex_release(shell_session.deamon_status_lock);
 				rt_kprintf("Already in UDP Shell!\n");
 			}
 		}
 		else if(!rt_strcmp(operator, "exit"))
 		{
+			rt_mutex_take(shell_session.deamon_status_lock, RT_WAITING_FOREVER);
 			if(shell_session.status)
 			{
 				shell_session.status = 0;
+    			rt_mutex_release(shell_session.deamon_status_lock);
 				rt_kprintf("Exit UDP Shell\n");
 				rt_sem_release(shell_session.deamon_notice);
 			}
 			else
 			{
+				rt_mutex_release(shell_session.deamon_status_lock);
 				rt_kprintf("UDP Shell isn't started!\n");
 			}
 		}
@@ -212,7 +284,6 @@ static void udpshell_deamon_init(void)
 
 void udpshell_init(void) {
 	struct uip_udp_conn *udpshell_conn;
-	uip_ipaddr_t addr;
 	
 	rt_ringbuffer_init(&shell_session.rx_ringbuffer, udpshell_rx_buffer, RX_BUFFER_SIZE);
 	rt_ringbuffer_init(&shell_session.tx_ringbuffer, udpshell_tx_buffer, TX_BUFFER_SIZE);
@@ -222,15 +293,16 @@ void udpshell_init(void) {
     /* create rx ringbuffer lock */
     shell_session.rx_ringbuffer_lock = rt_mutex_create("udpshell_rx", RT_IPC_FLAG_FIFO);
 	
-	shell_session.read_notice = rt_sem_create("udpshell_rx", 0, RT_IPC_FLAG_FIFO);
+	shell_session.deamon_status_lock = rt_mutex_create("udpshell_deamon", RT_IPC_FLAG_FIFO);
+	
 	shell_session.deamon_notice = rt_sem_create("udpshell_deamon", 0, RT_IPC_FLAG_FIFO);
-	uip_ipaddr(addr, 255,255,255,255);
-    udpshell_conn = uip_udp_new(&addr,HTONS(6666));
+	
+	uip_ipaddr(remote_ipaddr, 255,255,255,255);
+	
+    udpshell_conn = uip_udp_new(HTONS(6666));
 	if(udpshell_conn != RT_NULL)
 	{
-        uip_udp_bind(udpshell_conn, HTONS(6666));
 		register_udp_appcall(udpshell_appcall);
-		
         udpshell_deamon_init();
 	}
 }

@@ -4,6 +4,7 @@
 #include <net/uip/uip_arp.h>
 
 #include <net/uip-httpd/httpd.h>
+#include <net/uip-dhcpd/dhcpd.h>
 #include <net/uip-break/bootbreak.h>
 #include <net/uip-udpshell/udpshell.h>
 
@@ -102,6 +103,7 @@ static void rt_thread_uip_thread_entry(void *parameter)
     uip_setnetmask(ipaddr);
 	
 	httpd_init();
+	dhcpd_init();
 	bootbreak_init();
 	udpshell_init();
 	

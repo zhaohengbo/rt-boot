@@ -74,11 +74,20 @@ static void rt_qca953x_lsuart_irq_handler(int vector,void * para)
 	qca_soc_reg_read(QCA_LSUART_IIR_REG);
 	if(qca_soc_reg_read(QCA_LSUART_LSR_REG) & QCA_LSUART_LSR_DR_MASK)
 	{
-		qca_soc_reg_read_clear(QCA_LSUART_IER_REG, QCA_LSUART_IER_ERBFI_MASK);
 		if (soc_console_dev.rx_indicate != RT_NULL)
     	{
+			qca_soc_reg_read_clear(QCA_LSUART_IER_REG, QCA_LSUART_IER_ERBFI_MASK);
         	soc_console_dev.rx_indicate(&soc_console_dev, 1);
     	}
+		else
+		{
+			while(1)
+			{
+				if(!qca953x_lsuart_tstc())
+					break;
+				if(qca_soc_reg_read(QCA_LSUART_RBR_REG)& QCA_LSUART_RBR_RBR_MASK) ;
+			}
+		}
 	}
 }
 

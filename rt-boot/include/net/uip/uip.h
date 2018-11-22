@@ -495,7 +495,7 @@ void uip_unlisten(u16_t port);
  * or NULL if no connection could be allocated.
  *
  */
-struct uip_conn *uip_connect(uip_ipaddr_t *ripaddr, u16_t port);
+struct uip_conn *uip_connect(uip_ipaddr_t ripaddr, u16_t port);
 
 
 
@@ -747,14 +747,8 @@ void uip_send(const void *data, int len);
  *
  * Example:
  \code
- uip_ipaddr_t addr;
  struct uip_udp_conn *c;
- 
- uip_ipaddr(&addr, 192,168,2,1);
- c = uip_udp_new(&addr, HTONS(12345));
- if(c != NULL) {
-   uip_udp_bind(c, HTONS(12344));
- }
+ c = uip_udp_new(HTONS(12345));
  \endcode
  * \param ripaddr The IP address of the remote host.
  *
@@ -763,28 +757,7 @@ void uip_send(const void *data, int len);
  * \return The uip_udp_conn structure for the new connection or NULL
  * if no connection could be allocated.
  */
-struct uip_udp_conn *uip_udp_new(uip_ipaddr_t *ripaddr, u16_t rport);
-
-/**
- * Removed a UDP connection.
- *
- * \param conn A pointer to the uip_udp_conn structure for the connection.
- *
- * \hideinitializer
- */
-#define uip_udp_remove(conn) (conn)->lport = 0
-
-/**
- * Bind a UDP connection to a local port.
- *
- * \param conn A pointer to the uip_udp_conn structure for the
- * connection.
- *
- * \param port The local port number, in network byte order.
- *
- * \hideinitializer
- */
-#define uip_udp_bind(conn, port) (conn)->lport = port
+struct uip_udp_conn *uip_udp_new(u16_t lport);
 
 /**
  * Send a UDP datagram of length len on the current connection.
@@ -797,7 +770,20 @@ struct uip_udp_conn *uip_udp_new(uip_ipaddr_t *ripaddr, u16_t rport);
  *
  * \hideinitializer
  */
-#define uip_udp_send(len) uip_send((char *)uip_appdata, len)
+void uip_udp_send(uip_ipaddr_t ripaddr, u16_t rport ,const void *data, int len);
+
+/**
+ * Send a UDP datagram of length len on the current connection.
+ *
+ * This function can only be called in response to a UDP event (poll
+ * or newdata). The data must be present in the uip_buf buffer, at the
+ * place pointed to by the uip_appdata pointer.
+ *
+ * \param len The length of the data in the uip_buf buffer.
+ *
+ * \hideinitializer
+ */
+#define uip_udp_reply(data, len) uip_send(data, len)
 
 /** @} */
 

@@ -407,7 +407,7 @@ uip_init(void)
 /*---------------------------------------------------------------------------*/
 #if UIP_ACTIVE_OPEN
 struct uip_conn *
-uip_connect(uip_ipaddr_t *ripaddr, u16_t rport)
+uip_connect(uip_ipaddr_t ripaddr, u16_t rport)
 {
   register struct uip_conn *conn, *cconn;
   
@@ -465,7 +465,7 @@ uip_connect(uip_ipaddr_t *ripaddr, u16_t rport)
   conn->sv = 16;   /* Initial value of the RTT variance. */
   conn->lport = htons(lastport);
   conn->rport = rport;
-  uip_ipaddr_copy(&conn->ripaddr, ripaddr);
+  uip_ipaddr_copy(conn->ripaddr, ripaddr);
   
   return conn;
 }
@@ -473,24 +473,15 @@ uip_connect(uip_ipaddr_t *ripaddr, u16_t rport)
 /*---------------------------------------------------------------------------*/
 #if UIP_UDP
 struct uip_udp_conn *
-uip_udp_new(uip_ipaddr_t *ripaddr, u16_t rport)
+uip_udp_new(u16_t lport)
 {
   register struct uip_udp_conn *conn;
   
-  /* Find an unused local port. */
- again:
-  ++lastport;
-
-  if(lastport >= 32000) {
-    lastport = 4096;
-  }
-  
   for(c = 0; c < UIP_UDP_CONNS; ++c) {
-    if(uip_udp_conns[c].lport == htons(lastport)) {
-      goto again;
+    if(uip_udp_conns[c].lport == lport) {
+      return 0;
     }
   }
-
 
   conn = 0;
   for(c = 0; c < UIP_UDP_CONNS; ++c) {
@@ -504,13 +495,10 @@ uip_udp_new(uip_ipaddr_t *ripaddr, u16_t rport)
     return 0;
   }
   
-  conn->lport = HTONS(lastport);
-  conn->rport = rport;
-  if(ripaddr == RT_NULL) {
-    rt_memset(conn->ripaddr, 0, sizeof(uip_ipaddr_t));
-  } else {
-    uip_ipaddr_copy(&conn->ripaddr, ripaddr);
-  }
+  conn->lport = lport;
+  conn->rport = 0;
+  
+  uip_ipaddr(conn->ripaddr, 255,255,255,255);
   conn->ttl = UIP_TTL;
   
   return conn;
@@ -687,7 +675,6 @@ uip_process(u8_t flag)
   register struct uip_conn *uip_connr = uip_conn;
 
 #if UIP_UDP
-  u16_t udp_listen = 0;
   if(flag == UIP_UDP_SEND_CONN) {
     goto udp_send;
   }
@@ -1114,18 +1101,9 @@ uip_process(u8_t flag)
        connection is bound to a remote IP address, the source IP
        address of the packet is checked. */
     if(uip_udp_conn->lport != 0 &&
-       UDPBUF->destport == uip_udp_conn->lport &&
-       (uip_udp_conn->rport == 0 ||
-        UDPBUF->srcport == uip_udp_conn->rport) &&
-       (uip_ipaddr_cmp(uip_udp_conn->ripaddr, all_zeroes_addr) ||
-	uip_ipaddr_cmp(uip_udp_conn->ripaddr, all_ones_addr) ||
-	uip_ipaddr_cmp(BUF->srcipaddr, uip_udp_conn->ripaddr))) {
-      if(uip_udp_conn->rport == 0)
-	  {
-	    udp_listen = 1;
-	    uip_udp_conn->rport = UDPBUF->srcport;
-	    rt_memcpy(uip_udp_conn->ripaddr,UDPBUF->srcipaddr,sizeof(uip_ipaddr_t));
-	  }
+       UDPBUF->destport == uip_udp_conn->lport) {
+       uip_udp_conn->rport = UDPBUF->srcport;
+       uip_ipaddr_copy(uip_udp_conn->ripaddr,BUF->srcipaddr);
       goto udp_found;
     }
   }
@@ -1165,11 +1143,6 @@ uip_process(u8_t flag)
 
   uip_ipaddr_copy(BUF->srcipaddr, uip_hostaddr);
   uip_ipaddr_copy(BUF->destipaddr, uip_udp_conn->ripaddr);
-  
-  if(udp_listen)
-  {
-    uip_udp_conn->rport = 0;
-  }
   
   uip_appdata = &uip_buf[UIP_LLH_LEN + UIP_IPTCPH_LEN];
 
@@ -1909,4 +1882,20 @@ uip_send(const void *data, int len)
     }
   }
 }
+
+#if UIP_UDP
+void
+uip_udp_send(uip_ipaddr_t ripaddr, u16_t rport ,const void *data, int len)
+{
+  uip_udp_conn->rport = rport;
+  uip_ipaddr_copy(uip_udp_conn->ripaddr, ripaddr);
+  if(len > 0) {
+    uip_slen = len;
+    if(data != uip_sappdata) {
+      rt_memcpy(uip_sappdata, (data), uip_slen);
+    }
+  }
+}
+#endif
+
 /** @} */

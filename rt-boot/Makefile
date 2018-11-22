@@ -230,6 +230,7 @@ LIBS += net/uip/libuip.a
 LIBS += net/uip-httpd/libuip-httpd.a
 LIBS += net/uip-break/libuip-break.a
 LIBS += net/uip-udpshell/libuip-udpshell.a
+LIBS += net/uip-dhcpd/libuip-dhcpd.a
 
 LIBS_SHARED  = 
 ifdef SOC
