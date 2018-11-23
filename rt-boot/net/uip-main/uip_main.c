@@ -213,7 +213,7 @@ static void rt_thread_uip_thread_entry(void *parameter)
 	}
 }
 
-void network_init(void) 
+void network_thread_init(void) 
 {
     rt_thread_init(&uip_thread,
                    "uip_thread",

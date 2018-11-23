@@ -864,14 +864,7 @@ void uip_udp_send(uip_ipaddr_t ripaddr, u16_t rport ,const void *data, int len);
  *
  * \hideinitializer
  */
-#if !UIP_CONF_IPV6
-#define uip_ipaddr_copy(dest, src) do { \
-                     ((u16_t *)dest)[0] = ((u16_t *)src)[0]; \
-                     ((u16_t *)dest)[1] = ((u16_t *)src)[1]; \
-                  } while(0)
-#else /* !UIP_CONF_IPV6 */
-#define uip_ipaddr_copy(dest, src) rt_memcpy(dest, src, sizeof(uip_ip6addr_t))
-#endif /* !UIP_CONF_IPV6 */
+#define uip_ipaddr_copy(dest, src) rt_memcpy((void *)dest, (void *)src, sizeof(uip_ipaddr_t))
 
 /**
  * Compare two IP addresses
@@ -893,12 +886,7 @@ void uip_udp_send(uip_ipaddr_t ripaddr, u16_t rport ,const void *data, int len);
  *
  * \hideinitializer
  */
-#if !UIP_CONF_IPV6
-#define uip_ipaddr_cmp(addr1, addr2) (((u16_t *)addr1)[0] == ((u16_t *)addr2)[0] && \
-				      ((u16_t *)addr1)[1] == ((u16_t *)addr2)[1])
-#else /* !UIP_CONF_IPV6 */
-#define uip_ipaddr_cmp(addr1, addr2) (memcmp(addr1, addr2, sizeof(uip_ip6addr_t)) == 0)
-#endif /* !UIP_CONF_IPV6 */
+#define uip_ipaddr_cmp(addr1, addr2) (rt_memcmp((void *)addr1, (void *)addr2, sizeof(uip_ipaddr_t)) == 0)
 
 /**
  * Compare two IP addresses with netmasks

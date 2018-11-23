@@ -1,16 +1,12 @@
 include $(TOPDIR)/config.mk
 
-LIB	= libuip.a
+LIB	= libuip-main.a
 
 START	=
 OBJS	=
 SOBJS	=
 
-OBJS	+= uip.o
-OBJS	+= uip_arch.o
-OBJS	+= uip_arp.o
-OBJS	+= uip_socket.o
-OBJS	+= uip-neighbor.o
+OBJS	+= uip_main.o
 
 all:	.depend $(START) $(LIB)
 

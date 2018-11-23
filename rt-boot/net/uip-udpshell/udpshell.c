@@ -5,7 +5,7 @@
 #include <finsh/shell.h>
 
 #include <net/uip/uip.h>
-#include <net/uip/uip_main.h>
+#include <net/uip-main/uip_main.h>
 #include <net/uip-udpshell/udpshell.h>
 
 struct udpshell_session

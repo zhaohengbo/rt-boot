@@ -22,6 +22,7 @@ OBJS	+= signal.o
 OBJS	+= thread.o
 OBJS	+= timer.o
 OBJS	+= slab.o
+OBJS	+= cpu.o
 
 all:	.depend $(START) $(LIB)
 

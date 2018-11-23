@@ -6,14 +6,13 @@
 
 #include <kernel/rtthread.h>
 #include <common/global.h>
-#include <net/uip/uip_main.h>
+#include <net/uip-main/uip_main.h>
 
 ALIGN(RT_ALIGN_SIZE)
 static char main_thread_stack[0x400];
 struct rt_thread main_thread;
 void rt_thread_main_thread_entry(void* parameter)
 {
-	network_init();
     while (1)
     {
 		//rt_kprintf("test on qca9533\n");
@@ -31,5 +30,6 @@ int rt_application_init(void)
                    sizeof(main_thread_stack),12,5);
 	
     rt_thread_startup(&main_thread);
+	network_thread_init();
     return 0;
 }
