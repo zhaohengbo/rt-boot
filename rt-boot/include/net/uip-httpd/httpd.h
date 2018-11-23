@@ -50,7 +50,9 @@ void httpd_init(void);
 
 struct httpd_state {
 	u8_t state;
+	u16_t count_acked;
 	u16_t count;
+	char *dataptr_acked;
 	char *dataptr;
 	char *script;
 };

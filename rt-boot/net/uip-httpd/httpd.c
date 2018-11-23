@@ -85,6 +85,8 @@
 #include <kernel/rtthread.h>
 
 #include <net/uip/uip.h>
+#include <net/uip-main/uip_main.h>
+
 #include <net/uip-httpd/httpd.h>
 #include <net/uip-httpd/fs.h>
 #include <net/uip-httpd/fsdata.h>
@@ -172,7 +174,7 @@ void httpd_appcall(void) {
 			return;
 		}
 		
-		if (uip_poll()) {
+		if (uip_periodiced()) {
 			/* If we are polled ten times, we abort the connection. This is
 			 because we don't want connections lingering indefinately in
 			 the system. */
@@ -222,8 +224,10 @@ void httpd_appcall(void) {
 			hs->state = HTTP_FILE;
 			/* Point the file pointers in the connection state to point to
 			 the first byte of the file. */
+			hs->dataptr_acked = fsfile.data;
 			hs->dataptr = fsfile.data;
 			hs->count = fsfile.len;
+			hs->count_acked = hs->count;
 		}
 
 		if (hs->state == HTTP_FILE) {
@@ -231,19 +235,11 @@ void httpd_appcall(void) {
 			 we've previously sent. If so, we move the file pointer further
 			 into the file and send back more data. If we are out of data to
 			 send, we close the connection. */
-			if (uip_acked()) {
-				if(hs->count <= uip_mss())
-				{
-					hs->count = 0;
-				}
-				else if (hs->count > uip_mss()) {
-					hs->count -= uip_mss();
-					hs->dataptr += uip_mss();
-				} else {
-					hs->count = 0;
-				}
+			if (uip_acked()) {				
+				hs->count_acked = hs->count;
+				hs->dataptr_acked = hs->dataptr;
 				
-				if (hs->count == 0) {
+				if (hs->count_acked == 0) {
 					rt_free(hs);
 					uip_conn->appstate.pdata = RT_NULL;
 					uip_close();
@@ -252,15 +248,35 @@ void httpd_appcall(void) {
 			}
 		}
 
-		if (hs->state == HTTP_FILE && !uip_poll()) {
-			/* Send a piece of data, but not more than the MSS of the
-			 connection. */
-			uip_send(hs->dataptr, (hs->count > uip_mss() ? uip_mss() : hs->count));
-		}
-		
 		if(uip_rexmit())
 		{
-			uip_send(hs->dataptr, (hs->count > uip_mss() ? uip_mss() : hs->count));
+			hs->count = hs->count_acked;
+			hs->dataptr = hs->dataptr_acked;
+		}
+		
+		if (hs->state == HTTP_FILE && !uip_periodiced()) {
+			/* Send a piece of data, but not more than the MSS of the
+			 connection. */
+			
+			if(hs->count > uip_mss())
+			{
+				uip_send(hs->dataptr, uip_mss());
+				//uip_tcp_active_poll_call();
+			}
+			else if(hs->count != 0)
+			{
+				uip_send(hs->dataptr, hs->count);
+			}
+			
+			if(hs->count <= uip_mss())
+			{
+				hs->count = 0;
+			}
+			else if (hs->count > uip_mss()) 
+			{
+				hs->count -= uip_mss();
+				hs->dataptr += uip_mss();
+			}
 		}
 		
 		if(uip_closed() | uip_timedout())

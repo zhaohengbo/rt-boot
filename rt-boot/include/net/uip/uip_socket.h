@@ -33,6 +33,5 @@ rt_int32_t register_tcp_appcall(void (*callback)(void));
 
 #endif /* __UIP_H__ */
 
-
 /** @} */
 

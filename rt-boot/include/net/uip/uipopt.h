@@ -83,7 +83,7 @@
  * if uIP should be run over Ethernet.
  *
  * All of these should be changed to suit your project.
-*/
+ */
 
 /**
  * Determines if uIP should use a fixed IP address or not.
@@ -113,7 +113,6 @@
 #else /* UIP_CONF_PINGADDRCONF */
 #define UIP_PINGADDRCONF 0
 #endif /* UIP_CONF_PINGADDRCONF */
-
 
 /**
  * Specifies if the uIP ARP module should be compiled with a fixed
@@ -212,7 +211,6 @@
  * \hideinitializer
  */
 
-
 /** @} */
 /*------------------------------------------------------------------------------*/
 /**
@@ -246,7 +244,6 @@
 #else /* UIP_CONF_MAX_CONNECTIONS */
 #define UIP_CONNS UIP_CONF_MAX_CONNECTIONS
 #endif /* UIP_CONF_MAX_CONNECTIONS */
-
 
 /**
  * The maximum number of simultaneously listening TCP ports.
@@ -327,7 +324,6 @@
  */
 #define UIP_TIME_WAIT_TIMEOUT 120
 
-
 /** @} */
 /*------------------------------------------------------------------------------*/
 /**
@@ -380,7 +376,6 @@
 #else /* UIP_CONF_BUFFER_SIZE */
 #define UIP_BUFSIZE UIP_CONF_BUFFER_SIZE
 #endif /* UIP_CONF_BUFFER_SIZE */
-
 
 /**
  * Determines if statistics support should be compiled in.
@@ -503,16 +498,16 @@ void uip_log(char *msg);
  * The following example illustrates how this can look.
  \code
 
-void httpd_appcall(void);
-#define UIP_APPCALL     httpd_appcall
+ void httpd_appcall(void);
+ #define UIP_APPCALL     httpd_appcall
 
-struct httpd_state {
-  u8_t state;
-  u16_t count;
-  char *dataptr;
-  char *script;
-};
-typedef struct httpd_state uip_tcp_appstate_t
+ struct httpd_state {
+ u8_t state;
+ u16_t count;
+ char *dataptr;
+ char *script;
+ };
+ typedef struct httpd_state uip_tcp_appstate_t
  \endcode
  */
 

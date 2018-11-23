@@ -234,7 +234,6 @@ static int dhcpd_relay_offer(dhcp_client_node* head)
 	dhcp_client_node *p;
 	p =head;
 	struct dhcpd_msg *m = (struct dhcpd_msg *)uip_appdata;
-	static uip_ipaddr_t brodcast_ipaddr;
 	
     while((p->next)&&(rt_strcmp((char *)p->next->hwaddr,(char *)m->chaddr)))
 	{
@@ -281,8 +280,7 @@ static int dhcpd_relay_offer(dhcp_client_node* head)
 	end = add_dhcpd_domain_name(end);
 	end = add_end(end);
 	
-	uip_ipaddr(brodcast_ipaddr, 255,255,255,255);
-	uip_udp_send(brodcast_ipaddr,HTONS(DHCPC_CLIENT_PORT) ,uip_appdata, end - (u8_t *)uip_appdata);
+	uip_udp_broadcast(HTONS(DHCPC_CLIENT_PORT) ,uip_appdata, end - (u8_t *)uip_appdata);
 	return 1;
 	
 }
@@ -293,7 +291,6 @@ static int dhcpd_replay_ask(dhcp_client_node* head)
     uip_ipaddr_t addr;
 	dhcp_client_node *p;
 	p =head;
-	static uip_ipaddr_t brodcast_ipaddr;
 
 	struct dhcpd_msg *m = (struct dhcpd_msg *)uip_appdata;
 	
@@ -326,8 +323,7 @@ static int dhcpd_replay_ask(dhcp_client_node* head)
 
 	end = add_end(end);
 	
-	uip_ipaddr(brodcast_ipaddr, 255,255,255,255);
-	uip_udp_send(brodcast_ipaddr,HTONS(DHCPC_CLIENT_PORT) ,uip_appdata, end - (u8_t *)uip_appdata);
+	uip_udp_broadcast(HTONS(DHCPC_CLIENT_PORT) ,uip_appdata, end - (u8_t *)uip_appdata);
 
 	return 1;
 

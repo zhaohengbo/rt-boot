@@ -72,7 +72,7 @@ void udpshell_appcall(void) {
 			if(result != 0)
 				uip_udp_send(remote_ipaddr,6666,buffer,result);
 			if(rt_ringbuffer_data_len(&(shell_session.tx_ringbuffer)))
-				uip_udp_active_poll();
+				uip_udp_active_poll_call();
 			rt_free(buffer);
 		}
 	}
@@ -141,7 +141,7 @@ static rt_size_t udpshell_device_write (rt_device_t dev, rt_off_t pos, const voi
     }
     rt_mutex_release(shell_session.tx_ringbuffer_lock);
 
-    uip_udp_active_poll();
+    uip_udp_active_poll_call();
 
     return (rt_uint32_t) ptr - (rt_uint32_t) buffer;
 }

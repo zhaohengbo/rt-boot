@@ -22,12 +22,18 @@ struct rt_thread uip_thread;
 #define UIP_EVENT_PEDC_ID 1
 #define UIP_EVENT_ARP_ID 2
 #define UIP_EVENT_UPOLL_ID 3
+#define UIP_EVENT_TPOLL_ID 4
 
 struct rt_event uip_event;
 
-void uip_udp_active_poll(void)
+void uip_udp_active_poll_call(void)
 {
 	rt_event_send(&uip_event, (1 << UIP_EVENT_UPOLL_ID));
+}
+
+void uip_tcp_active_poll_call(void)
+{
+	rt_event_send(&uip_event, (1 << UIP_EVENT_TPOLL_ID));
 }
 
 static void uip_block_send(struct rt_event *event)
@@ -115,8 +121,8 @@ static void rt_thread_uip_thread_entry(void *parameter)
 	while (1) 
 	{
 		rt_event_recv(&uip_event, (1 << UIP_EVENT_RECV_ID) | (1 << UIP_EVENT_PEDC_ID) | (1 << UIP_EVENT_ARP_ID)
-					  | (1 << UIP_EVENT_UPOLL_ID),RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,RT_WAITING_FOREVER, 
-					  &uip_event_flag);
+					  | (1 << UIP_EVENT_UPOLL_ID) | (1 << UIP_EVENT_TPOLL_ID),RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
+					  RT_WAITING_FOREVER, &uip_event_flag);
 		
 		if(uip_event_flag & (1 << UIP_EVENT_RECV_ID))
 		{
@@ -187,12 +193,28 @@ static void rt_thread_uip_thread_entry(void *parameter)
 #endif /* UIP_UDP */
 		}
 		
+		if(uip_event_flag & (1 << UIP_EVENT_TPOLL_ID))
+		{
+			for (i = 0; i < UIP_CONNS; i++) 
+			{
+				uip_active_poll(i);
+				/* If the above function invocation resulted in data that
+				 should be sent out on the network, the global variable
+				 uip_len is set to a value > 0. */
+				if (uip_len > 0) 
+				{
+					uip_arp_out();
+                    uip_block_send(&uip_send_event);
+				}
+			}
+		}
+		
 #if UIP_UDP		
 		if(uip_event_flag & (1 << UIP_EVENT_UPOLL_ID))
 		{
 			for(i = 0; i < UIP_UDP_CONNS; i++) 
 			{
-				uip_udp_periodic(i);
+				uip_udp_active_poll(i);
 				/* If the above function invocation resulted in data that
 				 should be sent out on the network, the global variable
 				 uip_len is set to a value > 0. */

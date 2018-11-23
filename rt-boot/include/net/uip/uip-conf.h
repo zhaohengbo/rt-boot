@@ -145,7 +145,7 @@ typedef rt_uint16_t uip_stats_t;
 #define UIP_CONF_BROADCAST		 1
 
 /* Here we include the header file for the application(s) we use in
-   our project. */
+ our project. */
 #include <net/uip/uip_socket.h>
 
 #endif /* __UIP_CONF_H__ */
