@@ -339,10 +339,10 @@ int cmd_ifconfig(int argc, char **argv)
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_ifconfig, __cmd_ifconfig, list the information of network interfaces);
 
 #ifdef RT_LWIP_DNS
-#include <lwip/api.h>
-#include <lwip/dns.h>
-#include <lwip/ip_addr.h>
-#include <lwip/init.h>
+#include <net/lwip/lwip/api.h>
+#include <net/lwip/lwip/dns.h>
+#include <net/lwip/lwip/ip_addr.h>
+#include <net/lwip/lwip/init.h>
 
 int cmd_dns(int argc, char **argv)
 {

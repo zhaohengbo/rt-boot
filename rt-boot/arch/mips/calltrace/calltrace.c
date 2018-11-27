@@ -32,6 +32,7 @@ rt_int32_t calltrace_irq(rt_uint32_t irq_sp)
 	sp = (rt_uint32_t *)stack_frame->sp;
 
 	rt_kprintf("Calltrace:[0x%08x]\n", (rt_uint32_t)pc);
+	rt_kprintf("RA[0] : [0x%08x]\n", (rt_uint32_t)ra);
 
 	if (size == 1) return 1;
 

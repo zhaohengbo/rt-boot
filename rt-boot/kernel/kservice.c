@@ -567,6 +567,7 @@ RTM_EXPORT(rt_show_version);
 
 /* private function */
 #define isdigit(c)  ((unsigned)((c) - '0') < 10)
+#define isspace(c)  (c == ' ')
 
 rt_inline int divide(long *n, int base)
 {
@@ -595,6 +596,78 @@ rt_inline int skip_atoi(const char **s)
 
     return i;
 }
+
+/***
+*long atol(char *nptr) - Convert string to long
+*
+*Purpose:
+*       Converts ASCII string pointed to by nptr to binary.
+*       Overflow is not detected.
+*
+*Entry:
+*       nptr = ptr to string to convert
+*
+*Exit:
+*       return long int value of the string
+*
+*Exceptions:
+*       None - overflow is not detected.
+*
+*******************************************************************************/
+
+long rt_atol(const char *nptr)
+{
+        int c;              /* current char */
+        long total;         /* current total */
+        int sign;           /* if '-', then negative, otherwise positive */
+
+        /* skip whitespace */
+        while ( isspace((int)(unsigned char)*nptr) )
+            ++nptr;
+
+        c = (int)(unsigned char)*nptr++;
+        sign = c;           /* save sign indication */
+        if (c == '-' || c == '+')
+            c = (int)(unsigned char)*nptr++;    /* skip sign */
+
+        total = 0;
+
+        while (isdigit(c)) {
+            total = 10 * total + (c - '0');     /* accumulate digit */
+            c = (int)(unsigned char)*nptr++;    /* get next char */
+        }
+
+        if (sign == '-')
+            return -total;
+        else
+            return total;   /* return result, negated if necessary */
+}
+RTM_EXPORT(rt_atol);
+
+/***
+*int atoi(char *nptr) - Convert string to long
+*
+*Purpose:
+*       Converts ASCII string pointed to by nptr to binary.
+*       Overflow is not detected.  Because of this, we can just use
+*       atol().
+*
+*Entry:
+*       nptr = ptr to string to convert
+*
+*Exit:
+*       return int value of the string
+*
+*Exceptions:
+*       None - overflow is not detected.
+*
+*******************************************************************************/
+
+int rt_atoi(const char *nptr)
+{
+        return (int)rt_atol(nptr);
+}
+RTM_EXPORT(rt_atoi);
 
 #define ZEROPAD     (1 << 0)    /* pad with zero */
 #define SIGN        (1 << 1)    /* unsigned/signed long */

@@ -102,6 +102,8 @@ int board_network_init(void)
 	ag_eth.eth_init(&ag_eth);
 	ag_eth.eth_start(&ag_eth);
 	
+	//mdelay(4000);
+	
 	return 0;
 }
 

@@ -6,7 +6,6 @@
 
 #include <kernel/rtthread.h>
 #include <kernel/rthw.h>
-#include <finsh/shell.h>
 #include <common/global.h>
 #include <common/main.h>
 #include <arch/relocation.h>
@@ -48,12 +47,6 @@ void rtthread_startup(void)
 
     /* timer thread initialization */
     rt_system_timer_thread_init();
-	
-#ifdef RT_USING_FINSH
-    /* init finsh */
-    finsh_system_init();
-    finsh_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif
 
     /* idle thread initialization */
     rt_thread_idle_init();

@@ -21,29 +21,6 @@
 
 struct ag71xx_debug ag_debug;
 
-static long simple_atol(char *s)
-{
-    long r = 0;
-    int neg = 0;
-    switch(*s)
-    {
-        case '-':
-            neg = 1;
-            /* 这里没有break */
-        case '+':
-            s++;
-            break;
-    }
-    while(*s >= '0' && *s <= '9')
-    {
-        int n = *s++ - '0';
-        if(neg)
-            n = -n;
-        r = r * 10 + n;
-    }
-    return r;
-}
-
 static void mdio(uint8_t argc, char **argv) 
 {
 	if (argc < 3) 
@@ -60,7 +37,7 @@ static void mdio(uint8_t argc, char **argv)
 			{
 				goto mdio_too_few_arg;
 			}
-			bus_id = simple_atol(argv[2]);			
+			bus_id = rt_atol(argv[2]);			
 			if(bus_id > 1)
 			{
 				goto mdio_bus_id_error;
@@ -81,7 +58,7 @@ static void mdio(uint8_t argc, char **argv)
 			{
 				goto mdio_too_few_arg;
 			}
-			bus_id = simple_atol(argv[2]);
+			bus_id = rt_atol(argv[2]);
 			if(bus_id > 1)
 			{
 				goto mdio_bus_id_error;
@@ -90,9 +67,9 @@ static void mdio(uint8_t argc, char **argv)
 			{
 				goto mdio_not_exist;
 			}
-			addr = simple_atol(argv[3]);
-			reg = simple_atol(argv[4]);
-			value = simple_atol(argv[5]);
+			addr = rt_atol(argv[3]);
+			reg = rt_atol(argv[4]);
+			value = rt_atol(argv[5]);
 			
 			ag_debug.debug_mdio[bus_id]->mdio_write(ag_debug.debug_mdio[bus_id],addr,reg,value);
 		}
@@ -106,7 +83,7 @@ static void mdio(uint8_t argc, char **argv)
 			{
 				goto mdio_too_few_arg;
 			}
-			bus_id = simple_atol(argv[2]);
+			bus_id = rt_atol(argv[2]);
 			if(bus_id > 1)
 			{
 				goto mdio_bus_id_error;
@@ -115,8 +92,8 @@ static void mdio(uint8_t argc, char **argv)
 			{
 				goto mdio_not_exist;
 			}
-			addr = simple_atol(argv[3]);
-			reg = simple_atol(argv[4]);
+			addr = rt_atol(argv[3]);
+			reg = rt_atol(argv[4]);
 			
 			ret = ag_debug.debug_mdio[bus_id]->mdio_read(ag_debug.debug_mdio[bus_id],addr,reg);
 		
@@ -174,9 +151,9 @@ static void phy_mdio(uint8_t argc, char **argv)
 			{
 				goto phy_mdio_not_exist;
 			}
-			addr = simple_atol(argv[2]);
-			reg = simple_atol(argv[3]);
-			value = simple_atol(argv[4]);
+			addr = rt_atol(argv[2]);
+			reg = rt_atol(argv[3]);
+			value = rt_atol(argv[4]);
 			
 			ag_debug.debug_phy_mdio->phy_write(ag_debug.debug_phy_mdio->am_bus,addr,reg,value);
 		}
@@ -194,8 +171,8 @@ static void phy_mdio(uint8_t argc, char **argv)
 			{
 				goto phy_mdio_not_exist;
 			}
-			addr = simple_atol(argv[2]);
-			reg = simple_atol(argv[3]);
+			addr = rt_atol(argv[2]);
+			reg = rt_atol(argv[3]);
 			
 			ret = ag_debug.debug_phy_mdio->phy_read(ag_debug.debug_phy_mdio->am_bus,addr,reg);
 		
@@ -249,8 +226,8 @@ static void switcher(uint8_t argc, char **argv)
 			{
 				goto switcher_not_exist;
 			}
-			reg = simple_atol(argv[2]);
-			value = simple_atol(argv[3]);
+			reg = rt_atol(argv[2]);
+			value = rt_atol(argv[3]);
 
 			ag_debug.debug_switcher->switch_reg_write(ag_debug.debug_switcher->am_bus,reg,value);
 		}
@@ -267,7 +244,7 @@ static void switcher(uint8_t argc, char **argv)
 			{
 				goto switcher_not_exist;
 			}
-			reg = simple_atol(argv[2]);
+			reg = rt_atol(argv[2]);
 			
 			ret = ag_debug.debug_switcher->switch_reg_read(ag_debug.debug_switcher->am_bus,reg);
 		
@@ -313,7 +290,7 @@ static void gmac(uint8_t argc, char **argv)
 			{
 				goto gmac_too_few_arg;
 			}
-			gmac_id = simple_atol(argv[2]);
+			gmac_id = rt_atol(argv[2]);
 			if(gmac_id > 1)
 			{
 				goto gmac_id_error;
@@ -368,7 +345,7 @@ static void eth(uint8_t argc, char **argv)
 			{
 				goto eth_too_few_arg;
 			}
-			eth_id = simple_atol(argv[2]);
+			eth_id = rt_atol(argv[2]);
 			if(eth_id > 1)
 			{
 				goto eth_id_error;

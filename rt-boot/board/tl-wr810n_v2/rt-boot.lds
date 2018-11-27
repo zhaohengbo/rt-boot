@@ -43,7 +43,43 @@ SECTIONS
 	vsymtab : { *(VSymTab) }
 	__vsymtab_end = .;
 	. = ALIGN(4);
-
+	
+	. = ALIGN(4);
+	__lwip_tcp_pcb_list_start = .;
+	lwip_tcp_pcb_list : { *(LWIPTCPPcbList) }
+	__lwip_tcp_pcb_list_end = .;
+	
+	. = ALIGN(4);
+	__lwip_tcp_state_str_start = .;
+	lwip_tcp_state_str : { *(LWIPTCPStateStr) }
+	__lwip_tcp_state_str_end = .;
+	
+	. = ALIGN(4);
+	__lwip_mempool_start = .;
+	lwip_mempool : { *(LWIPMemPool) }
+	__lwip_mempool_end = .;
+	
+	. = ALIGN(4);
+	__lwip_mempool_desc_start = .;
+	lwip_mempool : { *(LWIPMemPoolDesc) }
+	__lwip_mempool_desc_end = .;
+	
+	. = ALIGN(4);
+	__lwip_cyclic_timer_start = .;
+	lwip_cyclic_timer : { *(LWIPCyclicTimer) }
+	__lwip_cyclic_timer_end = .;
+	
+	. = ALIGN(4);
+	__lwip_err_str_start = .;
+	lwip_err_str : { *(LWIPErrStr) }
+	__lwip_err_str_end = .;
+	
+	. = ALIGN(4);
+	__lwip_altcp_tcp_function_start = .;
+	lwip_altcp_tcp_function : { *(LWIPAltcpTcpFunction) }
+	__lwip_altcp_tcp_function_end = .;
+	
+	. = ALIGN(4);
 	rtboot_data_end = .;
 
 	. = ALIGN(4);

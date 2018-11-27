@@ -531,6 +531,9 @@ void *rt_memmove(void *dest, const void *src, rt_ubase_t n);
 rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count);
 rt_uint32_t rt_strcasecmp(const char *a, const char *b);
 
+long rt_atol(const char *nptr);
+int rt_atoi(const char *nptr);
+
 void rt_show_version(void);
 
 #ifdef RT_DEBUG
