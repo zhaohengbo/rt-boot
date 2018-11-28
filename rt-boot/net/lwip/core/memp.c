@@ -69,7 +69,6 @@
 #include <net/lwip/lwip/igmp.h>
 #include <net/lwip/lwip/timeouts.h>
 /* needed by default MEMP_NUM_SYS_TIMEOUT */
-#include <net/lwip/netif/ppp/ppp_opts.h>
 #include <net/lwip/lwip/netdb.h>
 #include <net/lwip/lwip/dns.h>
 #include <net/lwip/lwip/priv/nd6_priv.h>

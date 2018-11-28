@@ -1,3 +1,14 @@
+/**
+ * \addtogroup httpd
+ * @{
+ */
+
+/**
+ * \file
+ * HTTP server read-only file system header file.
+ * \author Adam Dunkels <adam@dunkels.com>
+ */
+
 /*
  * Copyright (c) 2001, Swedish Institute of Computer Science.
  * All rights reserved. 
@@ -30,35 +41,18 @@
  * 
  * Author: Adam Dunkels <adam@sics.se>
  *
- * $Id: sys_arch.h,v 1.3 2005/03/13 16:03:23 bear Exp $
+ * $Id: fs.h,v 1.6.2.3 2003/10/07 13:22:27 adam Exp $
  */
-#ifndef __ARCH_SYS_ARCH_H__
-#define __ARCH_SYS_ARCH_H__
+#ifndef __FS_H__
+#define __FS_H__
 
-#include <net/lwip/arch/cc.h>
+struct fs_file {
+	char *data; /**< The actual file data. */
+	int len; /**< The length of the file data. */
+};
 
-#include <kernel/rtthread.h>
+int fs_open(const char *name, struct fs_file *file);
 
-#ifndef BYTE_ORDER
-#define BYTE_ORDER BIG_ENDIAN
-#endif
+void fs_init(void);
 
-#define SYS_MBOX_NULL RT_NULL
-#define SYS_SEM_NULL  RT_NULL
-
-typedef u32_t sys_prot_t;
-
-#define SYS_MBOX_SIZE 10
-#define SYS_LWIP_TIMER_NAME "timer"
-#define SYS_LWIP_MBOX_NAME "mbox"
-#define SYS_LWIP_SEM_NAME "sem"
-#define SYS_LWIP_MUTEX_NAME "mu"
-
-typedef rt_sem_t sys_sem_t;
-typedef rt_mutex_t sys_mutex_t;
-typedef rt_mailbox_t  sys_mbox_t;
-typedef rt_thread_t sys_thread_t;
-
-err_t sys_mbox_trypost_fromisr(sys_mbox_t *q, void *msg);
-
-#endif /* __ARCH_SYS_ARCH_H__ */
+#endif /* __FS_H__ */

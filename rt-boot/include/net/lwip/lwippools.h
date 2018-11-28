@@ -1,4 +1,4 @@
-#if 0
+#if 1
  LWIP_MALLOC_MEMPOOL_START
  LWIP_MALLOC_MEMPOOL((unsigned char)128, 256)
  LWIP_MALLOC_MEMPOOL((unsigned char)128, 512)

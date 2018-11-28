@@ -38,12 +38,14 @@
 #include <kernel/rthw.h>
 #include <kernel/rtthread.h>
 
+#define X8_F "hhx"
 #define U16_F "hu"
 #define S16_F "hd"
 #define X16_F "hx"
 #define U32_F "lu"
 #define S32_F "ld"
 #define X32_F "lx"
+#define SZT_F "lx"
 
 #ifdef RT_USING_LIBC
 #if defined(__CC_ARM) || defined(__CLANG_ARM) || defined(__IAR_SYSTEMS_ICC__)

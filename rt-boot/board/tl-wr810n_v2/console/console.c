@@ -98,6 +98,9 @@ static rt_err_t rt_qca953x_lsuart_init (rt_device_t dev)
 	qca953x_interrupt_install(QCA953X_UART_INT, rt_qca953x_lsuart_irq_handler,0, "qca953x_lsuart_handler");
 	
     qca953x_interrupt_mask(QCA953X_UART_INT);
+	
+	qca_soc_reg_read_set(QCA_LSUART_IER_REG, QCA_LSUART_IER_ERBFI_MASK);
+	
     return RT_EOK;
 }
 

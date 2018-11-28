@@ -42,7 +42,11 @@ SECTIONS
 	__vsymtab_start = .;
 	vsymtab : { *(VSymTab) }
 	__vsymtab_end = .;
+	
 	. = ALIGN(4);
+	__finsh_device_type_str_start = .;
+	finsh_device_type_str : { *(FINSHDeviceTypeStr) }
+	__finsh_device_type_str_end = .;
 	
 	. = ALIGN(4);
 	__lwip_tcp_pcb_list_start = .;
@@ -61,7 +65,7 @@ SECTIONS
 	
 	. = ALIGN(4);
 	__lwip_mempool_desc_start = .;
-	lwip_mempool : { *(LWIPMemPoolDesc) }
+    lwip_mempool_desc : { *(LWIPMemPoolDesc) }
 	__lwip_mempool_desc_end = .;
 	
 	. = ALIGN(4);

@@ -91,9 +91,6 @@ struct pbuf *rt_boot_eth_rx(rt_device_t dev)
 	{
 		p = pbuf_alloc(PBUF_RAW, length, PBUF_POOL);
 		
-		if(p->len != length)
-			rt_kprintf("error in rx pbuf!\n");
-		
 		if (p != NULL)
 		{
 			rt_memcpy(p->payload,temp_buffer,p->len);
@@ -147,7 +144,7 @@ int rt_hw_boot_eth_init(void)
 	board_eth_send_register_event(&rt_boot_eth_device.eth_send_event,ETH_EVENT_SEND_ID);
 
     /* register eth device */
-    state = eth_device_init(&(rt_boot_eth_device.parent), "ag71xx-eth");
+    state = eth_device_init(&(rt_boot_eth_device.parent), "e0");
 	
 	eth_device_linkchange(&rt_boot_eth_device.parent, RT_TRUE);   //linkup the e0 for lwip to check
 	

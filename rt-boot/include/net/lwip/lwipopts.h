@@ -3,10 +3,10 @@
 
 #include <kernel/rtconfig.h>
 
-#define ERRNO                       1
+#define ERRNO                       0
 
-#define LWIP_SOCKET_SELECT 1
-#define LWIP_SOCKET_POLL 1
+#define LWIP_SOCKET_SELECT			0
+#define LWIP_SOCKET_POLL			0
 
 #define LWIP_IPV4                   1
 
@@ -18,7 +18,7 @@
 
 #define NO_SYS                      0
 #define LWIP_SOCKET                 1
-#define LWIP_NETCONN                1
+#define LWIP_NETCONN                0
 
 #ifdef RT_LWIP_IGMP
 #define LWIP_IGMP                   1
@@ -238,19 +238,17 @@
 
 /* ---------- Memory options ---------- */
 #define MEM_ALIGNMENT               4
-#define MEMP_OVERFLOW_CHECK         1 ////
-#define LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT 1 ////
-#define MEM_LIBC_MALLOC             1
-//#define MEM_USE_POOLS               1
-//#define MEMP_USE_CUSTOM_POOLS       1
-//#define MEM_SIZE                    (1024*64)
-
-#define MEMP_MEM_MALLOC             1
+#define MEMP_OVERFLOW_CHECK         0 
+#define LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT 1 
+#define MEM_LIBC_MALLOC             0
+#define MEM_USE_POOLS               1
+#define MEMP_USE_CUSTOM_POOLS       1
+#define MEM_SIZE                    (1024*64)
 
 /* MEMP_NUM_PBUF: the number of memp struct pbufs. If the application
    sends a lot of data out of ROM (or other static memory), this
    should be set high. */
-//#define MEMP_NUM_PBUF               32 //16
+#define MEMP_NUM_PBUF               32
 
 /* the number of struct netconns */
 #ifdef RT_MEMP_NUM_NETCONN
@@ -472,42 +470,6 @@
 #define MIB2_STATS                  1
 #endif /* LWIP_STATS */
 
-/* ---------- PPP options ---------- */
-#ifdef RT_LWIP_PPP
-#define PPP_SUPPORT                 1      /* Set > 0 for PPP */
-#else
-#define PPP_SUPPORT                 0      /* Set > 0 for PPP */
-#endif
-
-#if PPP_SUPPORT
-#define NUM_PPP                     1      /* Max PPP sessions. */
-
-/* Select modules to enable.  Ideally these would be set in the makefile but
- * we're limited by the command line length so you need to modify the settings
- * in this file.
- */
-#ifdef RT_LWIP_PPPOE
-#define PPPOE_SUPPORT               1
-#else
-#define PPPOE_SUPPORT               0
-#endif
-
-#ifdef RT_LWIP_PPPOS
-#define PPPOS_SUPPORT               1
-#else
-#define PPPOS_SUPPORT               0
-#endif
-
-#define PAP_SUPPORT                 1      /* Set > 0 for PAP. */
-#define CHAP_SUPPORT                1      /* Set > 0 for CHAP. */
-#define MSCHAP_SUPPORT              0      /* Set > 0 for MSCHAP (NOT FUNCTIONAL!) */
-#define CBCP_SUPPORT                0      /* Set > 0 for CBCP (NOT FUNCTIONAL!) */
-#define CCP_SUPPORT                 0      /* Set > 0 for CCP (NOT FUNCTIONAL!) */
-#define VJ_SUPPORT                  1      /* Set > 0 for VJ header compression. */
-#define MD5_SUPPORT                 1      /* Set > 0 for MD5 (see also CHAP) */
-
-#endif /* PPP_SUPPORT */
-
 /**
  * LWIP_POSIX_SOCKETS_IO_NAMES==1: Enable POSIX-style sockets functions names.
  * Disable this option if you use a POSIX operating system that uses the same
@@ -536,7 +498,7 @@
 #ifdef LWIP_IGMP
 //#include <stdlib.h>
 #include <kernel/rtthread.h>
-#define LWIP_RAND                  rt_tick_get//rand
+#define LWIP_RAND                  rt_rand
 #endif
 /*
    ------------------------------------

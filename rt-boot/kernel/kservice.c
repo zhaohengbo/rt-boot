@@ -552,6 +552,37 @@ char *strdup(const char *s) __attribute__((alias("rt_strdup")));
 #endif
 #endif
 
+char *rt_strchr(const char *s,int c)
+{
+	if(s == RT_NULL)
+	{
+		return RT_NULL;
+	}
+	
+	while(*s != '\0')
+	{
+		if(*s == (char)c)
+		{
+			return (char *)s;
+		}
+		s++;
+	}
+	return RT_NULL;
+}
+
+static unsigned int _seed=0;
+
+void rt_srand(unsigned int seed)
+{
+	_seed = seed;
+}
+
+int rt_rand(void)
+{
+	_seed = 1103515245 * _seed + 12345;
+	return _seed;
+}
+
 /**
  * This function will show the version of rt-thread rtos
  */

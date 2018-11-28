@@ -15,6 +15,20 @@ register rt_uint32_t $GP __asm__ ("$28");
 register rt_uint32_t $SP __asm__ ("$29");
 typedef void (late_init_entry)(void);
 
+static void arch_got_relocation(void)
+{
+    rt_uint32_t i;
+    rt_uint32_t got_entries_numbers = &__got_end - &__got_start;
+    rt_uint32_t *pointer_32;
+
+    pointer_32 = (rt_uint32_t *)rtboot_data.new_gp;
+
+    for(i=2;i<got_entries_numbers;i++)
+    {
+        pointer_32[i] += rtboot_data.relocation_offset;
+    }
+}
+
 static void rt_thread_relocation(void)
 {
 	rt_uint32_t i;
@@ -35,6 +49,7 @@ static void finsh_relocation(void)
 	rt_uint32_t i;
 	rt_uint32_t fsymtab_numbers = &__fsymtab_end - &__fsymtab_start;
 	rt_uint32_t vsymtab_numbers = &__vsymtab_end - &__vsymtab_start;
+    rt_uint32_t finsh_device_type_str_numbers = &__finsh_device_type_str_end - &__finsh_device_type_str_start;
 	rt_uint32_t *pointer_32;
 	
 	pointer_32 = (rt_uint32_t *)((rt_uint32_t)&__fsymtab_start + rtboot_data.relocation_offset);
@@ -55,6 +70,13 @@ static void finsh_relocation(void)
 #endif
 			pointer_32[i] += rtboot_data.relocation_offset;
 	}
+
+    pointer_32 = (rt_uint32_t *)((rt_uint32_t)&__finsh_device_type_str_start + rtboot_data.relocation_offset);
+
+    for(i=0;i<finsh_device_type_str_numbers;i++)
+    {
+        pointer_32[i] += rtboot_data.relocation_offset;
+    }
 }
 
 static void lwip_relocation(void)
@@ -131,7 +153,20 @@ static void lwip_relocation(void)
 #endif
 #endif
 #else
-#error not supported yet!
+#if defined(LWIP_DEBUG) || MEMP_OVERFLOW_CHECK || LWIP_STATS_DISPLAY
+#if MEMP_STATS
+        if((i%5) != 2)
+            pointer_32[i] += rtboot_data.relocation_offset;
+#else
+        if((i%4) == 0)
+            pointer_32[i] += rtboot_data.relocation_offset;
+#endif
+#else
+#if MEMP_STATS
+        if((i%4) == 0)
+            pointer_32[i] += rtboot_data.relocation_offset;
+#endif
+#endif
 #endif
     }
 
@@ -147,10 +182,6 @@ static void lwip_relocation(void)
 /* Here, we need to relocate the code */
 void arch_relocation(void)
 {
-	rt_uint32_t i;
-	rt_uint32_t got_entries_numbers = &__got_end - &__got_start;
-	rt_uint32_t *pointer_32;
-
 	register late_init_entry *late_init;
 	register rt_uint32_t temp_gp,temp_sp;
 	
@@ -164,13 +195,7 @@ void arch_relocation(void)
 	
 	rt_memcpy((void *)rtboot_data.relocation_base,(void *)CFG_MONITOR_BASE,rtboot_data.rtboot_length);
 	
-	pointer_32 = (rt_uint32_t *)rtboot_data.new_gp;
-	
-	for(i=2;i<got_entries_numbers;i++)
-	{
-		pointer_32[i] += rtboot_data.relocation_offset;
-	}
-	
+    arch_got_relocation();
 	rt_thread_relocation();
 	finsh_relocation();
     lwip_relocation();

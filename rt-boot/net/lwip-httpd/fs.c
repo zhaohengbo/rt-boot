@@ -1,3 +1,16 @@
+/**
+ * \addtogroup httpd
+ * @{
+ */
+
+/**
+ * \file
+ * HTTP server read-only file system code.
+ * \author Adam Dunkels <adam@dunkels.com>
+ *
+ * A simple read-only filesystem. 
+ */
+
 /*
  * Copyright (c) 2001, Swedish Institute of Computer Science.
  * All rights reserved. 
@@ -30,35 +43,63 @@
  * 
  * Author: Adam Dunkels <adam@sics.se>
  *
- * $Id: sys_arch.h,v 1.3 2005/03/13 16:03:23 bear Exp $
+ * $Id: fs.c,v 1.7.2.3 2003/10/07 13:22:27 adam Exp $
  */
-#ifndef __ARCH_SYS_ARCH_H__
-#define __ARCH_SYS_ARCH_H__
-
-#include <net/lwip/arch/cc.h>
 
 #include <kernel/rtthread.h>
 
-#ifndef BYTE_ORDER
-#define BYTE_ORDER BIG_ENDIAN
-#endif
+#include <net/lwip-httpd/httpd.h>
+#include <net/lwip-httpd/fs.h>
+#include <net/lwip-httpd/fsdata.h>
 
-#define SYS_MBOX_NULL RT_NULL
-#define SYS_SEM_NULL  RT_NULL
+#include "fsdata.c"
 
-typedef u32_t sys_prot_t;
+/*-----------------------------------------------------------------------------------*/
+static uint8_t fs_strcmp(const char *str1, const char *str2) {
+	uint8_t i;
+	i = 0;
+	loop:
 
-#define SYS_MBOX_SIZE 10
-#define SYS_LWIP_TIMER_NAME "timer"
-#define SYS_LWIP_MBOX_NAME "mbox"
-#define SYS_LWIP_SEM_NAME "sem"
-#define SYS_LWIP_MUTEX_NAME "mu"
+	if (str2[i] == 0 || str1[i] == '\r' || str1[i] == '\n') {
+		return 0;
+	}
 
-typedef rt_sem_t sys_sem_t;
-typedef rt_mutex_t sys_mutex_t;
-typedef rt_mailbox_t  sys_mbox_t;
-typedef rt_thread_t sys_thread_t;
+	if (str1[i] != str2[i]) {
+		return 1;
+	}
 
-err_t sys_mbox_trypost_fromisr(sys_mbox_t *q, void *msg);
+	++i;
+	goto loop;
+}
+/*-----------------------------------------------------------------------------------*/
+int fs_open(const char *name, struct fs_file *file) {
+	struct fsdata_file *f;
 
-#endif /* __ARCH_SYS_ARCH_H__ */
+	for (f = (struct fsdata_file *) FS_ROOT; f != RT_NULL ; f =
+			(struct fsdata_file *) f->next) {
+
+		if (fs_strcmp(name, f->name) == 0) {
+			
+			if(f->file_type == FS_STATIC_FILE)
+			{
+				file->data = f->data;
+				file->len = f->len;
+				return 1;
+			}
+			else if(f->file_type == FS_DYNAMIC_FILE)
+			{
+				uint16_t dynamic_len = 0;
+				if(f->dynamic_caller)
+					dynamic_len = f->dynamic_caller(&(f->data[f->static_len]),f->len-f->static_len);
+				file->data = f->data;
+				file->len = f->static_len + dynamic_len;
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+/*-----------------------------------------------------------------------------------*/
+void fs_init(void) {
+	fsdata_init();
+}

@@ -69,7 +69,7 @@
 
 /** Define random number generator function of your system */
 #ifdef __DOXYGEN__
-#define LWIP_RAND() ((u32_t)rand())
+#define LWIP_RAND() ((u32_t)rt_rand())
 #endif
 
 /** Platform specific diagnostic output.\n

@@ -1,26 +1,7 @@
 /*
- *  RT-Thread finsh shell commands
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
- *
- *  This file is part of RT-Thread (http://www.rt-thread.org)
- *  Maintainer: bernard.xiong <bernard.xiong at gmail.com>
- *
- *  All rights reserved.
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -72,11 +53,11 @@ long version(void)
 FINSH_FUNCTION_EXPORT(version, show RT-Thread version information);
 MSH_CMD_EXPORT(version, show RT-Thread version information);
 
-static int object_name_maxlen(struct rt_list_node *list)
+static int object_name_maxlen(const char *type_name, struct rt_list_node *list)
 {
     struct rt_list_node *node;
     struct rt_object *object = RT_NULL;
-    int max_length = 0, length;
+    int max_length = rt_strlen(type_name), length;
 
     rt_enter_critical();
     for (node = list->next; node != list; node = node->next)
@@ -104,13 +85,15 @@ static long _list_thread(struct rt_list_node *list)
     rt_uint8_t *ptr;
     struct rt_thread *thread;
     struct rt_list_node *node;
+    const char *item_title = "thread";
 
-    maxlen = object_name_maxlen(list);
+    maxlen = object_name_maxlen(item_title, list);
+
 #ifdef RT_USING_SMP
     rt_kprintf("%-*.s cpu pri  status      sp     stack size max used left tick  error\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " --- ---  ------- ---------- ----------  ------  ---------- ---\n");
 #else
-    rt_kprintf("%-*.s pri  status      sp     stack size max used left tick  error\n", maxlen, "thread"); object_split(maxlen);
+    rt_kprintf("%-*.s pri  status      sp     stack size max used left tick  error\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " ---  ------- ---------- ----------  ------  ---------- ---\n");
 #endif /*RT_USING_SMP*/
     for (node = list->next; node != list; node = node->next)
@@ -122,11 +105,10 @@ static long _list_thread(struct rt_list_node *list)
             rt_kprintf("%-*.*s %3d %3d ", maxlen, RT_NAME_MAX, thread->name, thread->oncpu, thread->current_priority);
         else
             rt_kprintf("%-*.*s N/A %3d ", maxlen, RT_NAME_MAX, thread->name, thread->current_priority);
- 
+
 #else
         rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->name, thread->current_priority);
 #endif /*RT_USING_SMP*/
-
         stat = (thread->stat & RT_THREAD_STAT_MASK);
         if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
         else if (stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
@@ -148,9 +130,9 @@ static long _list_thread(struct rt_list_node *list)
         while (*ptr == '#')ptr ++;
 
         rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
-                   (thread->stack_size + (rt_ubase_t)thread->stack_addr - (rt_ubase_t)thread->sp),
+                   thread->stack_size + ((rt_ubase_t)thread->stack_addr - (rt_ubase_t)thread->sp),
                    thread->stack_size,
-                   (thread->stack_size + (rt_ubase_t)thread->stack_addr - (rt_ubase_t) ptr) * 100
+                   (thread->stack_size - ((rt_ubase_t) ptr - (rt_ubase_t) thread->stack_addr)) * 100
                         / thread->stack_size,
                    thread->remaining_tick,
                    thread->error);
@@ -162,11 +144,11 @@ static long _list_thread(struct rt_list_node *list)
 
 long list_thread(void)
 {
-	rt_ubase_t level;
+    rt_ubase_t level;
     struct rt_object_information *info;
-	long ret;
+    long ret;
 
-	level = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
     info = rt_object_get_information(RT_Object_Class_Thread);
     ret = _list_thread(&info->object_list);
     rt_hw_interrupt_enable(level);
@@ -196,11 +178,11 @@ static long _list_sem(struct rt_list_node *list)
     int maxlen;
     struct rt_semaphore *sem;
     struct rt_list_node *node;
+    const char *item_title = "semaphore";
 
-    maxlen = object_name_maxlen(list);
-    if (maxlen < 9) maxlen = 9;
+    maxlen = object_name_maxlen(item_title, list);
 
-    rt_kprintf("%-*.s v   suspend thread\n", maxlen, "semaphore"); object_split(maxlen);
+    rt_kprintf("%-*.s v   suspend thread\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " --- --------------\n");
     for (node = list->next; node != list; node = node->next)
     {
@@ -246,10 +228,11 @@ static long _list_event(struct rt_list_node *list)
     int maxlen;
     struct rt_event *e;
     struct rt_list_node *node;
+    const char *item_title = "event";
 
-    maxlen = object_name_maxlen(list);
+    maxlen = object_name_maxlen(item_title, list);
 
-    rt_kprintf("%-*.s      set    suspend thread\n", maxlen, "event"); object_split(maxlen);
+    rt_kprintf("%-*.s      set    suspend thread\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     "  ---------- --------------\n");
     for (node = list->next; node != list; node = node->next)
     {
@@ -291,9 +274,11 @@ static long _list_mutex(struct rt_list_node *list)
     int maxlen;
     struct rt_mutex *m;
     struct rt_list_node *node;
+    const char *item_title = "mutex";
 
-    maxlen = object_name_maxlen(list);
-    rt_kprintf("%-*.s   owner  hold suspend thread\n", maxlen, "mutex"); object_split(maxlen);
+    maxlen = object_name_maxlen(item_title, list);
+
+    rt_kprintf("%-*.s   owner  hold suspend thread\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " -------- ---- --------------\n");
     for (node = list->next; node != list; node = node->next)
     {
@@ -328,12 +313,9 @@ static long _list_mailbox(struct rt_list_node *list)
     int maxlen;
     struct rt_mailbox *m;
     struct rt_list_node *node;
-    int item_title_len;
     const char *item_title = "mailbox";
 
-    item_title_len = rt_strlen(item_title);
-    maxlen = object_name_maxlen(list);
-    if(maxlen < item_title_len) maxlen = item_title_len;
+    maxlen = object_name_maxlen(item_title, list);
 
     rt_kprintf("%-*.s entry size suspend thread\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " ----  ---- --------------\n");
@@ -382,12 +364,9 @@ static long _list_msgqueue(struct rt_list_node *list)
     int maxlen;
     struct rt_messagequeue *m;
     struct rt_list_node *node;
-    int item_title_len;
     const char *item_title = "msgqueue";
 
-    item_title_len = rt_strlen(item_title);
-    maxlen = object_name_maxlen(list);
-    if(maxlen < item_title_len) maxlen = item_title_len;
+    maxlen = object_name_maxlen(item_title, list);
 
     rt_kprintf("%-*.s entry suspend thread\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " ----  --------------\n");
@@ -434,10 +413,11 @@ static long _list_memheap(struct rt_list_node *list)
     int maxlen;
     struct rt_memheap *mh;
     struct rt_list_node *node;
+    const char *item_title = "memheap";
 
-    maxlen = object_name_maxlen(list);
+    maxlen = object_name_maxlen(item_title, list);
 
-    rt_kprintf("%-*.s  pool size  max used size available size\n", maxlen, "memheap"); object_split(maxlen);
+    rt_kprintf("%-*.s  pool size  max used size available size\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(      " ---------- ------------- --------------\n");
     for (node = list->next; node != list; node = node->next)
     {
@@ -471,10 +451,11 @@ static long _list_mempool(struct rt_list_node *list)
     int maxlen;
     struct rt_mempool *mp;
     struct rt_list_node *node;
+    const char *item_title = "mempool";
 
-    maxlen = object_name_maxlen(list);
+    maxlen = object_name_maxlen(item_title, list);
 
-    rt_kprintf("%-*.s block total free suspend thread\n", maxlen, "mempool"); object_split(maxlen);
+    rt_kprintf("%-*.s block total free suspend thread\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " ----  ----  ---- --------------\n");
     for (node = list->next; node != list; node = node->next)
     {
@@ -522,10 +503,11 @@ static long _list_timer(struct rt_list_node *list)
     int maxlen;
     struct rt_timer *timer;
     struct rt_list_node *node;
+    const char *item_title = "timer";
 
-    maxlen = object_name_maxlen(list);
+    maxlen = object_name_maxlen(item_title, list);
 
-    rt_kprintf("%-*.s  periodic   timeout       flag\n", maxlen, "timer"); object_split(maxlen);
+    rt_kprintf("%-*.s  periodic   timeout       flag\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " ---------- ---------- -----------\n");
     for (node = list->next; node != list; node = node->next)
     {
@@ -556,137 +538,65 @@ long list_timer(void)
 FINSH_FUNCTION_EXPORT(list_timer, list timer in system);
 MSH_CMD_EXPORT(list_timer, list timer in system);
 
-#ifdef RT_USING_MODULE
-#include <rtm.h>
-
-int list_module(void)
+#ifdef RT_USING_DEVICE
+const char *const device_type_str[] SECTION("FINSHDeviceTypeStr") =
+{
+	"Character Device",
+	"Block Device",
+	"Network Interface",
+	"MTD Device",
+	"CAN Device",
+	"RTC",
+	"Sound Device",
+	"Graphic Device",
+	"I2C Bus",
+	"USB Slave Device",
+	"USB Host Bus",
+	"SPI Bus",
+	"SPI Device",
+	"SDIO Bus",
+	"PM Pseudo Device",
+	"Pipe",
+	"Portal Device",
+	"Timer Device",
+	"Miscellaneous Device",
+	"Unknown"
+};
+const char *item_title = "device";
+static long _list_device(struct rt_list_node *list)
 {
     int maxlen;
-    struct rt_module *module;
-    struct rt_list_node *list, *node;
-    struct rt_object_information *info;
+    struct rt_device *device;
+    struct rt_list_node *node;
 
-    info = rt_object_get_information(RT_Object_Class_Module);
-    list = &info->object_list;
+    maxlen = object_name_maxlen(item_title, list);
 
-    maxlen = object_name_maxlen(list);
-
-    rt_kprintf("%-*.s ref      address \n", maxlen, "module"); object_split(maxlen);
-    rt_kprintf(         " -------- ------------\n");
+    rt_kprintf("%-*.s         type         ref count\n", maxlen, item_title); object_split(maxlen);
+    rt_kprintf(     " -------------------- ----------\n");
     for (node = list->next; node != list; node = node->next)
     {
-        module = (struct rt_module *)(rt_list_entry(node, struct rt_object, list));
-        rt_kprintf("%-*.*s %-04d  0x%08x\n",
+        device = (struct rt_device *)(rt_list_entry(node, struct rt_object, list));
+        rt_kprintf("%-*.*s %-20s %-8d\n",
                    maxlen, RT_NAME_MAX,
-                   module->parent.name, module->nref, module->module_space);
+                   device->parent.name,
+                   (device->type <= RT_Device_Class_Unknown) ?
+                   device_type_str[device->type] :
+                   device_type_str[RT_Device_Class_Unknown],
+                   device->ref_count);
     }
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT(list_module, list module in system);
-MSH_CMD_EXPORT(list_module, list module in system);
 
-int list_mod_detail(const char *name)
+long list_device(void)
 {
-    int i;
-    struct rt_module *module;
+    struct rt_object_information *info;
 
-    /* find module */
-    if ((module = rt_module_find(name)) != RT_NULL)
-    {
-        /* module has entry point */
-        if (!(module->parent.flag & RT_MODULE_FLAG_WITHOUTENTRY))
-        {
-            struct rt_thread *thread;
-            struct rt_list_node *tlist;
-            rt_uint8_t *ptr;
-
-            /* list main thread in module */
-            if (module->module_thread != RT_NULL)
-            {
-                rt_uint8_t stat;
-
-                rt_kprintf("main thread  pri  status      sp     stack size max used   left tick  error\n");
-                rt_kprintf("------------- ---- ------- ---------- ---------- ---------- ---------- ---\n");
-                thread = module->module_thread;
-                rt_kprintf("%-8.*s 0x%02x", RT_NAME_MAX, thread->name, thread->current_priority);
-
-                stat = (thread->stat & RT_THREAD_STAT_MASK);
-                if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
-                else if (stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
-                else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
-
-                ptr = (rt_uint8_t *)thread->stack_addr;
-                while (*ptr == '#')ptr ++;
-
-                rt_kprintf(" 0x%08x 0x%08x 0x%08x 0x%08x %03d\n",
-                           thread->stack_size + ((rt_uint32_t)thread->stack_addr - (rt_uint32_t)thread->sp),
-                           thread->stack_size,
-                           thread->stack_size - ((rt_uint32_t) ptr - (rt_uint32_t)thread->stack_addr),
-                           thread->remaining_tick,
-                           thread->error);
-            }
-
-            /* list sub thread in module */
-            tlist = &module->module_object[RT_Object_Class_Thread].object_list;
-            if (!rt_list_isempty(tlist)) _list_thread(tlist);
-#ifdef RT_USING_SEMAPHORE
-            /* list semaphored in module */
-            tlist = &module->module_object[RT_Object_Class_Semaphore].object_list;
-            if (!rt_list_isempty(tlist)) _list_sem(tlist);
-#endif
-#ifdef RT_USING_MUTEX
-            /* list mutex in module */
-            tlist = &module->module_object[RT_Object_Class_Mutex].object_list;
-            if (!rt_list_isempty(tlist)) _list_mutex(tlist);
-#endif
-#ifdef RT_USING_EVENT
-            /* list event in module */
-            tlist = &module->module_object[RT_Object_Class_Event].object_list;
-            if (!rt_list_isempty(tlist)) _list_event(tlist);
-#endif
-#ifdef RT_USING_MAILBOX
-            /* list mailbox in module */
-            tlist = &module->module_object[RT_Object_Class_MailBox].object_list;
-            if (!rt_list_isempty(tlist)) _list_mailbox(tlist);
-#endif
-#ifdef RT_USING_MESSAGEQUEUE
-            /* list message queue in module */
-            tlist = &module->module_object[RT_Object_Class_MessageQueue].object_list;
-            if (!rt_list_isempty(tlist)) _list_msgqueue(tlist);
-#endif
-#ifdef RT_USING_MEMHEAP
-            /* list memory heap in module */
-            tlist = &module->module_object[RT_Object_Class_MemHeap].object_list;
-            if (!rt_list_isempty(tlist)) _list_memheap(tlist);
-#endif
-#ifdef RT_USING_MEMPOOL
-            /* list memory pool in module */
-            tlist = &module->module_object[RT_Object_Class_MemPool].object_list;
-            if (!rt_list_isempty(tlist)) _list_mempool(tlist);
-#endif
-            /* list timer in module */
-            tlist = &module->module_object[RT_Object_Class_Timer].object_list;
-            if (!rt_list_isempty(tlist)) _list_timer(tlist);
-        }
-
-        if (module->nsym > 0)
-        {
-            rt_kprintf("symbol    address   \n");
-            rt_kprintf("-------- ----------\n");
-
-            /* list module export symbols */
-            for (i = 0; i < module->nsym; i++)
-            {
-                rt_kprintf("%s 0x%x\n",
-                           module->symtab[i].name, module->symtab[i].addr);
-            }
-        }
-    }
-
-    return 0;
+    info = rt_object_get_information(RT_Object_Class_Device);
+    return _list_device(&info->object_list);
 }
-FINSH_FUNCTION_EXPORT(list_mod_detail, list module objects in system)
+FINSH_FUNCTION_EXPORT(list_device, list device in system);
+MSH_CMD_EXPORT(list_device, list device in system);
 #endif
 
 long list(void)
@@ -957,3 +867,4 @@ FINSH_VAR_EXPORT(dummy, finsh_type_int, dummy variable for finsh)
 #endif
 
 #endif /* RT_USING_FINSH */
+

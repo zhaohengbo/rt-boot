@@ -223,10 +223,15 @@ LIBS  = arch/$(ARCH)/lib$(ARCH).a
 LIBS += soc/qcom.$(ARCH)/libsoc.a
 LIBS += board/libboard.a
 LIBS += common/libcommon.a
+LIBS += fix/libfix.a
 LIBS += kernel/libkernel.a
 LIBS += drivers/libdrivers.a
 LIBS += finsh/libfinsh.a
 LIBS += net/lwip/liblwip.a
+LIBS += net/lwip-dhcpd/liblwip-dhcpd.a
+LIBS += net/lwip-telnetd/liblwip-telnetd.a
+LIBS += net/lwip-httpd/liblwip-httpd.a
+LIBS += net/lwip-breakd/liblwip-breakd.a
 
 LIBS_SHARED  = 
 ifdef SOC

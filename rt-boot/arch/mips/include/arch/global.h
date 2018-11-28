@@ -11,6 +11,8 @@ extern rt_uint32_t __fsymtab_end;
 extern rt_uint32_t __fsymtab_start;
 extern rt_uint32_t __vsymtab_end;
 extern rt_uint32_t __vsymtab_start;
+extern rt_uint32_t __finsh_device_type_str_end;
+extern rt_uint32_t __finsh_device_type_str_start;
 extern rt_uint32_t __lwip_tcp_pcb_list_end;
 extern rt_uint32_t __lwip_tcp_pcb_list_start;
 extern rt_uint32_t __lwip_tcp_state_str_end;

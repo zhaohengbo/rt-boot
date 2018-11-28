@@ -52,11 +52,6 @@
 //#include <string.h>
 #include <kernel/rtthread.h>
 
-#include <net/lwip/netif/ppp/ppp_opts.h>
-#if PPPOE_SUPPORT
-#include <net/lwip/netif/ppp/pppoe.h>
-#endif /* PPPOE_SUPPORT */
-
 #ifdef LWIP_HOOK_FILENAME
 #include LWIP_HOOK_FILENAME
 #endif
@@ -207,15 +202,6 @@ ethernet_input(struct pbuf *p, struct netif *netif)
       }
       break;
 #endif /* LWIP_IPV4 && LWIP_ARP */
-#if PPPOE_SUPPORT
-    case PP_HTONS(ETHTYPE_PPPOEDISC): /* PPP Over Ethernet Discovery Stage */
-      pppoe_disc_input(netif, p);
-      break;
-
-    case PP_HTONS(ETHTYPE_PPPOE): /* PPP Over Ethernet Session Stage */
-      pppoe_data_input(netif, p);
-      break;
-#endif /* PPPOE_SUPPORT */
 
 #if LWIP_IPV6
     case PP_HTONS(ETHTYPE_IPV6): /* IPv6 */
