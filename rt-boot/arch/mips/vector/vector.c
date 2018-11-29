@@ -1,7 +1,7 @@
 #include <kernel/rtthread.h>
 #include <kernel/rthw.h>
 
-#include <common/global.h>
+#include <global/global.h>
 #include <arch/mipsregs.h>
 #include <arch/cache.h>
 #include <arch/addrspace.h>

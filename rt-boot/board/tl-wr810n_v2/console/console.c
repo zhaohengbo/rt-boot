@@ -16,7 +16,7 @@
 
 #include <kernel/rtthread.h>
 #include <kernel/rthw.h>
-#include <common/global.h>
+#include <global/global.h>
 #include <soc/qca953x/qca953x_map.h>
 #include <soc/qca953x/qca953x_ls_uart.h>
 #include <soc/qca953x/qca953x_irq.h>

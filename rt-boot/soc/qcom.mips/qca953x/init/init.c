@@ -6,7 +6,7 @@
 
 #include <kernel/rtthread.h>
 #include <kernel/rthw.h>
-#include <common/global.h>
+#include <global/global.h>
 #include <arch/init.h>
 #include <arch/timer.h>
 #include <arch/coprocessor.h>

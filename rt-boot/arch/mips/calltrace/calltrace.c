@@ -3,7 +3,7 @@
  */
 
 #include <kernel/rtthread.h>
-#include <common/global.h>
+#include <global/global.h>
 #include <arch/addrspace.h>
 #include <arch/stack.h>
 #include <finsh/finsh.h>

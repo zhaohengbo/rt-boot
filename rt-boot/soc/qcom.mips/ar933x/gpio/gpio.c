@@ -5,7 +5,7 @@
  */
 
 #include <kernel/rtthread.h>
-#include <common/global.h>
+#include <global/global.h>
 #include <soc/ar933x/ar933x_map.h>
 #include <soc/ar933x/ar933x_gpio.h>
 

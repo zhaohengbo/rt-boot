@@ -6,8 +6,8 @@
 
 #include <kernel/rtthread.h>
 #include <kernel/rthw.h>
-#include <common/global.h>
-#include <common/main.h>
+#include <global/global.h>
+#include <main/main.h>
 #include <arch/relocation.h>
 #include <board/init.h>
 

@@ -35,6 +35,7 @@ OBJS   += common/net/ag71xx/ag71xx_debug.o
 OBJS   += qca953x/clock/clock.o
 OBJS   += qca953x/reset/reset.o
 OBJS   += qca953x/ls_uart/ls_uart.o
+OBJS   += qca953x/spi/spi.o
 OBJS   += qca953x/gpio/gpio.o
 OBJS   += qca953x/init/init.o
 OBJS   += qca953x/irq/irq.o

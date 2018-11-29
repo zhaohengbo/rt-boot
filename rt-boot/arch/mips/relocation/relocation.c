@@ -7,13 +7,21 @@
 #include <kernel/rtthread.h>
 #include <finsh/finsh.h>
 #include <net/lwip/lwip/opt.h>
-#include <common/global.h>
-#include <common/init.h>
+#include <global/global.h>
+#include <init/init.h>
 #include <arch/cache.h>
 
 register rt_uint32_t $GP __asm__ ("$28");
 register rt_uint32_t $SP __asm__ ("$29");
 typedef void (late_init_entry)(void);
+
+static rt_uint32_t relocation_check(rt_uint32_t data)
+{
+	if(data != 0)
+		return 1;
+	else
+		return 0;
+}
 
 static void arch_got_relocation(void)
 {
@@ -25,7 +33,8 @@ static void arch_got_relocation(void)
 
     for(i=2;i<got_entries_numbers;i++)
     {
-        pointer_32[i] += rtboot_data.relocation_offset;
+        if(relocation_check(pointer_32[i]))
+        	pointer_32[i] += rtboot_data.relocation_offset;
     }
 }
 
@@ -40,7 +49,8 @@ static void rt_thread_relocation(void)
 	for(i=0;i<rtobject_numbers;i++)
 	{
 		if(((i%4) == 1) | ((i%4) == 2))
-			pointer_32[i] += rtboot_data.relocation_offset;
+			if(relocation_check(pointer_32[i]))
+        		pointer_32[i] += rtboot_data.relocation_offset;
 	}
 }
 
@@ -56,7 +66,8 @@ static void finsh_relocation(void)
 	
 	for(i=0;i<fsymtab_numbers;i++)
 	{
-		pointer_32[i] += rtboot_data.relocation_offset;
+		if(relocation_check(pointer_32[i]))
+        	pointer_32[i] += rtboot_data.relocation_offset;
 	}
 	
 	pointer_32 = (rt_uint32_t *)((rt_uint32_t)&__vsymtab_start + rtboot_data.relocation_offset);
@@ -68,14 +79,16 @@ static void finsh_relocation(void)
 #else
 		if((i%3) != 1)
 #endif
-			pointer_32[i] += rtboot_data.relocation_offset;
+			if(relocation_check(pointer_32[i]))
+        		pointer_32[i] += rtboot_data.relocation_offset;
 	}
 
     pointer_32 = (rt_uint32_t *)((rt_uint32_t)&__finsh_device_type_str_start + rtboot_data.relocation_offset);
 
     for(i=0;i<finsh_device_type_str_numbers;i++)
     {
-        pointer_32[i] += rtboot_data.relocation_offset;
+        if(relocation_check(pointer_32[i]))
+        	pointer_32[i] += rtboot_data.relocation_offset;
     }
 }
 
@@ -96,28 +109,32 @@ static void lwip_relocation(void)
 
     for(i=0;i<lwip_pcb_list_numbers;i++)
     {
-        pointer_32[i] += rtboot_data.relocation_offset;
+        if(relocation_check(pointer_32[i]))
+        	pointer_32[i] += rtboot_data.relocation_offset;
     }
 
     pointer_32 = (rt_uint32_t *)((rt_uint32_t)&__lwip_tcp_state_str_start + rtboot_data.relocation_offset);
 
     for(i=0;i<lwip_tcp_state_str_numbers;i++)
     {
-        pointer_32[i] += rtboot_data.relocation_offset;
+        if(relocation_check(pointer_32[i]))
+        	pointer_32[i] += rtboot_data.relocation_offset;
     }
 
     pointer_32 = (rt_uint32_t *)((rt_uint32_t)&__lwip_err_str_start + rtboot_data.relocation_offset);
 
     for(i=0;i<lwip_err_str_numbers;i++)
     {
-        pointer_32[i] += rtboot_data.relocation_offset;
+        if(relocation_check(pointer_32[i]))
+        	pointer_32[i] += rtboot_data.relocation_offset;
     }
 
     pointer_32 = (rt_uint32_t *)((rt_uint32_t)&__lwip_altcp_tcp_function_start + rtboot_data.relocation_offset);
 
     for(i=0;i<lwip_altcp_tcp_function_numbers;i++)
     {
-        pointer_32[i] += rtboot_data.relocation_offset;
+        if(relocation_check(pointer_32[i]))
+        	pointer_32[i] += rtboot_data.relocation_offset;
     }
 
     pointer_32 = (rt_uint32_t *)((rt_uint32_t)&__lwip_cyclic_timer_start + rtboot_data.relocation_offset);
@@ -126,10 +143,12 @@ static void lwip_relocation(void)
     {
 #if defined(LWIP_DEBUG_TIMERNAMES) || (defined(LWIP_DEBUG) && SYS_DEBUG)
         if((i%3) != 0)
-            pointer_32[i] += rtboot_data.relocation_offset;
+            if(relocation_check(pointer_32[i]))
+        		pointer_32[i] += rtboot_data.relocation_offset;
 #else
-      if((i%2) != 0)
-          pointer_32[i] += rtboot_data.relocation_offset;
+        if((i%2) != 0)
+            if(relocation_check(pointer_32[i]))
+        		pointer_32[i] += rtboot_data.relocation_offset;
 #endif
     }
 
@@ -138,35 +157,63 @@ static void lwip_relocation(void)
     for(i=0;i<lwip_mempool_desc_numbers;i++)
     {
 #if MEMP_MEM_MALLOC
-#if defined(LWIP_DEBUG) || MEMP_OVERFLOW_CHECK || LWIP_STATS_DISPLAY
-#if MEMP_STATS
+    #if defined(LWIP_DEBUG) || MEMP_OVERFLOW_CHECK || LWIP_STATS_DISPLAY
+        #if MEMP_STATS
         if((i%3) != 2)
-            pointer_32[i] += rtboot_data.relocation_offset;
-#else
+            if(relocation_check(pointer_32[i]))
+        		pointer_32[i] += rtboot_data.relocation_offset;
+        #else
         if((i%2) == 0)
-            pointer_32[i] += rtboot_data.relocation_offset;
-#endif
-#else
-#if MEMP_STATS
+            if(relocation_check(pointer_32[i]))
+        		pointer_32[i] += rtboot_data.relocation_offset;
+        #endif
+    #else
+    #if MEMP_STATS
         if((i%2) == 0)
-            pointer_32[i] += rtboot_data.relocation_offset;
-#endif
+            if(relocation_check(pointer_32[i]))
+        		pointer_32[i] += rtboot_data.relocation_offset;
+    #endif
 #endif
 #else
-#if defined(LWIP_DEBUG) || MEMP_OVERFLOW_CHECK || LWIP_STATS_DISPLAY
-#if MEMP_STATS
+    #if defined(LWIP_DEBUG) || MEMP_OVERFLOW_CHECK || LWIP_STATS_DISPLAY
+        #if MEMP_STATS
+            #ifdef LWIP_NOASSERT
+        if((i%4) != 2)
+            if(relocation_check(pointer_32[i]))
+        		pointer_32[i] += rtboot_data.relocation_offset;
+            #else
         if((i%5) != 2)
-            pointer_32[i] += rtboot_data.relocation_offset;
-#else
-        if((i%4) == 0)
-            pointer_32[i] += rtboot_data.relocation_offset;
-#endif
-#else
-#if MEMP_STATS
-        if((i%4) == 0)
-            pointer_32[i] += rtboot_data.relocation_offset;
-#endif
-#endif
+            if(relocation_check(pointer_32[i]))
+        		pointer_32[i] += rtboot_data.relocation_offset;
+            #endif
+        #else
+            #ifdef LWIP_NOASSERT
+        if((i%3) == 0)
+            if(relocation_check(pointer_32[i]))
+        		pointer_32[i] += rtboot_data.relocation_offset;
+            #else
+        if((i%4) != 2)
+            if(relocation_check(pointer_32[i]))
+        		pointer_32[i] += rtboot_data.relocation_offset;
+            #endif
+        #endif
+    #else
+        #if MEMP_STATS
+            #ifdef LWIP_NOASSERT
+        if((i%3) == 0)
+            if(relocation_check(pointer_32[i]))
+        		pointer_32[i] += rtboot_data.relocation_offset;
+            #else
+        if((i%4) != 2)
+            if(relocation_check(pointer_32[i]))
+        		pointer_32[i] += rtboot_data.relocation_offset;
+            #endif
+        #else
+        if((i%3) != 0)
+          if(relocation_check(pointer_32[i]))
+              pointer_32[i] += rtboot_data.relocation_offset;
+        #endif
+    #endif
 #endif
     }
 
@@ -174,9 +221,78 @@ static void lwip_relocation(void)
 
     for(i=0;i<lwip_mempool_numbers;i++)
     {
-        pointer_32[i] += rtboot_data.relocation_offset;
+        if(relocation_check(pointer_32[i]))
+        	pointer_32[i] += rtboot_data.relocation_offset;
     }
-    //memp_pools[i]->desc = (char *)((rt_uint32_t)memp_pools[i]->desc + rtboot_data.relocation_offset);
+}
+
+static void lib_sfud_relocation(void)
+{
+	rt_uint32_t i;
+    rt_uint32_t sfud_flash_table_numbers = &__sfud_flash_table_end - &__sfud_flash_table_start;
+	rt_uint32_t sfud_mf_table_numbers = &__sfud_mf_table_end - &__sfud_mf_table_start;
+	rt_uint32_t sfud_flash_chip_table_numbers = &__sfud_flash_chip_table_end - &__sfud_flash_chip_table_start;
+	rt_uint32_t sfud_flash_ext_info_table_numbers = &__sfud_flash_ext_info_table_end - &__sfud_flash_ext_info_table_start;
+    rt_uint32_t *pointer_32;
+
+    pointer_32 = (rt_uint32_t *)((rt_uint32_t)&__sfud_flash_table_start + rtboot_data.relocation_offset);
+
+    for(i=0;i<sfud_flash_table_numbers;i++)
+    {
+        if(relocation_check(pointer_32[i]))
+        	pointer_32[i] += rtboot_data.relocation_offset;
+    }
+	
+	pointer_32 = (rt_uint32_t *)((rt_uint32_t)&__sfud_mf_table_start + rtboot_data.relocation_offset);
+
+    for(i=0;i<sfud_mf_table_numbers;i++)
+    {
+		if((i%2) == 0)
+        	if(relocation_check(pointer_32[i]))
+        		pointer_32[i] += rtboot_data.relocation_offset;
+    }
+	
+	pointer_32 = (rt_uint32_t *)((rt_uint32_t)&__sfud_flash_chip_table_start + rtboot_data.relocation_offset);
+
+    for(i=0;i<sfud_flash_chip_table_numbers;i++)
+    {
+		if((i%7) == 0)
+        	if(relocation_check(pointer_32[i]))
+        		pointer_32[i] += rtboot_data.relocation_offset;
+    }
+	
+	pointer_32 = (rt_uint32_t *)((rt_uint32_t)&__sfud_flash_ext_info_table_start + rtboot_data.relocation_offset);
+
+    for(i=0;i<sfud_flash_ext_info_table_numbers;i++)
+    {
+		if((i%3) == 0)
+        	if(relocation_check(pointer_32[i]))
+        		pointer_32[i] += rtboot_data.relocation_offset;
+    }
+}
+
+static void rt_device_relocation(void)
+{
+    rt_uint32_t i;
+    rt_uint32_t rt_device_sf_help_info_numbers = &__rt_device_sf_help_info_end - &__rt_device_sf_help_info_start;
+	rt_uint32_t rt_device_ops_numbers = &__rt_device_ops_end - &__rt_device_ops_start;
+    rt_uint32_t *pointer_32;
+
+    pointer_32 = (rt_uint32_t *)((rt_uint32_t)&__rt_device_sf_help_info_start + rtboot_data.relocation_offset);
+
+    for(i=0;i<rt_device_sf_help_info_numbers;i++)
+    {
+        if(relocation_check(pointer_32[i]))
+        	pointer_32[i] += rtboot_data.relocation_offset;
+    }
+	
+	pointer_32 = (rt_uint32_t *)((rt_uint32_t)&__rt_device_ops_start + rtboot_data.relocation_offset);
+
+    for(i=0;i<rt_device_ops_numbers;i++)
+    {
+		if(relocation_check(pointer_32[i]))
+        	pointer_32[i] += rtboot_data.relocation_offset;
+    }
 }
 
 /* Here, we need to relocate the code */
@@ -199,6 +315,8 @@ void arch_relocation(void)
 	rt_thread_relocation();
 	finsh_relocation();
     lwip_relocation();
+    lib_sfud_relocation();
+    rt_device_relocation();
 
 	rt_memset((void *)((rt_uint32_t)&rtboot_data_end + rtboot_data.relocation_offset),0,(rt_uint32_t)&rtboot_end - (rt_uint32_t)&rtboot_data_end);
 	

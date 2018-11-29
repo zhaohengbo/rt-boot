@@ -15,7 +15,7 @@
  */
 
 #include <kernel/rtthread.h>
-#include <common/global.h>
+#include <global/global.h>
 #include <soc/qca953x/qca953x_map.h>
 #include <soc/qca953x/qca953x_clock.h>
 #include <soc/qca953x/qca953x_ls_uart.h>

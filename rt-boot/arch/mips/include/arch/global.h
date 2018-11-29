@@ -27,6 +27,18 @@ extern rt_uint32_t __lwip_err_str_end;
 extern rt_uint32_t __lwip_err_str_start;
 extern rt_uint32_t __lwip_altcp_tcp_function_end;
 extern rt_uint32_t __lwip_altcp_tcp_function_start;
+extern rt_uint32_t __sfud_flash_table_end;
+extern rt_uint32_t __sfud_flash_table_start;
+extern rt_uint32_t __sfud_mf_table_end;
+extern rt_uint32_t __sfud_mf_table_start;
+extern rt_uint32_t __sfud_flash_chip_table_end;
+extern rt_uint32_t __sfud_flash_chip_table_start;
+extern rt_uint32_t __sfud_flash_ext_info_table_end;
+extern rt_uint32_t __sfud_flash_ext_info_table_start;
+extern rt_uint32_t __rt_device_sf_help_info_end;
+extern rt_uint32_t __rt_device_sf_help_info_start;
+extern rt_uint32_t __rt_device_ops_end;
+extern rt_uint32_t __rt_device_ops_start;
 
 #define TOTAL_MALLOC_LEN	(1024 * 1024)
 #define CFG_BOOTPARAMS_LEN	(512 * 1024)

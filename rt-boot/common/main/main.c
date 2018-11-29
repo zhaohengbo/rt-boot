@@ -6,7 +6,9 @@
 
 #include <kernel/rtthread.h>
 #include <finsh/shell.h>
-#include <common/global.h>
+#include <global/global.h>
+#include <board/spi.h>
+#include <board/flash.h>
 
 #include <net/lwip-dhcpd/dhcp_server.h>
 #include <net/lwip-telnetd/telnetd.h>
@@ -31,6 +33,10 @@ void rt_thread_main_thread_entry(void* parameter)
     finsh_set_device(RT_CONSOLE_DEVICE_NAME);
 	telnet_server();
 #endif
+	
+	//soc_spi_init();
+	//soc_flash_init();
+	
     while (1)
     {
 		rt_thread_mdelay(1000);

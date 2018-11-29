@@ -15,7 +15,7 @@
  */
 
 #include <kernel/rtthread.h>
-#include <common/global.h>
+#include <global/global.h>
 
 #include <arch/timer.h>
 

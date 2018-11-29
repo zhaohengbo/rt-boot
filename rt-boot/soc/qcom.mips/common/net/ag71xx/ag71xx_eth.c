@@ -12,7 +12,7 @@
  */
 #include <kernel/rtthread.h>
 #include <kernel/rthw.h>
-#include <common/global.h>
+#include <global/global.h>
 #include <arch/cache.h>
 #include <soc/net/ag71xx/regs.h>
 #include <soc/net/ag71xx/ag71xx.h>

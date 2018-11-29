@@ -5,7 +5,7 @@
  */
 
 #include <kernel/rtthread.h>
-#include <common/global.h>
+#include <global/global.h>
 #include <soc/init.h>
 #include <board/console.h>
 #include <board/network.h>

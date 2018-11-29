@@ -5,7 +5,7 @@
  */
 
 #include <kernel/rtthread.h>
-#include <common/global.h>
+#include <global/global.h>
 #include <arch/mipsregs.h>
 
 /* Here, we need to get cache information */

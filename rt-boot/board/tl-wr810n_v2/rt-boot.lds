@@ -84,6 +84,36 @@ SECTIONS
 	__lwip_altcp_tcp_function_end = .;
 	
 	. = ALIGN(4);
+	__sfud_flash_table_start = .;
+	sfud_flash_table : { *(SFUDFlashTable) }
+	__sfud_flash_table_end = .;
+	
+	. = ALIGN(4);
+	__sfud_mf_table_start = .;
+	sfud_mf_table : { *(SFUDMfTable) }
+	__sfud_mf_table_end = .;
+	
+	. = ALIGN(4);
+	__sfud_flash_chip_table_start = .;
+	sfud_flash_chip_table : { *(SFUDFlashChipTable) }
+	__sfud_flash_chip_table_end = .;
+	
+	. = ALIGN(4);
+	__sfud_flash_ext_info_table_start = .;
+	sfud_flash_ext_info_table : { *(SFUDFlashExtInfoTable) }
+	__sfud_flash_ext_info_table_end = .;
+	
+	. = ALIGN(4);
+	__rt_device_sf_help_info_start = .;
+	rt_device_sf_help_info : { *(RTDeviceSfHelpInfo) }
+	__rt_device_sf_help_info_end = .;
+	
+	. = ALIGN(4);
+	__rt_device_ops_start = .;
+	rt_device_ops : { *(RTDeviceOps) }
+	__rt_device_ops_end = .;
+	
+	. = ALIGN(4);
 	rtboot_data_end = .;
 
 	. = ALIGN(4);

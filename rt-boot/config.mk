@@ -107,7 +107,8 @@ gccincdir := $(shell $(CC) -print-file-name=include)
 
 CPPFLAGS := $(DBGFLAGS) $(OPTFLAGS) $(RELFLAGS)            \
 	    -D__KERNEL__ -DTEXT_BASE=$(TEXT_BASE)          \
-	    -I$(TOPDIR)/include                            \
+		-I$(TOPDIR)/include                            \
+	    -I$(TOPDIR)/common/include                            \
 		-I$(TOPDIR)/arch/$(ARCH)/include                   \
 		-I$(TOPDIR)/soc/qcom.$(ARCH)/include                   \
 		-I$(TOPDIR)/board/include                   \

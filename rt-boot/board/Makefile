@@ -9,6 +9,8 @@ SOBJS	=
 OBJS	+= tl-wr810n_v2/init/init.o
 OBJS	+= tl-wr810n_v2/console/console.o
 OBJS	+= tl-wr810n_v2/network/network.o
+OBJS	+= tl-wr810n_v2/spi/spi.o
+OBJS	+= tl-wr810n_v2/flash/flash.o
 
 all:	.depend $(START) $(LIB)
 
