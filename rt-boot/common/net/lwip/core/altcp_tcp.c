@@ -514,7 +514,7 @@ altcp_tcp_dbg_get_tcp_state(struct altcp_pcb *conn)
   return CLOSED;
 }
 #endif
-const struct altcp_functions altcp_tcp_functions SECTION("LWIPAltcpTcpFunction") = {
+const struct altcp_functions altcp_tcp_functions = {
   altcp_tcp_set_poll,
   altcp_tcp_recved,
   altcp_tcp_bind,

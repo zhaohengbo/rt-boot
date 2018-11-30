@@ -29,4 +29,4 @@ PLATFORM_CPPFLAGS += $(MIPSFLAGS)
 PLATFORM_CPPFLAGS += -DCONFIG_MIPS -D__MIPS__
 
 
-PLATFORM_LDFLAGS += -G 0 -static -n -nostdlib
+PLATFORM_LDFLAGS += -G 0 -static -n -nostdlib --emit-relocs

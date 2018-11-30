@@ -165,10 +165,13 @@ static struct dhcp_client_node *
 dhcp_client_find_by_ip(struct dhcp_server *dhcpserver, const ip4_addr_t *ip)
 {
     struct dhcp_client_node *node;
+	ip4_addr_t align_ip;
+	
+	rt_memcpy(&align_ip,ip,sizeof(ip4_addr_t));
 
     for (node = dhcpserver->node_list; node != NULL; node = node->next)
     {
-        if (ip4_addr_cmp(&node->ipaddr, ip))
+        if (ip4_addr_cmp(&node->ipaddr, &align_ip))
         {
             return node;
         }

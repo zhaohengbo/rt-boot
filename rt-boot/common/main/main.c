@@ -20,6 +20,8 @@ static char main_thread_stack[0x400];
 struct rt_thread main_thread;
 void rt_thread_main_thread_entry(void* parameter)
 {
+	soc_spi_init();
+	soc_flash_init();
 	extern int rt_hw_boot_eth_init(void);
 	extern int lwip_system_init(void);
 	lwip_system_init();
@@ -33,10 +35,6 @@ void rt_thread_main_thread_entry(void* parameter)
     finsh_set_device(RT_CONSOLE_DEVICE_NAME);
 	telnet_server();
 #endif
-	
-	//soc_spi_init();
-	//soc_flash_init();
-	
     while (1)
     {
 		rt_thread_mdelay(1000);

@@ -296,6 +296,7 @@ u-boot: fsdata depend version $(SUBDIRS) $(OBJS) $(LIBS) $(LIBS_SHARED) $(LDSCRI
 	      --start-group $(LIBS) $(LIBS_SHARED) \
 	      --end-group $(PLATFORM_LIBS) \
 	      -Map u-boot.map -o u-boot
+	./tools/mips-relocs u-boot
 
 $(LIBS_SHARED):
 	$(MAKE) -C `dirname $@`

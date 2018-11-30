@@ -72,7 +72,7 @@ extern const struct memp_desc* const memp_pools[MEMP_MAX];
 
 #define LWIP_MEMPOOL_DECLARE(name,num,size,desc) \
   LWIP_MEMPOOL_DECLARE_STATS_INSTANCE(memp_stats_ ## name) \
-  const struct memp_desc memp_ ## name SECTION("LWIPMemPoolDesc") = { \
+  const struct memp_desc memp_ ## name = { \
     DECLARE_LWIP_MEMPOOL_DESC(desc) \
     LWIP_MEMPOOL_DECLARE_STATS_REFERENCE(memp_stats_ ## name) \
     LWIP_MEM_ALIGN_SIZE(size) \
@@ -101,7 +101,7 @@ extern const struct memp_desc* const memp_pools[MEMP_MAX];
     \
   static struct memp *memp_tab_ ## name; \
     \
-  const struct memp_desc memp_ ## name SECTION("LWIPMemPoolDesc") = { \
+  const struct memp_desc memp_ ## name = { \
     DECLARE_LWIP_MEMPOOL_DESC(desc) \
     LWIP_MEMPOOL_DECLARE_STATS_REFERENCE(memp_stats_ ## name) \
     LWIP_MEM_ALIGN_SIZE(size), \

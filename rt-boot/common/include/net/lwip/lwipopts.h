@@ -20,6 +20,7 @@
 #define NO_SYS                      0
 #define LWIP_SOCKET                 1
 #define LWIP_NETCONN                0
+#define LWIP_ALTCP					0
 
 #ifdef RT_LWIP_IGMP
 #define LWIP_IGMP                   1

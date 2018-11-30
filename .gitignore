@@ -43,6 +43,7 @@ host_util/lzma/lzma
 /rt-boot/tools/environment.c
 /rt-boot/tools/envcrc
 /rt-boot/tools/mkimage
+/rt-boot/tools/mips-relocs
 
 #
 # git files that we don't want to ignore even it they are dot-files

@@ -17,3 +17,13 @@ void *memcpy(void *dst, const void *src, uint32_t count)
 
     return dst;
 }
+
+void *memset(void *s, int c, uint32_t count)
+{
+    char *xs = (char *)s;
+
+    while (count--)
+        *xs++ = c;
+
+    return s;
+}

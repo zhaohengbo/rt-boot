@@ -142,7 +142,7 @@
 #define INITIAL_MSS TCP_MSS
 #endif
 
-static const char *const tcp_state_str[] SECTION("LWIPTCPStateStr") = {
+static const char *const tcp_state_str[] = {
   "CLOSED",
   "LISTEN",
   "SYN_SENT",
@@ -179,7 +179,7 @@ struct tcp_pcb *tcp_active_pcbs;
 struct tcp_pcb *tcp_tw_pcbs;
 
 /** An array with all (non-temporary) PCB lists, mainly used for smaller code size */
-struct tcp_pcb **const tcp_pcb_lists[] SECTION("LWIPTCPPcbList") = {&tcp_listen_pcbs.pcbs, &tcp_bound_pcbs,
+struct tcp_pcb **const tcp_pcb_lists[] = {&tcp_listen_pcbs.pcbs, &tcp_bound_pcbs,
          &tcp_active_pcbs, &tcp_tw_pcbs
 };
 

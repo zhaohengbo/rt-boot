@@ -36,15 +36,19 @@ static rt_uint32_t qca953x_spi_xfer(struct rt_spi_device *device, struct rt_spi_
     rt_uint8_t *sndb = (rt_uint8_t *)message->send_buf;
     rt_uint8_t *rcvb = message->recv_buf;
     rt_int32_t length = message->length;
-    while (length)
+	
+    while (length--)
     {
-        qca953x_shift_out(*sndb++,8,0);
-		*rcvb++ = qca953x_shift_in();
-        length--;
+		if(sndb != RT_NULL)
+        	qca953x_shift_out(*sndb++,8,0);
+		else
+			qca953x_shift_out(0,8,0);
+		if(rcvb != RT_NULL)
+			*rcvb++ = qca953x_shift_in();
     }
     if (message->cs_release)
     {
-        qca953x_shift_out(0,0,0);
+        qca953x_shift_out(0,0,1);
     }
     return message->length - length;
 }

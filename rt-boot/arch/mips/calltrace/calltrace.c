@@ -31,8 +31,8 @@ rt_int32_t calltrace_irq(rt_uint32_t irq_sp)
 	ra = (rt_uint32_t *)stack_frame->ra;
 	sp = (rt_uint32_t *)stack_frame->sp;
 
-	rt_kprintf("Calltrace:[0x%08x]\n", (rt_uint32_t)pc);
-	rt_kprintf("RA[%2d] : [0x%08x]\n", 0, (rt_uint32_t)ra);
+	rt_kprintf("Calltrace:[0x%08x][Ref:0x%08x]\n", (rt_uint32_t)pc,(rt_uint32_t)pc - rtboot_data.relocation_offset);
+	rt_kprintf("RA[%2d] : [0x%08x][Ref:0x%08x]\n", 0, (rt_uint32_t)ra,(rt_uint32_t)ra - rtboot_data.relocation_offset);
 
 	if (size == 1) return 1;
 
@@ -64,7 +64,7 @@ out_of_loop:
 	// repeat backwar scanning
 	for (depth = 1; depth < size && ra && ((( rt_uint32_t )ra > KSEG0) && (( rt_uint32_t )ra < KSEG1)); ++depth)
 	{
-		rt_kprintf("RA[%2d] : [0x%08x]\n", depth ,ra);
+		rt_kprintf("RA[%2d] : [0x%08x][Ref:0x%08x]\n", depth ,(rt_uint32_t)ra,(rt_uint32_t)ra - rtboot_data.relocation_offset);
 		{
 			extern void rt_thread_exit(void);
 			if ((rt_uint32_t)ra == (rt_uint32_t)(&rt_thread_exit))
@@ -123,7 +123,7 @@ rt_int32_t calltrace(void)
 			: "=r"(ra), "=r"(sp), "=r"(pc)
 			);
 	
-	rt_kprintf("Calltrace:[0x%08x]\n", (rt_uint32_t)pc);
+	rt_kprintf("Calltrace:[0x%08x][Ref:0x%08x]\n", (rt_uint32_t)pc,(rt_uint32_t)pc - rtboot_data.relocation_offset);
 
 	// scanning to find the size of hte current stack frame
 	stack_size  = 0;
@@ -141,7 +141,7 @@ rt_int32_t calltrace(void)
 	// repeat backwar scanning
 	for ( depth = 0; depth < size && ra  && ((( rt_uint32_t )ra > KSEG0) && (( rt_uint32_t )ra < KSEG1)); ++ depth )
 	{
-		rt_kprintf("RA[%2d] : [0x%08x]\n", depth, ra);
+		rt_kprintf("RA[%2d] : [0x%08x][Ref:0x%08x]\n", depth, (rt_uint32_t)ra,(rt_uint32_t)ra - rtboot_data.relocation_offset);
 		{
 			extern void rt_thread_exit(void);
 			if ((rt_uint32_t)ra == (rt_uint32_t)(&rt_thread_exit))

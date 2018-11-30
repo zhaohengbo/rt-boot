@@ -38,6 +38,9 @@
 #define SFUD_DEBUG_MODE
 #endif
 
+#ifdef RT_SHOW_SFUD_INFO
+#define SFUD_SHOW_INFO
+#endif
 /**
  * Using probe flash JEDEC SFDP parameter.
  */

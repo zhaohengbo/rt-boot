@@ -37,13 +37,13 @@
 #endif
 
 /* user configured flash device information table */
-static sfud_flash flash_table[] SECTION("SFUDFlashTable") = SFUD_FLASH_DEVICE_TABLE;
+static sfud_flash flash_table[] = SFUD_FLASH_DEVICE_TABLE;
 /* supported manufacturer information table */
-static const sfud_mf mf_table[] SECTION("SFUDMfTable") = SFUD_MF_TABLE;
+static const sfud_mf mf_table[] = SFUD_MF_TABLE;
 
 #ifdef SFUD_USING_FLASH_INFO_TABLE
 /* supported flash chip information table */
-static const sfud_flash_chip flash_chip_table[] SECTION("SFUDFlashChipTable") = SFUD_FLASH_CHIP_TABLE;
+static const sfud_flash_chip flash_chip_table[] = SFUD_FLASH_CHIP_TABLE;
 #endif
 
 #ifdef SFUD_USING_QSPI
@@ -59,7 +59,7 @@ enum sfud_qspi_read_mode {
 };
 
 /* QSPI flash chip's extended information table */
-static const sfud_qspi_flash_ext_info qspi_flash_ext_info_table[] SECTION("SFUDFlashExtInfoTable") = SFUD_FLASH_EXT_INFO_TABLE;
+static const sfud_qspi_flash_ext_info qspi_flash_ext_info_table[] = SFUD_FLASH_EXT_INFO_TABLE;
 #endif /* SFUD_USING_QSPI */
 
 static sfud_err software_init(const sfud_flash *flash);

@@ -539,7 +539,7 @@ FINSH_FUNCTION_EXPORT(list_timer, list timer in system);
 MSH_CMD_EXPORT(list_timer, list timer in system);
 
 #ifdef RT_USING_DEVICE
-const char *const device_type_str[] SECTION("FINSHDeviceTypeStr") =
+const char *const device_type_str[] =
 {
 	"Character Device",
 	"Block Device",

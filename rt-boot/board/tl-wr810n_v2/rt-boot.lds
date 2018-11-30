@@ -30,11 +30,6 @@ SECTIONS
 	.sdata  : { *(.sdata*) }
 
 	. = ALIGN(4);
-	__rtobject_start = .;
-	rtobject : { *(RTObject) }
-	__rtobject_end = .;
-
-	. = ALIGN(4);
 	__fsymtab_start = .;
 	fsymtab : { *(FSymTab) }
 	__fsymtab_end = .;
@@ -43,75 +38,11 @@ SECTIONS
 	vsymtab : { *(VSymTab) }
 	__vsymtab_end = .;
 	
-	. = ALIGN(4);
-	__finsh_device_type_str_start = .;
-	finsh_device_type_str : { *(FINSHDeviceTypeStr) }
-	__finsh_device_type_str_end = .;
-	
-	. = ALIGN(4);
-	__lwip_tcp_pcb_list_start = .;
-	lwip_tcp_pcb_list : { *(LWIPTCPPcbList) }
-	__lwip_tcp_pcb_list_end = .;
-	
-	. = ALIGN(4);
-	__lwip_tcp_state_str_start = .;
-	lwip_tcp_state_str : { *(LWIPTCPStateStr) }
-	__lwip_tcp_state_str_end = .;
-	
-	. = ALIGN(4);
-	__lwip_mempool_start = .;
-	lwip_mempool : { *(LWIPMemPool) }
-	__lwip_mempool_end = .;
-	
-	. = ALIGN(4);
-	__lwip_mempool_desc_start = .;
-    lwip_mempool_desc : { *(LWIPMemPoolDesc) }
-	__lwip_mempool_desc_end = .;
-	
-	. = ALIGN(4);
-	__lwip_cyclic_timer_start = .;
-	lwip_cyclic_timer : { *(LWIPCyclicTimer) }
-	__lwip_cyclic_timer_end = .;
-	
-	. = ALIGN(4);
-	__lwip_err_str_start = .;
-	lwip_err_str : { *(LWIPErrStr) }
-	__lwip_err_str_end = .;
-	
-	. = ALIGN(4);
-	__lwip_altcp_tcp_function_start = .;
-	lwip_altcp_tcp_function : { *(LWIPAltcpTcpFunction) }
-	__lwip_altcp_tcp_function_end = .;
-	
-	. = ALIGN(4);
-	__sfud_flash_table_start = .;
-	sfud_flash_table : { *(SFUDFlashTable) }
-	__sfud_flash_table_end = .;
-	
-	. = ALIGN(4);
-	__sfud_mf_table_start = .;
-	sfud_mf_table : { *(SFUDMfTable) }
-	__sfud_mf_table_end = .;
-	
-	. = ALIGN(4);
-	__sfud_flash_chip_table_start = .;
-	sfud_flash_chip_table : { *(SFUDFlashChipTable) }
-	__sfud_flash_chip_table_end = .;
-	
-	. = ALIGN(4);
-	__sfud_flash_ext_info_table_start = .;
-	sfud_flash_ext_info_table : { *(SFUDFlashExtInfoTable) }
-	__sfud_flash_ext_info_table_end = .;
-	
-	. = ALIGN(4);
-	__rt_device_sf_help_info_start = .;
-	rt_device_sf_help_info : { *(RTDeviceSfHelpInfo) }
-	__rt_device_sf_help_info_end = .;
-	
-	. = ALIGN(4);
-	__rt_device_ops_start = .;
-	rt_device_ops : { *(RTDeviceOps) }
-	__rt_device_ops_end = .;
+	.reltable : {
+		__rel_table_start = .;
+		BYTE(0x0)
+		. += (4 * 1024) - 1;
+	}
 	
 	. = ALIGN(4);
 	rtboot_data_end = .;
@@ -120,4 +51,6 @@ SECTIONS
 	.sbss  : { *(.sbss*) }
 	.bss  : { *(.bss*) . = ALIGN(4); }
 	rtboot_end = .;
+	
+	
 }

@@ -103,6 +103,9 @@
 //#define RT_USING_PIN
 #define RT_USING_SPI
 #define RT_USING_SFUD
+#define RT_SFUD_USING_SFDP
+//#define RT_SHOW_SFUD_INFO
+#define RT_SFUD_USING_FLASH_INFO_TABLE
 //#define RT_USING_SPI_MSD
 
 /* Using USB */

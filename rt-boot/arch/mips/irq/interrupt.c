@@ -152,10 +152,45 @@ void mips_do_interrupt(rt_uint32_t sp,int number)
 #endif
 }
 
+enum {
+	EXCEP_IRQ = 0,			// interrupt
+	EXCEP_AdEL = 4,			// address error exception (load or ifetch)
+	EXCEP_AdES,				// address error exception (store)
+	EXCEP_IBE,				// bus error (ifetch)
+	EXCEP_DBE,				// bus error (load/store)
+	EXCEP_Sys,				// syscall
+	EXCEP_Bp,				// breakpoint
+	EXCEP_RI,				// reserved instruction
+	EXCEP_CpU,				// coprocessor unusable
+	EXCEP_Overflow,			// arithmetic overflow
+	EXCEP_Trap,				// trap (possible divide by zero)
+	EXCEP_IS1 = 16,			// implementation specfic 1
+	EXCEP_CEU,				// CorExtend Unuseable
+	EXCEP_C2E				// coprocessor 2
+};
+
 void mips_do_excpetion(rt_uint32_t sp,int code)
 {
 	rt_uint32_t irq_nest = rt_interrupt_get_nest();
-	rt_kprintf("Mips exception 0x%08x occured\n",code);
+	rt_kprintf("Mips exception 0x%08x:",code);
+	switch(code)
+	{
+	    case EXCEP_IRQ:rt_kprintf("interrupt\r\n");break;
+	    case EXCEP_AdEL:rt_kprintf("address error exception (load or ifetch)\r\n");break;
+	    case EXCEP_AdES:rt_kprintf("address error exception (store)\r\n");break;
+	    case EXCEP_IBE:rt_kprintf("bus error (ifetch)\r\n");break;
+	    case EXCEP_DBE:rt_kprintf("bus error (load/store)\r\n");break;
+	    case EXCEP_Sys:rt_kprintf("syscall\r\n");break;
+	    case EXCEP_Bp:rt_kprintf("breakpoint\r\n");break;
+	    case EXCEP_RI:rt_kprintf("reserved instruction\r\n");break;
+	    case EXCEP_CpU:rt_kprintf("coprocessor unusable\r\n");break;
+	    case EXCEP_Overflow:rt_kprintf("arithmetic overflow\r\n");break;
+	    case EXCEP_Trap:rt_kprintf("trap (possible divide by zero)\r\n");break;
+	    case EXCEP_IS1:rt_kprintf("implementation specfic 1\r\n");break;
+	    case EXCEP_CEU:rt_kprintf("corextend unuseable\r\n");break;
+	    case EXCEP_C2E:rt_kprintf("coprocessor 2\r\n");break;
+	    default : rt_kprintf("unkown exception\r\n");break;
+	}
 	rt_kprintf("Current irq_nest: %d\n",irq_nest);
 	arch_stack_dump(sp);
 	calltrace_irq(sp);

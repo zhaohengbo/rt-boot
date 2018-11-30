@@ -61,7 +61,7 @@ enum rt_object_info_type
 
 #define _OBJ_CONTAINER_LIST_INIT(c)     \
     {&(rt_object_container[c].object_list), &(rt_object_container[c].object_list)}
-static struct rt_object_information rt_object_container[RT_Object_Info_Unknown]  SECTION("RTObject") =
+static struct rt_object_information rt_object_container[RT_Object_Info_Unknown] =
 {
     /* initialize object container - thread */
     {RT_Object_Class_Thread, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Thread), sizeof(struct rt_thread)},

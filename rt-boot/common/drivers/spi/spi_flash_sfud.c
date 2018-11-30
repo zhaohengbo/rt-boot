@@ -41,9 +41,13 @@
 }
 #endif
 
+#ifdef SFUD_SHOW_INFO
 static char log_buf[RT_CONSOLEBUF_SIZE];
+#endif
 
+#ifdef SFUD_DEBUG_MODE
 void sfud_log_debug(const char *file, const long line, const char *format, ...);
+#endif
 
 static rt_err_t rt_sfud_control(rt_device_t dev, int cmd, void *args) {
     RT_ASSERT(dev != RT_NULL);
@@ -229,6 +233,7 @@ static void retry_delay_100us(void) {
     rt_thread_delay((RT_TICK_PER_SECOND * 1 + 9999) / 10000);
 }
 
+#ifdef SFUD_DEBUG_MODE
 /**
  * This function is print debug info.
  *
@@ -248,7 +253,9 @@ void sfud_log_debug(const char *file, const long line, const char *format, ...) 
     rt_kprintf("%s\n", log_buf);
     va_end(args);
 }
+#endif
 
+#ifdef SFUD_SHOW_INFO
 /**
  * This function is print routine info.
  *
@@ -266,6 +273,7 @@ void sfud_log_info(const char *format, ...) {
     rt_kprintf("%s\n", log_buf);
     va_end(args);
 }
+#endif
 
 sfud_err sfud_spi_port_init(sfud_flash *flash) {
     sfud_err result = SFUD_SUCCESS;
@@ -466,7 +474,7 @@ rt_err_t rt_sfud_flash_delete(rt_spi_flash_device_t spi_flash_dev) {
 #define CMD_RW_STATUS_INDEX           4
 #define CMD_BENCH_INDEX               5
 
-const char* sf_help_info[] SECTION("RTDeviceSfHelpInfo") = {
+const char* sf_help_info[] = {
 	[CMD_PROBE_INDEX]     = "sf probe [spi_device]           - probe and init SPI flash by given 'spi_device'",
 	[CMD_READ_INDEX]      = "sf read addr size               - read 'size' bytes starting at 'addr'",
 	[CMD_WRITE_INDEX]     = "sf write addr data1 ... dataN   - write some bytes 'data' to flash starting at 'addr'",

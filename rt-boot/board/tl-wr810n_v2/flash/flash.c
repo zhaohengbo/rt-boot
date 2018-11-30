@@ -24,7 +24,7 @@
 #include <soc/qca953x/qca953x_map.h>
 
 #define SPI_BUS_NAME                "SPI0"
-#define SPI_FLASH_DEVICE_NAME       "FLASH0"
+#define SPI_FLASH_DEVICE_NAME       "SPI00"
 #define SPI_FLASH_CHIP              "SPI-FLASH0"
 
 static struct rt_spi_device spi_flash_device;

@@ -46,8 +46,12 @@ extern "C" {
 #define SFUD_DEBUG(...)
 #endif /* SFUD_DEBUG_MODE */
 
+#ifdef SFUD_SHOW_INFO
 #ifndef SFUD_INFO
 #define SFUD_INFO(...)  sfud_log_info(__VA_ARGS__)
+#endif
+#else
+#define SFUD_INFO(...)
 #endif
 
 /* assert for developer. */
