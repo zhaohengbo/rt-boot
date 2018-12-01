@@ -228,6 +228,7 @@ LIBS += common/main/libmain.a
 LIBS += common/fix/libfix.a
 LIBS += common/kernel/libkernel.a
 LIBS += common/drivers/libdrivers.a
+LIBS += common/dfs/libdfs.a
 LIBS += common/finsh/libfinsh.a
 LIBS += common/libs/liblibs.a
 LIBS += common/net/lwip/liblwip.a

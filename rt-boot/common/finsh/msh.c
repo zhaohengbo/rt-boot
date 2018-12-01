@@ -18,7 +18,7 @@
 #include <finsh/shell.h>
 
 #ifdef RT_USING_DFS
-#include <dfs_posix.h>
+#include <dfs/dfs_posix.h>
 #endif
 
 #ifdef RT_USING_MODULE
@@ -206,7 +206,7 @@ int msh_exec_module(const char *cmd_line, int size)
         return -RT_ENOMEM;
 
     /* copy command0 */
-    memcpy(pg_name, cmd_line, cmd_length);
+    rt_memcpy(pg_name, cmd_line, cmd_length);
     pg_name[cmd_length] = '\0';
 
     if (strstr(pg_name, ".mo") != RT_NULL || strstr(pg_name, ".MO") != RT_NULL)
@@ -226,7 +226,7 @@ int msh_exec_module(const char *cmd_line, int size)
         /* add .mo and open program */
 
         /* try to open program */
-        strcat(pg_name, ".mo");
+        rt_strcat(pg_name, ".mo");
         fd = open(pg_name, O_RDONLY, 0);
 
         /* search in /bin path */
@@ -427,7 +427,7 @@ void msh_auto_complete_path(char *path)
     {
         getcwd(full_path, 256);
         if (full_path[rt_strlen(full_path) - 1]  != '/')
-            strcat(full_path, "/");
+            rt_strcat(full_path, "/");
     }
     else *full_path = '\0';
 
@@ -493,7 +493,7 @@ void msh_auto_complete_path(char *path)
                 {
                     min_length = rt_strlen(dirent->d_name);
                     /* save dirent name */
-                    strcpy(full_path, dirent->d_name);
+                    rt_strcpy(full_path, dirent->d_name);
                 }
 
                 length = str_common(dirent->d_name, full_path);
@@ -523,7 +523,7 @@ void msh_auto_complete_path(char *path)
             }
 
             length = index - path;
-            memcpy(index, full_path, min_length);
+            rt_memcpy(index, full_path, min_length);
             path[length + min_length] = '\0';
         }
     }

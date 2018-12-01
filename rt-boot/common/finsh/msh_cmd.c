@@ -17,7 +17,7 @@
 #include <finsh/msh.h>
 
 #ifdef RT_USING_DFS
-#include <dfs_posix.h>
+#include <dfs/dfs_posix.h>
 
 #ifdef DFS_USING_WORKDIR
 extern char working_directory[];
@@ -216,7 +216,7 @@ int cmd_mkfs(int argc, char **argv)
     }
     else if (argc == 4)
     {
-        if (strcmp(argv[1], "-t") == 0)
+        if (rt_strcmp(argv[1], "-t") == 0)
         {
             type = argv[2];
             result = dfs_mkfs(type, argv[3]);
@@ -246,7 +246,7 @@ int cmd_df(int argc, char** argv)
     }
     else
     {
-        if ((strcmp(argv[1], "--help") == 0) || (strcmp(argv[1], "-h") == 0))
+        if ((rt_strcmp(argv[1], "--help") == 0) || (rt_strcmp(argv[1], "-h") == 0))
         {
             rt_kprintf("df [path]\n");
         }
@@ -273,7 +273,7 @@ int cmd_echo(int argc, char** argv)
         fd = open(argv[2], O_RDWR | O_APPEND | O_CREAT, 0);
         if (fd >= 0)
         {
-            write (fd, argv[1], strlen(argv[1]));
+            write (fd, argv[1], rt_strlen(argv[1]));
             close(fd);
         }
         else
@@ -388,7 +388,7 @@ int cmd_ps(int argc, char **argv)
     extern int list_module(void);
 
 #ifdef RT_USING_MODULE
-    if ((argc == 2) && (strcmp(argv[1], "-m") == 0))
+    if ((argc == 2) && (rt_strcmp(argv[1], "-m") == 0))
         list_module();
     else
 #endif
