@@ -570,6 +570,22 @@ char *rt_strchr(const char *s,int c)
 	return RT_NULL;
 }
 
+char *rt_strrchr(const char *s, int c)
+{
+   char        tch = c;
+   char       *__res  = RT_NULL;
+
+   for (;;)
+   {
+      if ((tch = *s) == c) 
+		  __res = (char *) s;
+      if (!tch) break;
+      s++;
+   }
+
+   return __res;
+}
+
 static unsigned int _seed=0;
 
 void rt_srand(unsigned int seed)

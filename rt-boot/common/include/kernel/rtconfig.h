@@ -200,4 +200,10 @@
 
 /* miscellaneous packages */
 
+#define TINY_CRYPT_MD5
+#define TINY_CRYPT_AES
+#define TINY_CRYPT_SHA1
+#define TINY_CRYPT_SHA256
+#define TINY_CRYPT_BASE64
+
 #endif

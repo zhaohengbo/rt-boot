@@ -528,6 +528,7 @@ char *rt_strncpy(char *dest, const char *src, rt_ubase_t n);
 char *rt_strcpy(char* dst,const char* src);
 char *rt_strcat(char *dst,const char *src);
 char *rt_strchr(const char *s,int c);
+char *rt_strrchr(const char *s, int c);
 void *rt_memmove(void *dest, const void *src, rt_ubase_t n);
 rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count);
 rt_uint32_t rt_strcasecmp(const char *a, const char *b);
