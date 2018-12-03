@@ -15,6 +15,11 @@ OBJS	+= tinycrypt/tiny_md5.o
 OBJS	+= tinycrypt/tiny_sha1.o
 OBJS	+= tinycrypt/tiny_sha2.o
 
+OBJS	+= lzma/LzmaDecode.o
+OBJS	+= lzma/LzmaWrapper.o
+
+OBJS	+= crc32/crc32.o
+
 all:	.depend $(START) $(LIB)
 
 $(LIB):	$(OBJS) $(SOBJS)

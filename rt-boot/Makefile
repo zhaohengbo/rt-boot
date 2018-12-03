@@ -290,10 +290,13 @@ u-boot.dis: u-boot
 	$(OBJDUMP) -d $< > $@
 
 u-boot: fsdata depend version $(SUBDIRS) $(OBJS) $(LIBS) $(LIBS_SHARED) $(LDSCRIPT)
-	UNDEF_SYM=`$(OBJDUMP) -x $(LIBS) $(LIBS_SHARED) | \
-	           sed -n -e 's/.*\(__u_boot_cmd_.*\)/-u\1/p' | \
+	UNDEF_FSYM=`$(OBJDUMP) -x $(LIBS) $(LIBS_SHARED) | \
+	           sed -n -e 's/.*\(__fsym_*\)/-u\1/p' | \
 	           sort | uniq`; \
-	$(LD) $(LDFLAGS) $$UNDEF_SYM $(OBJS) \
+	UNDEF_VSYM=`$(OBJDUMP) -x $(LIBS) $(LIBS_SHARED) | \
+	           sed -n -e 's/.*\(__vsym_*\)/-u\1/p' | \
+	           sort | uniq`; \
+	$(LD) $(LDFLAGS) $$UNDEF_FSYM $$UNDEF_VSYM $(OBJS) \
 	      --start-group $(LIBS) $(LIBS_SHARED) \
 	      --end-group $(PLATFORM_LIBS) \
 	      -Map u-boot.map -o u-boot

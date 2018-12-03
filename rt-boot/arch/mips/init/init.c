@@ -75,6 +75,13 @@ void arch_early_init(void)
 	
 	rt_memset((void *)(rtboot_data.start_stack_base),0,0x8);
 	
+	rtboot_data.ramfs_end_base = rtboot_data.start_stack_base - 0x4000;
+	rtboot_data.ramfs_end_base &= ~(4096 - 1);
+	
+	rtboot_data.ramfs_start_base = rtboot_data.system_memsize/2 + 0x80000000;
+	if(rtboot_data.ramfs_end_base < rtboot_data.ramfs_start_base)
+		rtboot_data.ramfs_start_base = rtboot_data.ramfs_end_base;
+	
 	arch_cache_init();
 }
 

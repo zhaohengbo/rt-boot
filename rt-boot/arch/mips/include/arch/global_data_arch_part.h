@@ -5,6 +5,8 @@
 	rt_uint32_t relocation_ebase;
 	rt_uint32_t malloc_start_base;
 	rt_uint32_t malloc_end_base;
+	rt_uint32_t ramfs_start_base;
+	rt_uint32_t ramfs_end_base;
 	rt_uint32_t relocation_base;
 	rt_uint32_t start_stack_base;
 	/* relocation information */

@@ -73,7 +73,11 @@ HOSTSTRIP  = strip
 
 # Include the make variables (CC, etc...)
 AS      = $(CROSS_COMPILE)as
-LD      = $(CROSS_COMPILE)ld
+ifneq ($(shell $(CROSS_COMPILE)ld.bfd -v 2> /dev/null),)
+LD		= $(CROSS_COMPILE)ld.bfd
+else
+LD		= $(CROSS_COMPILE)ld
+endif
 CC      = $(CROSS_COMPILE)gcc
 CPP     = $(CC) -E
 AR      = $(CROSS_COMPILE)ar

@@ -31,11 +31,11 @@ SECTIONS
 
 	. = ALIGN(4);
 	__fsymtab_start = .;
-	fsymtab : { *(FSymTab) }
+	fsymtab : { KEEP(*(FSymTab)) }
 	__fsymtab_end = .;
 	. = ALIGN(4);
 	__vsymtab_start = .;
-	vsymtab : { *(VSymTab) }
+	vsymtab : { KEEP(*(VSymTab)) }
 	__vsymtab_end = .;
 	
 	.reltable : {
