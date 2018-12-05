@@ -123,6 +123,11 @@ void qca953x_interrupt_init(void)
 	rt_hw_interrupt_mask(6);
 }
 
+void qca953x_interrupt_deinit(void)
+{
+	qca_soc_reg_write(QCA_RST_MISC_INTERRUPT_MASK_REG,0);
+}
+
 /*@}*/
 
 

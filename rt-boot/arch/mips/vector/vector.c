@@ -70,3 +70,9 @@ void mips_vector_init(void)
 	
 	arch_cache_flush(new_ebase,(0x1000-4));
 }
+
+void mips_vector_restore(void)
+{
+	if(mips_cpu_version() == MIPS32R2)
+		write_c0_ebase(K0BASE);
+}

@@ -1,17 +1,12 @@
 include $(TOPDIR)/config.mk
 
-LIB	= libboard.a
+LIB	= libloader.a
 
 START	=
 OBJS	=
 SOBJS	=
 
-OBJS	+= tl-wr810n_v2/init/init.o
-OBJS	+= tl-wr810n_v2/console/console.o
-OBJS	+= tl-wr810n_v2/network/network.o
-OBJS	+= tl-wr810n_v2/spi/spi.o
-OBJS	+= tl-wr810n_v2/flash/flash.o
-OBJS	+= tl-wr810n_v2/loader/loader.o
+OBJS	+= loader.o
 
 all:	.depend $(START) $(LIB)
 

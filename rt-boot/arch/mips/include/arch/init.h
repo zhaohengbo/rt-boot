@@ -3,5 +3,6 @@
 
 void arch_early_init(void);
 void arch_late_init(void);
+void arch_deinit(void);
 
 #endif

@@ -9,6 +9,7 @@
 #include <soc/init.h>
 #include <board/console.h>
 #include <board/network.h>
+#include <soc/init.h>
 
 void board_early_init(void)
 {	
@@ -53,4 +54,9 @@ void rt_hw_board_init(void)
 #else
 	board_late_init();
 #endif
+}
+
+void board_deinit(void)
+{
+	soc_deinit();
 }

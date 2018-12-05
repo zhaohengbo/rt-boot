@@ -37,6 +37,7 @@ OBJS   += cache/cache.o
 OBJS   += global/global.o
 OBJS   += calltrace/calltrace.o
 OBJS   += coprocessor/coprocessor.o
+OBJS   += loader/loader.o
 
 SOBJS	= context/context_gcc.o
 

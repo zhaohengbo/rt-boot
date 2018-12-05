@@ -14,6 +14,7 @@
 #include <soc/qca953x/qca953x_ls_uart.h>
 #include <soc/qca953x/qca953x_gpio.h>
 #include <soc/qca953x/qca953x_irq.h>
+#include <soc/qca953x/qca953x_reset.h>
 
 void soc_early_init(void)
 {	
@@ -33,4 +34,12 @@ void soc_late_init(void)
 	
 	qca953x_all_led_on();
 
+}
+
+void soc_deinit(void)
+{
+	//spiflash_reset(); //change flash mode back(For flash upper than 16MB)
+	arch_deinit();
+	qca953x_interrupt_deinit();
+	qca953x_net_reset();
 }

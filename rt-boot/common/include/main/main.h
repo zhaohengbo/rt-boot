@@ -1,5 +1,5 @@
-#ifndef __SYSTEM_INIT_H__
-#define __SYSTEM_INIT_H__
+#ifndef __SYSTEM_MAIN_H__
+#define __SYSTEM_MAIN_H__
 
 int rt_application_init(void);
 

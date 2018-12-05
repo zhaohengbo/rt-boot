@@ -4,5 +4,6 @@
 void board_early_init(void);
 void board_late_init(void);
 void rt_hw_board_init(void);
+void board_deinit(void);
 
 #endif

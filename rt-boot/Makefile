@@ -225,6 +225,7 @@ LIBS += board/libboard.a
 LIBS += common/global/libglobal.a
 LIBS += common/init/libinit.a
 LIBS += common/main/libmain.a
+LIBS += common/loader/libloader.a
 LIBS += common/fix/libfix.a
 LIBS += common/kernel/libkernel.a
 LIBS += common/drivers/libdrivers.a

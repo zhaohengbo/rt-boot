@@ -110,4 +110,9 @@ void arch_late_init(void)
     rt_hw_fpu_init();
 #endif
 }
-	
+
+void arch_deinit(void)
+{
+	write_c0_status(0x10000000);
+	mips_vector_restore();
+}

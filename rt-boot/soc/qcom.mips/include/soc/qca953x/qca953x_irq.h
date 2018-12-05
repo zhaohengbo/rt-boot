@@ -35,5 +35,6 @@ void qca953x_interrupt_umask(int vector);
 rt_isr_handler_t qca953x_interrupt_install(int vector, rt_isr_handler_t handler,
                                          void *param, char *name);
 void qca953x_interrupt_init(void);
+void qca953x_interrupt_deinit(void);
 
 #endif /* _SOC_COMMON_H_ */

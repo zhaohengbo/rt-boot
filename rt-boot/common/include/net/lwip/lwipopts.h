@@ -49,7 +49,11 @@
 #define LWIP_HAVE_LOOPIF            0
 
 #ifndef BYTE_ORDER
+#if __BYTE_ORDER == __BIG_ENDIAN
 #define BYTE_ORDER                  BIG_ENDIAN
+#else
+#define BYTE_ORDER                  LITTLE_ENDIAN
+#endif
 #endif
 
 /* #define RT_LWIP_DEBUG */

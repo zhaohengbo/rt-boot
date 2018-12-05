@@ -242,7 +242,11 @@ int cmd_df(int argc, char** argv)
 {
     if (argc != 2)
     {
+#ifdef DFS_USING_WORKDIR
+        df(working_directory);
+#else
         df("/");
+#endif
     }
     else
     {

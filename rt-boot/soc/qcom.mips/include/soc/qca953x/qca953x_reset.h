@@ -156,5 +156,6 @@
 #define QCA_RST_MISC2_PERSTN_RCPHY2_MASK	BIT(QCA_RST_MISC2_PERSTN_RCPHY2_SHIFT)
 
 void qca953x_full_reset(void);
+void qca953x_net_reset(void);
 
 #endif /* _SOC_COMMON_H_ */

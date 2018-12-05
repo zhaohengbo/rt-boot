@@ -31,6 +31,7 @@ static rt_uint32_t qca953x_spi_xfer(struct rt_spi_device *device, struct rt_spi_
 	rt_uint32_t cs_bank = (rt_uint32_t)device->parent.user_data;
     if (message->cs_take)
 	{
+		qca953x_spi_enable();
 		qca953x_change_cs(cs_bank);
 	}
     rt_uint8_t *sndb = (rt_uint8_t *)message->send_buf;
@@ -49,6 +50,7 @@ static rt_uint32_t qca953x_spi_xfer(struct rt_spi_device *device, struct rt_spi_
     if (message->cs_release)
     {
         qca953x_shift_out(0,0,1);
+		qca953x_spi_disable();
     }
     return message->length - length;
 }
@@ -61,7 +63,6 @@ static rt_err_t qca953x_spi_configure(struct rt_spi_device *device,
 
 rt_err_t soc_spi_init(void)
 {
-    qca953x_spi_enable();
 	qca953x_spi_ops.configure = qca953x_spi_configure;
 	qca953x_spi_ops.xfer = qca953x_spi_xfer;
 	return rt_spi_bus_register(&qca953x_spi_bus, "SPI0", &qca953x_spi_ops);

@@ -68,3 +68,12 @@ void system_late_init(void)
 	while(1)
 		;
 }
+
+void system_deinit(void)
+{
+	rt_hw_interrupt_disable();
+	
+	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+	
+	board_deinit();
+}
