@@ -24,7 +24,7 @@
 #define DBG_SECTION_NAME    "SIGN"
 #define DBG_COLOR
 #define DBG_LEVEL           DBG_LOG
-#include <rtdbg.h>
+#include <kernel/rtdbg.h>
 
 #define sig_mask(sig_no)    (1u << sig_no)
 #define sig_valid(sig_no)   (sig_no >= 0 && sig_no < RT_SIG_MAX)
@@ -201,14 +201,14 @@ int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout)
     RT_DEBUG_IN_THREAD_CONTEXT;
 
     /* parameters check */
-    if (set == NULL || *set == 0 || si == NULL )
+    if (set == RT_NULL || *set == 0 || si == RT_NULL )
     {
         ret = -RT_EINVAL;
         goto __done_return;
     }
 
     /* clear siginfo to avoid unknown value */
-    memset(si, 0x0, sizeof(rt_siginfo_t));
+    rt_memset(si, 0x0, sizeof(rt_siginfo_t));
 
     level = rt_hw_interrupt_disable();
 
@@ -426,7 +426,7 @@ int rt_thread_kill(rt_thread_t tid, int sig)
             entry = rt_slist_entry(node, struct siginfo_node, list);
             if (entry->si.si_signo == sig)
             {
-                memcpy(&(entry->si), &si, sizeof(siginfo_t));
+                rt_memcpy(&(entry->si), &si, sizeof(siginfo_t));
                 rt_exit_critical();
                 return 0;
             }
@@ -447,7 +447,7 @@ int rt_thread_kill(rt_thread_t tid, int sig)
     if (si_node)
     {
         rt_slist_init(&(si_node->list));
-        memcpy(&(si_node->si), &si, sizeof(siginfo_t));
+        rt_memcpy(&(si_node->si), &si, sizeof(siginfo_t));
 
         level = rt_hw_interrupt_disable();
         if (!tid->si_list) tid->si_list = si_node;

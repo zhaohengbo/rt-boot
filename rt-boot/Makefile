@@ -364,7 +364,7 @@ version:
 fsdata:
 	$(call echo_green,Preparing web server files...)
 	@echo
-	#cd httpd && ./vendors/makefsdatac $(DEVICE_VENDOR)
+	cd common/dfs/filesystems/romfs && python mkromfs.py ./../../../../sysfs romfs.c
 
 depend dep:
 	@for dir in $(SUBDIRS); do $(MAKE) -C $$dir .depend; done

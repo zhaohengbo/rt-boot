@@ -318,7 +318,6 @@ lzma_host_clean:
 
 clean:
 	@cd $(SOURCE_DIR) && $(SUB_MAKE_CMD) distclean
-	#@rm -f $(SOURCE_DIR)/httpd/fsdata.c
 
 clean_all: clean
 	@$(call echo_green,Removing all binary images...)

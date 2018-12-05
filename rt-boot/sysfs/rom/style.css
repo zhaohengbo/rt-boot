@@ -1,0 +1,276 @@
+BODY {
+	LINE-HEIGHT: 1.5em; FONT-FAMILY: "Microsoft YaHei", Arial, "Courier New"; COLOR: #7f7f7f
+}
+A {
+	TEXT-DECORATION: none
+}
+H2 {
+	MARGIN: 18px 0px 18px 20px; FONT-SIZE: 18px; FONT-WEIGHT: bold
+}
+H3 {
+	MARGIN: 18px 0px 18px 20px; FONT-SIZE: 18px; FONT-WEIGHT: bold
+}
+H4 {
+	MARGIN: 18px 0px 18px 20px; FONT-SIZE: 18px; FONT-WEIGHT: bold
+}
+H2 {
+	
+}
+H3 {
+	COLOR: red
+}
+H4 {
+	COLOR: green
+}
+#container {
+	MARGIN: auto; WIDTH: 850px; PADDING-TOP: 20px
+}
+#bootloader_console {
+	TEXT-ALIGN: center; PADDING-BOTTOM: 30px; WIDTH: 100%; COLOR: #f3443a; FONT-SIZE: 36px; FONT-WEIGHT: bold
+}
+#bootloader_copyright {
+	TEXT-ALIGN: center; WIDTH: 100%; COLOR: #000; FONT-WEIGHT: bold; text-shadow: 2px 2px 2px rgba(0, 0, 0, .16)
+}
+#nav {
+	BORDER-BOTTOM: #66ffcc 1px solid; BORDER-LEFT: #66ffcc 1px solid; WIDTH: 190px; FLOAT: left; BORDER-TOP: #66ffcc 1px solid; BORDER-RIGHT: #66ffcc 1px solid
+}
+#nav UL {
+	PADDING-BOTTOM: 0px; LIST-STYLE-TYPE: none; MARGIN: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; LIST-STYLE-IMAGE: none; PADDING-TOP: 0px
+}
+#nav UL LI A {
+	TEXT-ALIGN: center; PADDING-BOTTOM: 10px; BACKGROUND-COLOR: transparent; PADDING-LEFT: 10px; WIDTH: 170px; PADDING-RIGHT: 10px; DISPLAY: block; COLOR: #7f7f7f; PADDING-TOP: 10px
+}
+A:visited {
+	TEXT-ALIGN: center; PADDING-BOTTOM: 10px; BACKGROUND-COLOR: transparent; PADDING-LEFT: 10px; WIDTH: 170px; PADDING-RIGHT: 10px; DISPLAY: block; COLOR: #7f7f7f; PADDING-TOP: 10px
+}
+#nav UL LI A:hover {
+	TEXT-ALIGN: center; BACKGROUND-COLOR: #f5f5f5; COLOR: #f3443a; FONT-WEIGHT: normal
+}
+#page {
+	WIDTH: 645px; FLOAT: right
+}
+#info {
+	BORDER-BOTTOM: #66ffcc 1px solid; BORDER-LEFT: #66ffcc 1px solid; BACKGROUND-COLOR: #fff8f7; WIDTH: 100%; HEIGHT: 170px; BORDER-TOP: #66ffcc 1px solid; BORDER-RIGHT: #66ffcc 1px solid
+}
+#info_content {
+	MARGIN: 10px 40px 0px; WIDTH: 100%; HEIGHT: 50px; COLOR: black
+}
+#ret {
+	MARGIN: 15px 0px 10px 20px
+}
+#fw_type {
+	BORDER-BOTTOM: #66ffcc 1px solid; BORDER-LEFT: #66ffcc 1px solid; WIDTH: 100%; BORDER-TOP: #66ffcc 1px solid; BORDER-RIGHT: #66ffcc 1px solid
+}
+#fw_type UL {
+	PADDING-BOTTOM: 0px; LIST-STYLE-TYPE: none; MARGIN: 0px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; LIST-STYLE-IMAGE: none; PADDING-TOP: 0px
+}
+#fw_type LI {
+	WIDTH: 50%; DISPLAY: inline; FLOAT: left
+}
+#fw_type UL A {
+	TEXT-ALIGN: center; PADDING-BOTTOM: 5px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; DISPLAY: block; PADDING-TOP: 5px
+}
+#fw_files {
+	MARGIN-TOP: 20px; WIDTH: 100%
+}
+#fw_files .th {
+	WIDTH: 150px
+}
+#fw_options {
+	MARGIN-TOP: 20px
+}
+#fw_files_fullflash {
+	DISPLAY: none
+}
+#fw_skipboot {
+	DISPLAY: none
+}
+#fw_skipeeprom {
+	DISPLAY: none
+}
+#fw_skipart {
+	DISPLAY: none
+}
+#freqs .th {
+	WIDTH: 40px
+}
+#freq_notice {
+	MARGIN-BOTTOM: 20px; COLOR: black
+}
+#about {
+	TEXT-ALIGN: center; MARGIN-TOP: 20px; COLOR: black
+}
+#ddr2_config .th {
+	WIDTH: 150px
+}
+#upgrade_list {
+	MARGIN: 10px 40px 20px
+}
+#upgrade_confirm {
+	BORDER-BOTTOM: #66ffcc 1px solid; BORDER-LEFT: #66ffcc 1px solid; BACKGROUND-COLOR: #dff; WIDTH: 100%; BORDER-TOP: #66ffcc 1px solid; BORDER-RIGHT: #66ffcc 1px solid
+}
+#confirm_boot {
+	PADDING-BOTTOM: 10px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; DISPLAY: none; COLOR: #396; PADDING-TOP: 10px
+}
+#confirm_fw {
+	PADDING-BOTTOM: 10px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; DISPLAY: none; COLOR: #396; PADDING-TOP: 10px
+}
+#confirm_fw1 {
+	PADDING-BOTTOM: 10px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; DISPLAY: none; COLOR: #396; PADDING-TOP: 10px
+}
+#confirm_fw2 {
+	PADDING-BOTTOM: 10px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; DISPLAY: none; COLOR: #396; PADDING-TOP: 10px
+}
+#confirm_art {
+	PADDING-BOTTOM: 10px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; DISPLAY: none; COLOR: #396; PADDING-TOP: 10px
+}
+#confirm_bc {
+	PADDING-BOTTOM: 10px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; DISPLAY: none; COLOR: #396; PADDING-TOP: 10px
+}
+#confirm_eeprom {
+	PADDING-BOTTOM: 10px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; DISPLAY: none; COLOR: #396; PADDING-TOP: 10px
+}
+#confirm_fullflash {
+	PADDING-BOTTOM: 10px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; DISPLAY: none; COLOR: #396; PADDING-TOP: 10px
+}
+#fw_info .th {
+	WIDTH: 150px
+}
+#progress_container {
+	BORDER-BOTTOM: #66ffcc 1px solid; POSITION: relative; BORDER-LEFT: #66ffcc 1px solid; MARGIN: auto; HEIGHT: 30px; VERTICAL-ALIGN: middle; BORDER-TOP: #66ffcc 1px solid; BORDER-RIGHT: #66ffcc 1px solid
+}
+#progress_bar {
+	POSITION: absolute; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; HEIGHT: 100%; TOP: 0px; PADDING-TOP: 0px; LEFT: 0px
+}
+#progress_prompt {
+	POSITION: absolute; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; HEIGHT: 100%; TOP: 0px; PADDING-TOP: 0px; LEFT: 0px
+}
+#progress_bar {
+	BACKGROUND-COLOR: #f3443a; WIDTH: 0px
+}
+#progress_prompt {
+	TEXT-ALIGN: center; LINE-HEIGHT: 32px; WIDTH: 100%; FONT-WEIGHT: bold
+}
+#progress_desc {
+	LINE-HEIGHT: 32px; WIDTH: 100%; HEIGHT: 32px; COLOR: #000; FONT-WEIGHT: bold
+}
+#netgear_table .th {
+	WIDTH: 150px
+}
+#field_add {
+	MARGIN: auto; DISPLAY: block
+}
+#nvram_result {
+	DISPLAY: none
+}
+.clearfloat {
+	CLEAR: both
+}
+.operate_success {
+	DISPLAY: none; MARGIN-BOTTOM: 10px; COLOR: green; FONT-WEIGHT: bold
+}
+.current_nav {
+	TEXT-ALIGN: center; PADDING-BOTTOM: 10px; BACKGROUND-COLOR: #f3443a; PADDING-LEFT: 10px; PADDING-RIGHT: 10px; COLOR: white; FONT-WEIGHT: bold; PADDING-TOP: 10px
+}
+.system_info {
+	BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; WIDTH: 100%; BORDER-COLLAPSE: collapse; BORDER-TOP: medium none; BORDER-RIGHT: medium none
+}
+.file_info {
+	BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; WIDTH: 100%; BORDER-COLLAPSE: collapse; BORDER-TOP: medium none; BORDER-RIGHT: medium none
+}
+.system_info TR:hover {
+	BACKGROUND-COLOR: #f2f1f0
+}
+.file_info TR:hover {
+	BACKGROUND-COLOR: #f2f1f0
+}
+.file_info {
+	MARGIN: 15px 0px
+}
+.file_info .th {
+	COLOR: gray
+}
+.system_info TD {
+	BORDER-BOTTOM-COLOR: #66ffcc; PADDING-LEFT: 10px; BORDER-RIGHT-COLOR: #66ffcc; BORDER-LEFT-COLOR: #66ffcc; BORDER-TOP: #66ffcc 1px solid
+}
+.file_info TD {
+	BORDER-BOTTOM-COLOR: #66ffcc; PADDING-LEFT: 10px; BORDER-RIGHT-COLOR: #66ffcc; BORDER-LEFT-COLOR: #66ffcc; BORDER-TOP: #66ffcc 1px solid
+}
+.g {
+	BACKGROUND-COLOR: #f4f3f2
+}
+.th {
+	BORDER-BOTTOM-COLOR: #66ffcc; BORDER-TOP-COLOR: #66ffcc; PADDING-LEFT: 10px; BORDER-LEFT-COLOR: #66ffcc; FONT-WEIGHT: bold; BORDER-RIGHT: #66ffcc 1px solid
+}
+.fw_type {
+	BORDER-BOTTOM-COLOR: #66ffcc; BORDER-TOP-COLOR: #66ffcc; PADDING-LEFT: 10px; BORDER-LEFT-COLOR: #66ffcc; FONT-WEIGHT: bold; BORDER-RIGHT: #66ffcc 1px solid
+}
+.thr {
+	BORDER-BOTTOM-COLOR: #66ffcc; BORDER-TOP-COLOR: #66ffcc; PADDING-LEFT: 10px; WIDTH: 100px; BORDER-RIGHT-COLOR: #66ffcc; BORDER-LEFT-COLOR: #66ffcc; FONT-WEIGHT: bold
+}
+.th {
+	WIDTH: 100px
+}
+.tf {
+	BORDER-BOTTOM-COLOR: #66ffcc; BORDER-TOP-COLOR: #66ffcc; BORDER-LEFT-COLOR: #66ffcc; BORDER-RIGHT: #66ffcc 1px solid
+}
+.ed {
+	BORDER-BOTTOM: #66ffcc 1px solid; BORDER-TOP-COLOR: #66ffcc; BORDER-RIGHT-COLOR: #66ffcc; BORDER-LEFT-COLOR: #66ffcc
+}
+.fw_type {
+	WIDTH: 150px
+}
+.fw_type_clicked {
+	BACKGROUND-COLOR: #f3443a; COLOR: white; FONT-WEIGHT: bold
+}
+.fw_type_unclicked:hover {
+	BACKGROUND-COLOR: #f5f5f5; COLOR: #f3443a; CURSOR: pointer
+}
+.fw_upload {
+	WIDTH: 100%
+}
+.flash_layout {
+	FONT-SIZE: 10px; FONT-WEIGHT: normal
+}
+.operate {
+	MARGIN-TOP: 20px
+}
+.freq {
+	WIDTH: 55px; FONT-WEIGHT: bold
+}
+.freq_item {
+	CURSOR: pointer
+}
+.freq_cur {
+	BACKGROUND-COLOR: #f3443a !important; COLOR: white
+}
+.rafreq {
+	WIDTH: 200px
+}
+.mac_field {
+	TEXT-ALIGN: center
+}
+.command {
+	COLOR: blue
+}
+.prompt {
+	COLOR: black
+}
+.upgrade_file_list {
+	WIDTH: 100%
+}
+.fw_name {
+	BORDER-BOTTOM-COLOR: #66ffcc; BORDER-TOP-COLOR: #66ffcc; WIDTH: 200px; BORDER-LEFT-COLOR: #66ffcc; BORDER-RIGHT: #66ffcc 1px solid
+}
+.nvram_name {
+	WIDTH: 30%; PADDING-RIGHT: 5px; FONT-WEIGHT: bold
+}
+.nvram_value {
+	FONT-WEIGHT: bold
+}
+.nvram_del {
+	WIDTH: 10%
+}
+.mac_rf {
+	COLOR: black; FONT-WEIGHT: bold
+}

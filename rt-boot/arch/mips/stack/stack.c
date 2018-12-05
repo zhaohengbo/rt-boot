@@ -27,6 +27,15 @@ rt_uint32_t rt_system_stack;
 
 register rt_uint32_t $GP __asm__ ("$28");
 
+static void relocatable_thread_entry(void * para1,void * para2,void * para3)
+{
+	void (*entry)(void* ) = para1;
+	void (*exit)(void) = para3;
+	void *parameter = para2;
+	entry(parameter);
+	exit();
+}
+
 /**
  * This function will initialize thread stack
  *
@@ -54,19 +63,19 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
 
     /** Start at stack top */
     stk = (rt_uint32_t *)stack_addr;
-	*(stk)   = (rt_uint32_t) tentry;        /* pc: Entry Point */
+	*(stk)   = (rt_uint32_t) relocatable_thread_entry;        /* pc: Entry Point */
 	*(--stk) = (rt_uint32_t) 0xeeee; 		/* c0_cause */
 	*(--stk) = (rt_uint32_t) 0xffff;		/* c0_badvaddr */
 	*(--stk) = (rt_uint32_t) read_c0_entrylo0();	/* lo */
 	*(--stk) = (rt_uint32_t) read_c0_entryhi();	/* hi */
 	*(--stk) = (rt_uint32_t) g_sr; 			/* C0_SR: HW2 = En, IE = En */
-	*(--stk) = (rt_uint32_t) texit;	        /* ra */
+	*(--stk) = (rt_uint32_t) 0x00000000;	/* ra */
 	*(--stk) = (rt_uint32_t) 0x0000001e;	/* s8 */
 	*(--stk) = (rt_uint32_t) stack_addr;	/* sp */
 	*(--stk) = (rt_uint32_t) g_gp;	        /* gp */
 	*(--stk) = (rt_uint32_t) 0x0000001b;	/* k1 */
 	*(--stk) = (rt_uint32_t) 0x0000001a;	/* k0 */
-	*(--stk) = (rt_uint32_t) tentry;	    /* t9 */
+	*(--stk) = (rt_uint32_t) relocatable_thread_entry;	    /* t9 */
 	*(--stk) = (rt_uint32_t) 0x00000018;	/* t8 */
 	*(--stk) = (rt_uint32_t) 0x00000017;	/* s7 */
 	*(--stk) = (rt_uint32_t) 0x00000016;	/* s6 */
@@ -85,9 +94,9 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
 	*(--stk) = (rt_uint32_t) 0x00000009;	/* t1 */
 	*(--stk) = (rt_uint32_t) 0x00000008;	/* t0 */
 	*(--stk) = (rt_uint32_t) 0x00000007;	/* a3 */
-	*(--stk) = (rt_uint32_t) 0x00000006;	/* a2 */
-	*(--stk) = (rt_uint32_t) 0x00000005;	/* a1 */
-	*(--stk) = (rt_uint32_t) parameter;	    /* a0 */
+	*(--stk) = (rt_uint32_t) texit;			/* a2 */
+	*(--stk) = (rt_uint32_t) parameter;		/* a1 */
+	*(--stk) = (rt_uint32_t) tentry;	    /* a0 */
 	*(--stk) = (rt_uint32_t) 0x00000003;	/* v1 */
 	*(--stk) = (rt_uint32_t) 0x00000002;	/* v0 */
 	*(--stk) = (rt_uint32_t) 0x00000001;	/* at */

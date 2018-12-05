@@ -458,7 +458,7 @@ typedef struct rt_timer *rt_timer_t;
  * @addtogroup Signal
  */
 #ifdef RT_USING_SIGNALS
-#include <libc/libc_signal.h>
+#include <kernel/libc/libc_signal.h>
 typedef unsigned long rt_sigset_t;
 typedef void (*rt_sighandler_t)(int signo);
 typedef siginfo_t rt_siginfo_t;

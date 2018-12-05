@@ -6,7 +6,7 @@ START	=
 OBJS	=
 SOBJS	=
 
-OBJS	+= fs.o
+OBJS	+= cgi.o
 OBJS	+= httpd.o
 
 all:	.depend $(START) $(LIB)

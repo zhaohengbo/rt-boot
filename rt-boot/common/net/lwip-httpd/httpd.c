@@ -1,13 +1,12 @@
 #include <kernel/rtthread.h>
 #include <drivers/rtdevice.h>
+#include <dfs/dfs_posix.h>
 
 #include <net/lwip/lwip/sockets.h>
-
 #include <net/lwip-httpd/httpd.h>
-#include <net/lwip-httpd/fs.h>
-#include <net/lwip-httpd/fsdata.h>
+#include <net/lwip-httpd/cgi.h>
 
-#define HTTPD_DEBUG
+//#define HTTPD_DEBUG
 
 #ifdef HTTPD_DEBUG
 #define PRINT(x) rt_kprintf("%s", x)
@@ -17,9 +16,6 @@
 #define PRINTLN(x)
 #endif /* HTTPD_DEBUG */
 
-extern const struct fsdata_file file_index_htm;
-extern const struct fsdata_file file_404_htm;
-
 // ASCII characters
 #define ISO_G					0x47	// GET
 #define ISO_E					0x45
@@ -28,6 +24,9 @@ extern const struct fsdata_file file_404_htm;
 #define ISO_O					0x4f
 #define ISO_S					0x53
 #define ISO_T					0x54
+#define ISO_c        			0x63
+#define ISO_g        			0x67
+#define ISO_i        			0x69
 #define ISO_slash				0x2f	// control and other characters
 #define ISO_space				0x20
 #define ISO_nl					0x0a
@@ -39,6 +38,10 @@ extern const struct fsdata_file file_404_htm;
 #define RECV_BUF_LEN 1600
 static rt_uint8_t recv_buf[RECV_BUF_LEN];
 static rt_int32_t recv_len = 0;
+
+#define SEND_BUF_LEN 4096
+static rt_uint8_t send_buf[SEND_BUF_LEN];
+static rt_int32_t send_len = 0;
 
 static char eol[3] = { 0x0d, 0x0a, 0x00 };
 static char eol2[5] = { 0x0d, 0x0a, 0x0d, 0x0a, 0x00 };
@@ -54,7 +57,6 @@ static void httpd_thread_entry(void* parameter)
 	rt_uint32_t server_fd;
 	rt_uint32_t client_fd;
 	rt_int32_t i;
-	struct fs_file fsfile;
 	
 	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
@@ -91,6 +93,7 @@ static void httpd_thread_entry(void* parameter)
         {
             if (recv_buf[0] == ISO_G && recv_buf[1] == ISO_E
 					&& recv_buf[2] == ISO_T && recv_buf[3] == ISO_space) {
+				int fd;
 				/* Find the file we are looking for. */
 				for (i = 4; i < 40; ++i) {
 					if (recv_buf[i] == ISO_space || recv_buf[i] == ISO_cr
@@ -104,17 +107,59 @@ static void httpd_thread_entry(void* parameter)
 			
 				if (recv_buf[4] == ISO_slash && recv_buf[5] == 0) 
 				{
-					fs_open(file_index_htm.name, &fsfile);
-				} else 
+					fd = open("/rom/index.html", 0, O_RDONLY);
+    				
+				} 
+				else if(recv_buf[4] == ISO_slash && recv_buf[5] == ISO_c && recv_buf[6] == ISO_g && recv_buf[7] == ISO_i && recv_buf[8] == ISO_slash)
 				{
-					if (!fs_open((const char *) &recv_buf[4], &fsfile)) 
-					{
-						PRINTLN("couldn't open file");
-						fs_open(file_404_htm.name, &fsfile);
-					}
+					httpd_cgi_handler((char *)&recv_buf[4]);
+					recv_buf[5] = 'r';
+					recv_buf[6] = 'a';
+					recv_buf[7] = 'm';
+					fd = open((char *)&recv_buf[4], 0, O_RDONLY);
 				}
-			
-				send(client_fd, fsfile.data, fsfile.len, 0);
+				else 
+				{	
+					recv_buf[0] = '/';
+					recv_buf[1] = 'r';
+					recv_buf[2] = 'o';
+					recv_buf[3] = 'm';
+					fd = open((char *)recv_buf, 0, O_RDONLY);
+					if (fd < 0)
+						fd = open("/rom/404.html", 0, O_RDONLY);
+				}
+				
+				if (fd < 0)
+    			{
+					send_len = rt_sprintf((char *)send_buf,"HTTP/1.0 500 Http Server Error\r\nServer: lwip/2.1.3\r\nContent-type: text/html; charset=UTF-8\r\n\r\n");
+					send(client_fd, send_buf, send_len, 0);
+					PRINTLN("open file failed");
+    			}
+				else
+				{
+					char *file_type;
+					file_type = rt_strrchr((char *)recv_buf,'.');
+					if(file_type != RT_NULL)
+					{
+						file_type++;
+						send_len = rt_sprintf((char *)send_buf,"HTTP/1.0 200 OK\r\nServer: lwip/2.1.3\r\nContent-type: text/%s; charset=UTF-8\r\n\r\n",file_type);
+						send(client_fd, send_buf, send_len, 0);
+					}
+					else
+					{
+						send_len = rt_sprintf((char *)send_buf,"HTTP/1.0 200 OK\r\nServer: lwip/2.1.3\r\nContent-type: text/html; charset=UTF-8\r\n\r\n");
+						send(client_fd, send_buf, send_len, 0);
+					}
+					while (1)
+    				{
+        				send_len = read(fd, send_buf, SEND_BUF_LEN);
+
+        				if (send_len <= 0) break;
+						if (send(client_fd, send_buf, send_len, 0) <= 0) break;
+    				}
+					
+					close(fd);
+				}
 			}
 			else if(recv_buf[0] == ISO_P && recv_buf[1] == ISO_O && recv_buf[2] == ISO_S && recv_buf[3] == ISO_T && (recv_buf[4] == ISO_space || recv_buf[4] == ISO_tab))
 			{
@@ -162,8 +207,8 @@ static void httpd_thread_entry(void* parameter)
 										start = (char *)rt_strstr((char *)recv_buf, (char *)boundary_value);
 										if(start)
 										{
-											//end = (char *)rt_strstr((char *)start, "name=\"fw_file\"");
-											//if(end)
+											end = (char *)rt_strstr((char *)start, "name=\"fw_file\"");
+											if(end)
 											{
 												PRINTLN("Upgrade type: firmware");
 												end = RT_NULL;
@@ -177,8 +222,8 @@ static void httpd_thread_entry(void* parameter)
 													PRINT("Start Receiving:");
 													// move pointer over CR LF CR LF
 													end += 4;
-													upload_total -=  (int)(end - start) - rt_strlen(boundary_value) - 6;
-													upload = (unsigned int)(recv_len - (end - (char *)recv_buf));
+													//upload_total -=  (int)(end - start) - rt_strlen(boundary_value) - 6;
+													upload = recv_len;//(unsigned int)(recv_len - (end - (char *)recv_buf));
 													
 													//add file
 													PRINT("#");
@@ -199,9 +244,9 @@ static void httpd_thread_entry(void* parameter)
 												PRINTLN("");
 												//add file
 											}
-											//else
+											else
 											{
-												//PRINTLN("Unknown File");
+												PRINTLN("Unknown File");
 											}
 										}
 									}
@@ -224,7 +269,6 @@ static void httpd_thread_entry(void* parameter)
 /* telnet server */
 void http_server(void)
 {
-	fs_init();
 	rt_thread_init(&httpd_thread,
                    "httpd_thread",
                    &httpd_thread_entry,

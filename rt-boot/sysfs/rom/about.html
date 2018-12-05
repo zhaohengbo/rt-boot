@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>RT-BOOT Web恢复终端</title>
+<link rel="stylesheet" href="/style.css" type="text/css" />
+</head>
+
+<body>
+	<div id="container">
+		<div id="bootloader_console">
+			RT-BOOT Web恢复终端
+		</div>
+		<div id="nav">
+			<ul id="navbar"></ul>
+		</div>
+		<div id="page">
+			<div id="about">
+	RT-BOOT Web恢复终端 v1.0<br />
+	联系作者: 1826902167(明德无敌赵晓薇)<br />
+    <br />
+    源代码：http://github.com/zhaohengbo/rt-boot/</a><br />
+    <br />
+    <div id="bootloader_copyright">
+        本项目使用MIT协议,您可以随意修改或商用而无需提供修改副本
+    </div>
+</div>
+		</div>
+		<div class="clearfloat"> </div>
+	</div>
+	<script type="text/javascript">
+		var nav_str = "/index.html|系统信息,/upgrade.html|固件更新,/about.html|关于";
+		var nav_page = "/about.html";
+		var nav_list = nav_str.split(",");
+		var navbar = document.getElementById("navbar");
+
+		for (var i = 0; i < nav_list.length; i++) {
+			if (!nav_list[i].indexOf("|"))
+				continue;
+
+			var nav_val = nav_list[i].split("|");
+
+			var li = document.createElement("li");
+			if (nav_page == nav_val[0]) {
+				li.className = "current_nav";
+				li.appendChild(document.createTextNode(nav_val[1]));
+			} else {
+				var a = document.createElement("a");
+				a.appendChild(document.createTextNode(nav_val[1]));
+				a.setAttribute("href", nav_val[0]);
+				li.appendChild(a);
+			}
+
+			navbar.appendChild(li);
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>RT-BOOT Web恢复终端</title>
+<link rel="stylesheet" href="/style.css" type="text/css" />
+<script type="text/javascript" src="/ajax.js"></script>
+</head>
+
+<body>
+	<div id="container">
+    	<div id="bootloader_console">
+        	RT-BOOT Web恢复终端
+        </div>
+        <div id="upgrade_confirm">
+            <h4>操作正在进行</h4>
+        	<div id="upgrade_list">
+            	<p class="prompt">
+                	您选择的操作正在进行<br />
+                    正在更新固件，请耐心等待至进度条完成
+                </p>
+                <div id="progress_container">
+                	<div id="progress_bar"> </div>
+                	<div id="progress_prompt">0%</div>
+                </div>
+                <div id="freq_notice">
+                	警告：在操作进行过程中请不要断开电源
+                </div>
+            </div>
+        </div>
+        <div class="clearfloat"> </div>
+    </div>
+    <script type="text/javascript">
+        var progbar = document.getElementById("progress_bar");
+        var progprompt = document.getElementById("progress_prompt");
+;
+        var query = "/cgi/upgrade_query.cgi";
+        var done_prompt = "更新完成，2 秒后跳转到系统信息页面。";
+        var return_delay = "2000";
+        var return_url = "/"
+
+        var c = 0;
+        var timer;
+
+        function do_progress() {
+            var status = RequestURL(query);
+
+            if (status == "CE") {
+                clearInterval(timer);
+                progprompt.innerHTML = "通信错误";
+                return;
+            }
+
+            if (status == "BE") {
+                clearInterval(timer);
+                progprompt.innerHTML = "浏览器不支持 Ajax!";
+                return;
+            }
+
+            if (status == "SE") {
+                clearInterval(timer);
+                progprompt.innerHTML = "RT-BOOT 内部错误!";
+                return;
+            }
+
+            if (status == "NP") {
+                clearInterval(timer);
+                progprompt.innerHTML = "没有正在进行的操作!";
+                return;
+            }
+
+            progbar.style.width = status + "%";
+            progprompt.innerHTML = status + "%";
+
+            if (status >= 50)
+                progprompt.style.color = "#ffffff";
+
+            if (status == "100") {
+                clearInterval(timer);
+                progprompt.innerHTML = done_prompt;
+
+                if (return_url != "")
+                    setTimeout("location=\"" + return_url + "\"", return_delay);
+            }
+        }
+
+        timer = setInterval("do_progress()", 1000);
+	</script>
+</body>
+</html>
