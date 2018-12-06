@@ -12,6 +12,7 @@
 #define _SPI_FLASH_SFUD_H_
 
 #include <kernel/rtthread.h>
+#include <drivers/rtdevice.h>
 #include <libs/sfud/sfud.h>
 #include <drivers/drivers/spi_flash.h>
 
