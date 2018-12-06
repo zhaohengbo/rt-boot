@@ -56,10 +56,6 @@ void rt_thread_main_thread_entry(void* parameter)
     finsh_set_device(RT_CONSOLE_DEVICE_NAME);
 	telnet_server();
 #endif
-    while (1)
-    {
-		rt_thread_mdelay(1000);
-    }
 }
 
 int rt_application_init(void)

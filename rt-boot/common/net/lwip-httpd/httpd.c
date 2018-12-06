@@ -6,6 +6,8 @@
 #include <net/lwip-httpd/httpd.h>
 #include <net/lwip-httpd/cgi.h>
 
+#include <board/flash.h>
+
 //#define HTTPD_DEBUG
 
 #ifdef HTTPD_DEBUG
@@ -94,6 +96,7 @@ static void httpd_thread_entry(void* parameter)
             if (recv_buf[0] == ISO_G && recv_buf[1] == ISO_E
 					&& recv_buf[2] == ISO_T && recv_buf[3] == ISO_space) {
 				int fd;
+				int cgi_flag=0;
 				/* Find the file we are looking for. */
 				for (i = 4; i < 40; ++i) {
 					if (recv_buf[i] == ISO_space || recv_buf[i] == ISO_cr
@@ -117,6 +120,7 @@ static void httpd_thread_entry(void* parameter)
 					recv_buf[6] = 'a';
 					recv_buf[7] = 'm';
 					fd = open((char *)&recv_buf[4], 0, O_RDONLY);
+					cgi_flag = 1;
 				}
 				else 
 				{	
@@ -142,12 +146,18 @@ static void httpd_thread_entry(void* parameter)
 					if(file_type != RT_NULL)
 					{
 						file_type++;
-						send_len = rt_sprintf((char *)send_buf,"HTTP/1.0 200 OK\r\nServer: lwip/2.1.3\r\nContent-type: text/%s; charset=UTF-8\r\n\r\n",file_type);
+						if(cgi_flag)
+							send_len = rt_sprintf((char *)send_buf,"HTTP/1.1 200 OK\r\nServer: lwip/2.1.3\r\nCache-Control: no-store, no-cache, must-revalidate\r\nContent-type: text/%s; charset=UTF-8\r\n\r\n",file_type);
+						else
+							send_len = rt_sprintf((char *)send_buf,"HTTP/1.0 200 OK\r\nServer: lwip/2.1.3\r\nContent-type: text/%s; charset=UTF-8\r\n\r\n",file_type);
 						send(client_fd, send_buf, send_len, 0);
 					}
 					else
 					{
-						send_len = rt_sprintf((char *)send_buf,"HTTP/1.0 200 OK\r\nServer: lwip/2.1.3\r\nContent-type: text/html; charset=UTF-8\r\n\r\n");
+						if(cgi_flag)
+							send_len = rt_sprintf((char *)send_buf,"HTTP/1.1 200 OK\r\nServer: lwip/2.1.3\r\nCache-Control: no-store, no-cache, must-revalidate\r\nContent-type: text/html; charset=UTF-8\r\n\r\n");
+						else
+							send_len = rt_sprintf((char *)send_buf,"HTTP/1.0 200 OK\r\nServer: lwip/2.1.3\r\nContent-type: text/html; charset=UTF-8\r\n\r\n");
 						send(client_fd, send_buf, send_len, 0);
 					}
 					while (1)
@@ -166,6 +176,7 @@ static void httpd_thread_entry(void* parameter)
 				char *start = RT_NULL;
 				char *end = RT_NULL;
 				char *boundary_value = RT_NULL;
+				int fd;
 				rt_uint32_t upload_total = 0,upload = 0;
 				recv_buf[recv_len] = '\0';
 				start = (char *)rt_strstr((char*)recv_buf, "Content-Length:");
@@ -215,34 +226,36 @@ static void httpd_thread_entry(void* parameter)
 												// find start position of the data!
 												end = (char *)rt_strstr((char *)start, eol2);
 												
-												//add file
-												
 												if(end)
 												{
-													PRINT("Start Receiving:");
-													// move pointer over CR LF CR LF
-													end += 4;
-													//upload_total -=  (int)(end - start) - rt_strlen(boundary_value) - 6;
-													upload = recv_len;//(unsigned int)(recv_len - (end - (char *)recv_buf));
-													
-													//add file
-													PRINT("#");
-													if(upload < upload_total)
+													unlink("/ram/firmware.bin");
+													fd = open("/ram/firmware.bin", O_WRONLY | O_CREAT | O_TRUNC, 0);
+													if(fd >=0)
 													{
-														while((recv_len = recv(client_fd, recv_buf, RECV_BUF_LEN, 0)) > 0)
+														PRINT("Start Receiving:");
+														// move pointer over CR LF CR LF
+														end += 4;
+														upload = recv_len;
+														write(fd, end, (recv_len - (end - (char *)recv_buf)));
+														PRINT("#");
+														if(upload < upload_total)
 														{
-															//add file
-															PRINT("#");
-															upload += (unsigned int)recv_len;
-															if(upload >= upload_total)
+															while((recv_len = recv(client_fd, recv_buf, RECV_BUF_LEN, 0)) > 0)
 															{
-																break;
-															}															
+																write(fd, recv_buf, recv_len);
+																PRINT("#");
+																upload += (unsigned int)recv_len;
+																if(upload >= upload_total)
+																{
+																	break;
+																}															
+															}
 														}
+														close(fd);
+														board_flash_firmware_notisfy();
 													}
 												}
 												PRINTLN("");
-												//add file
 											}
 											else
 											{
@@ -250,14 +263,31 @@ static void httpd_thread_entry(void* parameter)
 											}
 										}
 									}
-									
-									
 									rt_free(boundary_value);
 								}
 							}
 						}
 						
 					}
+				}
+				fd = open("/rom/upgrading.html", 0, O_RDONLY);
+				if (fd < 0)
+    			{
+					send_len = rt_sprintf((char *)send_buf,"HTTP/1.0 500 Http Server Error\r\nServer: lwip/2.1.3\r\nContent-type: text/html; charset=UTF-8\r\n\r\n");
+					send(client_fd, send_buf, send_len, 0);
+    			}
+				else
+				{
+					send_len = rt_sprintf((char *)send_buf,"HTTP/1.0 200 OK\r\nServer: lwip/2.1.3\r\nContent-type: text/html; charset=UTF-8\r\n\r\n");
+					send(client_fd, send_buf, send_len, 0);
+					while (1)
+    				{
+        				send_len = read(fd, send_buf, SEND_BUF_LEN);
+
+        				if (send_len <= 0) break;
+						if (send(client_fd, send_buf, send_len, 0) <= 0) break;
+    				}
+					close(fd);
 				}
 			}
         }

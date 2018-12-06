@@ -30,7 +30,7 @@ function RequestURL(url) {
     if (!xmlhttp)
         return "BE";
 
-    xmlhttp.open("get", url, false);
+    xmlhttp.open("GET", url, false);
     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xmlhttp.setRequestHeader("Cache-Control", "no-cache");
     xmlhttp.send("");

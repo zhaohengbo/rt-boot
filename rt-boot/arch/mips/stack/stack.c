@@ -15,6 +15,7 @@
 #include <kernel/rtthread.h>
 #include <arch/mipsregs.h>
 #include <arch/stack.h>
+#include <arch/relocation.h>
 /**
  * @addtogroup PIC32
  */
@@ -26,15 +27,6 @@ rt_uint32_t rt_thread_switch_interrupt_flag;
 rt_uint32_t rt_system_stack;
 
 register rt_uint32_t $GP __asm__ ("$28");
-
-static void relocatable_thread_entry(void * para1,void * para2,void * para3)
-{
-	void (*entry)(void* ) = para1;
-	void (*exit)(void) = para3;
-	void *parameter = para2;
-	entry(parameter);
-	exit();
-}
 
 /**
  * This function will initialize thread stack
@@ -63,7 +55,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
 
     /** Start at stack top */
     stk = (rt_uint32_t *)stack_addr;
-	*(stk)   = (rt_uint32_t) relocatable_thread_entry;        /* pc: Entry Point */
+	*(stk)   = (rt_uint32_t) mips_relocatable_thread_wrapper;        /* pc: Entry Point */
 	*(--stk) = (rt_uint32_t) 0xeeee; 		/* c0_cause */
 	*(--stk) = (rt_uint32_t) 0xffff;		/* c0_badvaddr */
 	*(--stk) = (rt_uint32_t) read_c0_entrylo0();	/* lo */
@@ -75,7 +67,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
 	*(--stk) = (rt_uint32_t) g_gp;	        /* gp */
 	*(--stk) = (rt_uint32_t) 0x0000001b;	/* k1 */
 	*(--stk) = (rt_uint32_t) 0x0000001a;	/* k0 */
-	*(--stk) = (rt_uint32_t) relocatable_thread_entry;	    /* t9 */
+	*(--stk) = (rt_uint32_t) mips_relocatable_thread_wrapper;	    /* t9 */
 	*(--stk) = (rt_uint32_t) 0x00000018;	/* t8 */
 	*(--stk) = (rt_uint32_t) 0x00000017;	/* s7 */
 	*(--stk) = (rt_uint32_t) 0x00000016;	/* s6 */

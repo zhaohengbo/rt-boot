@@ -120,4 +120,15 @@ void arch_relocation(void)
 	while(1)
 		;//halt system
 }
-	
+
+//All task entry
+void mips_relocatable_thread_wrapper(void * para1,void * para2,void * para3)
+{
+	void (*entry)(void* ) = para1;
+	void (*exit)(void) = para3;
+	void *parameter = para2;
+	if(entry)
+		entry(parameter);
+	if(exit)
+		exit();
+}

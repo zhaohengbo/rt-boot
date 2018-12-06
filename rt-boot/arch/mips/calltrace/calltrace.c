@@ -66,10 +66,7 @@ out_of_loop:
 	{
 		rt_kprintf("RA[%2d] : [0x%08x][Ref:0x%08x]\n", depth ,(rt_uint32_t)ra,(rt_uint32_t)ra - rtboot_data.relocation_offset);
 		{
-			extern void rt_thread_exit(void);
-			if ((rt_uint32_t)ra == (rt_uint32_t)(&rt_thread_exit))
-				return depth;
-			else if(((rt_uint32_t)ra < rtboot_data.relocation_base) || ((rt_uint32_t)ra > (rtboot_data.relocation_base + rtboot_data.rtboot_length)))
+			if(((rt_uint32_t)ra < rtboot_data.relocation_base) || ((rt_uint32_t)ra > (rtboot_data.relocation_base + rtboot_data.rtboot_length)))
 				return depth;
 		}
 		
@@ -143,10 +140,7 @@ rt_int32_t calltrace(void)
 	{
 		rt_kprintf("RA[%2d] : [0x%08x][Ref:0x%08x]\n", depth, (rt_uint32_t)ra,(rt_uint32_t)ra - rtboot_data.relocation_offset);
 		{
-			extern void rt_thread_exit(void);
-			if ((rt_uint32_t)ra == (rt_uint32_t)(&rt_thread_exit))
-				return depth;
-			else if(((rt_uint32_t)ra < rtboot_data.relocation_base) || ((rt_uint32_t)ra > (rtboot_data.relocation_base + rtboot_data.rtboot_length)))
+			if(((rt_uint32_t)ra < rtboot_data.relocation_base) || ((rt_uint32_t)ra > (rtboot_data.relocation_base + rtboot_data.rtboot_length)))
 				return depth;
 		}
 
