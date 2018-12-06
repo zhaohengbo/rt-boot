@@ -11,5 +11,6 @@
 
 void rt_hw_console_init(void);
 int soc_console_init(void);
+int rt_hw_console_tstc(void);
 
 #endif /* _SOC_COMMON_H_ */

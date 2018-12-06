@@ -9,6 +9,9 @@
 #include <global/global.h>
 #include <board/spi.h>
 #include <board/flash.h>
+#include <board/console.h>
+#include <loader/image.h>
+#include <board/loader.h>
 
 #include <net/lwip-dhcpd/dhcp_server.h>
 #include <net/lwip-telnetd/telnetd.h>
@@ -20,12 +23,28 @@
 #include <dfs/filesystems/dfs_romfs.h>
 #include <dfs/filesystems/dfs_ramfs.h>
 
+static struct rt_event boot_break_event;
+
+#define BOOT_BREAK_BY_UART 0
+#define BOOT_BREAK_BY_NET 1
+
+void board_break_net_notisfy(void)
+{
+	rt_event_send(&boot_break_event, (1 << BOOT_BREAK_BY_NET));
+}
+
 ALIGN(RT_ALIGN_SIZE)
 static char main_thread_stack[0x400];
 struct rt_thread main_thread;
 void rt_thread_main_thread_entry(void* parameter)
 {
 	struct dfs_ramfs* ramfs;
+	rt_uint32_t boot_break_event_flag = 0;
+	
+	rt_uint32_t break_flag = 0;
+	
+	rt_uint32_t delay_count=5;
+	
 	soc_spi_init();
 	soc_flash_init();
 	dfs_init();
@@ -48,8 +67,38 @@ void rt_thread_main_thread_entry(void* parameter)
 	lwip_system_init();
 	rt_hw_boot_eth_init();
 	dhcpd_start("e0");
-	http_server();
 	break_server();
+	
+	while(delay_count--)
+	{
+		rt_kprintf("Auto Boot Wait Delay %d...\n",delay_count);
+		rt_event_recv(&boot_break_event, 
+					  	(1 << BOOT_BREAK_BY_NET)
+				  	,RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR
+				 	,RT_TICK_PER_SECOND, &boot_break_event_flag);
+		if(boot_break_event_flag & (1 << BOOT_BREAK_BY_NET))
+		{
+			rt_kprintf("Break By Net\n");
+			break_flag = 1;
+			break;
+		}
+		
+		if(rt_hw_console_tstc())
+		{
+			rt_kprintf("Break By Console\n");
+			break_flag = 1;
+			break;
+		}
+		
+	}
+	
+	if(!break_flag)
+	{
+		board_boot_linux();
+		rt_kprintf("Break By Boot-Failed\n");
+	}
+	
+	http_server();
 #ifdef RT_USING_FINSH
     /* init finsh */
     finsh_system_init();
@@ -60,6 +109,7 @@ void rt_thread_main_thread_entry(void* parameter)
 
 int rt_application_init(void)
 {
+	rt_event_init(&boot_break_event, "boot break event", RT_IPC_FLAG_FIFO);
 	rt_thread_init(&main_thread,
                    "main_thread",
                    &rt_thread_main_thread_entry,

@@ -31,6 +31,11 @@ void rt_hw_console_output(const char *str)
     qca953x_lsuart_puts(str);
 }
 
+int rt_hw_console_tstc(void)
+{
+    return qca953x_lsuart_tstc();
+}
+
 struct rt_device soc_console_dev;
 
 static rt_err_t rt_qca953x_lsuart_open(rt_device_t dev, rt_uint16_t oflag)

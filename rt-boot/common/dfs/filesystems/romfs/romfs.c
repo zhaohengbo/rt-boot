@@ -2,8 +2,12 @@
 #include <kernel/rtthread.h>
 #include <dfs/filesystems/dfs_romfs.h>
 
-static const struct romfs_dirent _romfs_root_ram[] = {
+static const rt_uint8_t _romfs_root_ram_RAMFS_DIR[] = {
 
+};
+
+static const struct romfs_dirent _romfs_root_ram[] = {
+    {ROMFS_DIRENT_FILE, "RAMFS_DIR", (rt_uint8_t *)_romfs_root_ram_RAMFS_DIR, sizeof(_romfs_root_ram_RAMFS_DIR)/sizeof(_romfs_root_ram_RAMFS_DIR[0])}
 };
 
 static const rt_uint8_t _romfs_root_rom_404_html[] = {

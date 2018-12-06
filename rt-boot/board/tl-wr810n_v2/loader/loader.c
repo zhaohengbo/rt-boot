@@ -24,7 +24,7 @@ int board_linux_loader(image_header_t *hdr)
 	return 0;
 }
 
-static void board_boot_linux(void)
+void board_boot_linux(void)
 {
 	arch_dcache_invalidate(0x9F000000,0x1000000);
 	
