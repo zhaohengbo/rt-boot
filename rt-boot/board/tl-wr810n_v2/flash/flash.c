@@ -41,9 +41,9 @@ static struct rt_event board_flash_event;
 static rt_int32_t board_flash_status;
 
 #define BOARD_FLASH_EVENT_FIRMWARE 0
-#define BOARD_FLASH_EVENT_UBOOT 0
-#define BOARD_FLASH_EVENT_ART 0
-#define BOARD_FLASH_EVENT_ALL 0
+#define BOARD_FLASH_EVENT_UBOOT 1
+#define BOARD_FLASH_EVENT_ART 2
+#define BOARD_FLASH_EVENT_FULL 3
 
 rt_int32_t board_flash_get_status(void)
 {
@@ -57,6 +57,32 @@ void board_flash_firmware_notisfy(void)
 	rt_event_send(&board_flash_event, (1 << BOARD_FLASH_EVENT_FIRMWARE));
 }
 
+void board_flash_uboot_notisfy(void)
+{
+	if(board_flash_status > 0)
+		board_flash_status = 0;
+	rt_event_send(&board_flash_event, (1 << BOARD_FLASH_EVENT_UBOOT));
+}
+
+void board_flash_art_notisfy(void)
+{
+	if(board_flash_status > 0)
+		board_flash_status = 0;
+	rt_event_send(&board_flash_event, (1 << BOARD_FLASH_EVENT_ART));
+}
+
+void board_flash_full_notisfy(void)
+{
+	if(board_flash_status > 0)
+		board_flash_status = 0;
+	rt_event_send(&board_flash_event, (1 << BOARD_FLASH_EVENT_FULL));
+}
+
+void board_flash_error_notisfy(void)
+{
+	board_flash_status = 404;
+}
+
 static void board_flash_thread_entry(void* parameter)
 {
 	rt_uint32_t board_flash_event_flag;
@@ -64,12 +90,12 @@ static void board_flash_thread_entry(void* parameter)
 	
 	int firmware_start = 0;
 	int firmware_length = 0;
-    //int uboot_start = 0;
-    //int uboot_length = 0;
-    //int art_start = 0;
-    //int art_length = 0;
-    //int full_start = 0;
-    //int full_length = 0;
+    int uboot_start = 0;
+    int uboot_length = 0;
+    int art_start = 0;
+    int art_length = 0;
+    int full_start = 0;
+    int full_length = 0;
 	
 	if (sfud_dev == RT_NULL)
 	{
@@ -84,42 +110,42 @@ static void board_flash_thread_entry(void* parameter)
 		case 16:
 			firmware_start = 0x20000;
 			firmware_length = 0xFC0000;
-            //uboot_start = 0x00000;
-            //uboot_length = 0x20000;
-            //art_start = 0xFE0000;
-            //art_length = 0x20000;
-            //full_start = 0x0;
-            //full_length = 0x1000000;
+            uboot_start = 0x00000;
+            uboot_length = 0x20000;
+            art_start = 0xFE0000;
+            art_length = 0x20000;
+            full_start = 0x0;
+            full_length = 0x1000000;
 			break;
 		case 8:
 			firmware_start = 0x20000;
 			firmware_length = 0x7C0000;
-            //uboot_start = 0x00000;
-            //uboot_length = 0x20000;
-            //art_start = 0x7E0000;
-            //art_length = 0x20000;
-            //full_start = 0x0;
-            //full_length = 0x800000;
+            uboot_start = 0x00000;
+            uboot_length = 0x20000;
+            art_start = 0x7E0000;
+            art_length = 0x20000;
+            full_start = 0x0;
+            full_length = 0x800000;
 			break;
 		case 4:
 			firmware_start = 0x20000;
 			firmware_length = 0x3C0000;
-            //uboot_start = 0x00000;
-            //uboot_length = 0x20000;
-            //art_start = 0x3E0000;
-            //art_length = 0x20000;
-            //full_start = 0x0;
-            //full_length = 0x400000;
+            uboot_start = 0x00000;
+            uboot_length = 0x20000;
+            art_start = 0x3E0000;
+            art_length = 0x20000;
+            full_start = 0x0;
+            full_length = 0x400000;
 			break;
 		case 2:
 			firmware_start = 0x20000;
 			firmware_length = 0x1C0000;
-            //uboot_start = 0x00000;
-            //uboot_length = 0x20000;
-            //art_start = 0x1E0000;
-            //art_length = 0x20000;
-            //full_start = 0x0;
-            //full_length = 0x200000;
+            uboot_start = 0x00000;
+            uboot_length = 0x20000;
+            art_start = 0x1E0000;
+            art_length = 0x20000;
+            full_start = 0x0;
+            full_length = 0x200000;
 			break;
 		default:
 			board_flash_status = -1;
@@ -127,14 +153,45 @@ static void board_flash_thread_entry(void* parameter)
 	}
 	while(1)
 	{
+		int flash_start = 0;
+		int flash_length = 0;
+		const char *open_file = "";
 		rt_event_recv(&board_flash_event, 
 					  (1 << BOARD_FLASH_EVENT_FIRMWARE) |
 					  (1 << BOARD_FLASH_EVENT_UBOOT) |
 					  (1 << BOARD_FLASH_EVENT_ART) | 
-					  (1 << BOARD_FLASH_EVENT_ALL) 
+					  (1 << BOARD_FLASH_EVENT_FULL) 
 					  ,RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
 					  RT_WAITING_FOREVER, &board_flash_event_flag);
 		if(board_flash_event_flag & (1 << BOARD_FLASH_EVENT_FIRMWARE))
+		{
+			flash_start = firmware_start;
+			flash_length = firmware_length;
+			open_file = "/ram/firmware.bin";
+		}
+		else if(board_flash_event_flag & (1 << BOARD_FLASH_EVENT_UBOOT))
+		{
+			flash_start = uboot_start;
+			flash_length = uboot_length;
+			open_file = "/ram/uboot.bin";
+		}
+		else if(board_flash_event_flag & (1 << BOARD_FLASH_EVENT_ART))
+		{
+			flash_start = art_start;
+			flash_length = art_length;
+			open_file = "/ram/art.bin";
+		}
+		else if(board_flash_event_flag & (1 << BOARD_FLASH_EVENT_FULL))
+		{
+			flash_start = full_start;
+			flash_length = full_length;
+			open_file = "/ram/full.bin";
+		}
+		else
+		{
+			continue;
+		}
+		
 		{
 			rt_uint8_t *buffer;
 			int fd;
@@ -144,25 +201,25 @@ static void board_flash_thread_entry(void* parameter)
 			buffer = rt_malloc(0x1000);
 			if(buffer)
 			{
-				fd = open("/ram/firmware.bin", 0, O_RDONLY);
+				fd = open(open_file, 0, O_RDONLY);
 				if(fd < 0)
 				{
 					board_flash_status = -1;
 				}
 				else
 				{
-					write_off = firmware_start;
+					write_off = flash_start;
 					
-					while (write_off < (firmware_start + firmware_length))
+					while (write_off < (flash_start + flash_length))
 					{
 						sfud_erase(sfud_dev, write_off, 0x1000);
 						
-						board_flash_status = ((write_off - firmware_start)*100 / firmware_length) / 2;
+						board_flash_status = ((write_off - flash_start)*100 / flash_length) / 2;
 						
 						write_off+=0x1000;
 					}
 					
-					write_off = firmware_start;
+					write_off = flash_start;
 					
 					while (1)
     				{
@@ -173,7 +230,7 @@ static void board_flash_thread_entry(void* parameter)
 						sfud_write(sfud_dev,write_off,read_length,buffer);
 						write_off+=read_length;
 						
-						board_flash_status = ((write_off - firmware_start)*100 / firmware_length) / 2 + 50;
+						board_flash_status = ((write_off - flash_start)*100 / flash_length) / 2 + 50;
     				}
 					board_flash_status = 100;
 					close(fd);

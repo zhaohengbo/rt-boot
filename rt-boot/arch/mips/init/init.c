@@ -19,15 +19,15 @@ static char ram_size[16];
 /* Here, we need to part the memory */
 void arch_early_init(void)
 {	
-	rtboot_data.system_memstart = K0BASE;
-	rtboot_data.system_memend = K0BASE + rtboot_data.system_memsize;
+	rtboot_data.system_memstart = CFG_SDRAM_BASE;
+	rtboot_data.system_memend = CFG_SDRAM_BASE + rtboot_data.system_memsize;
 	
 	rtboot_data.rtboot_length = (rt_uint32_t)&rtboot_end - CFG_MONITOR_BASE;
 	/*
 	 * Now that we have DRAM mapped and working, we can
 	 * relocate the code and continue running from DRAM
 	 */
-	rtboot_data.relocation_base = CFG_SDRAM_BASE + rtboot_data.system_memsize;
+	rtboot_data.relocation_base = rtboot_data.system_memend;
 	/*
 	 * We can reserve some RAM "on top" here,
 	 * round down to next 4 kB limit

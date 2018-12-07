@@ -53,7 +53,7 @@ static void sysfs_init(void)
 	rt_uint32_t ramfs_start,ramfs_size;
 	rt_uint32_t ramfs_end = rtboot_data.end_stack_base;
 	
-	ramfs_size = (ramfs_end - rtboot_data.system_memstart) / 3;
+	ramfs_size = (ramfs_end - rtboot_data.system_memstart) / 2;
 	ramfs_start = ramfs_end - ramfs_size;
 	
 	dfs_init();

@@ -12,5 +12,9 @@
 rt_err_t board_flash_init(void);
 rt_int32_t board_flash_get_status(void);
 void board_flash_firmware_notisfy(void);
+void board_flash_uboot_notisfy(void);
+void board_flash_art_notisfy(void);
+void board_flash_full_notisfy(void);
+void board_flash_error_notisfy(void);
 
 #endif /* _SOC_COMMON_H_ */

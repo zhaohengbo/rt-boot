@@ -218,18 +218,77 @@ static void httpd_thread_entry(void* parameter)
 										start = (char *)rt_strstr((char *)recv_buf, (char *)boundary_value);
 										if(start)
 										{
-											end = (char *)rt_strstr((char *)start, "name=\"fw_file\"");
+											int type;
+											if((end = (char *)rt_strstr((char *)start, "name=\"fw_file\"")) != 0)
+											{
+												type = 0;
+											}
+											else if((end = (char *)rt_strstr((char *)start, "name=\"uboot_file\"")) != 0)
+											{
+												type = 1;
+											}
+											else if((end = (char *)rt_strstr((char *)start, "name=\"art_file\"")) != 0)
+											{
+												type = 2;
+											}
+											else if((end = (char *)rt_strstr((char *)start, "name=\"full_file\"")) != 0)
+											{
+												type = 3;
+											}
+											else
+											{
+												type = -1;
+											}
+											
 											if(end)
 											{
-												PRINTLN("Upgrade type: firmware");
+												if(type == 0)
+													PRINTLN("Upgrade type: firmware");
+												else if(type == 1)
+													PRINTLN("Upgrade type: uboot");
+												else if(type == 2)
+													PRINTLN("Upgrade type: art");
+												else if(type == 3)
+													PRINTLN("Upgrade type: full");
 												end = RT_NULL;
 												// find start position of the data!
 												end = (char *)rt_strstr((char *)start, eol2);
 												
 												if(end)
 												{
-													unlink("/ram/firmware.bin");
-													fd = open("/ram/firmware.bin", O_WRONLY | O_CREAT | O_TRUNC, 0);
+													if(type == 0)
+													{
+														unlink("/ram/firmware.bin");
+														unlink("/ram/uboot.bin");
+														unlink("/ram/art.bin");
+														unlink("/ram/full.bin");
+														fd = open("/ram/firmware.bin", O_WRONLY | O_CREAT | O_TRUNC, 0);
+													}
+													else if(type == 1)
+													{
+														unlink("/ram/firmware.bin");
+														unlink("/ram/uboot.bin");
+														unlink("/ram/art.bin");
+														unlink("/ram/full.bin");
+														fd = open("/ram/uboot.bin", O_WRONLY | O_CREAT | O_TRUNC, 0);
+													}
+													else if(type == 2)
+													{
+														unlink("/ram/firmware.bin");
+														unlink("/ram/uboot.bin");
+														unlink("/ram/art.bin");
+														unlink("/ram/full.bin");
+														fd = open("/ram/art.bin", O_WRONLY | O_CREAT | O_TRUNC, 0);
+													}
+													else if(type == 3)
+													{
+														unlink("/ram/firmware.bin");
+														unlink("/ram/uboot.bin");
+														unlink("/ram/art.bin");
+														unlink("/ram/full.bin");
+														fd = open("/ram/full.bin", O_WRONLY | O_CREAT | O_TRUNC, 0);
+													}
+													
 													if(fd >=0)
 													{
 														PRINT("Start Receiving:");
@@ -252,7 +311,16 @@ static void httpd_thread_entry(void* parameter)
 															}
 														}
 														close(fd);
-														board_flash_firmware_notisfy();
+														if(type == 0)
+															board_flash_firmware_notisfy();
+														else if(type == 1)
+															board_flash_uboot_notisfy();
+														else if(type == 2)
+															board_flash_art_notisfy();
+														else if(type == 3)
+															board_flash_full_notisfy();
+														else
+															board_flash_error_notisfy();
 													}
 												}
 												PRINTLN("");
