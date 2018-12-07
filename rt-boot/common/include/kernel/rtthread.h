@@ -525,19 +525,9 @@ char* strdup(const char* str);
 char *rt_strstr(const char *str1, const char *str2);
 rt_int32_t rt_sscanf(const char *buf, const char *fmt, ...);
 char *rt_strncpy(char *dest, const char *src, rt_ubase_t n);
-char *rt_strcpy(char* dst,const char* src);
-char *rt_strcat(char *dst,const char *src);
-char *rt_strchr(const char *s,int c);
-char *rt_strrchr(const char *s, int c);
 void *rt_memmove(void *dest, const void *src, rt_ubase_t n);
 rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count);
 rt_uint32_t rt_strcasecmp(const char *a, const char *b);
-
-long rt_atol(const char *nptr);
-int rt_atoi(const char *nptr);
-
-void rt_srand(unsigned int seed);
-int rt_rand(void);
 
 void rt_show_version(void);
 
@@ -547,6 +537,8 @@ void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t
 
 void rt_assert_handler(const char *ex, const char *func, rt_size_t line);
 #endif /* RT_DEBUG */
+
+#include <fix/fix_rtt.h>
 
 #ifdef RT_USING_FINSH
 #include <finsh/finsh_api.h>

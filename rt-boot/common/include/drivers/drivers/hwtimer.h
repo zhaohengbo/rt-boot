@@ -10,7 +10,7 @@
 #define __HWTIMER_H__
 
 #include <kernel/rtthread.h>
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 
 #ifdef __cplusplus
 extern "C" {

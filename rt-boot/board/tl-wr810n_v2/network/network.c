@@ -24,6 +24,8 @@
 #include <soc/net/ag71xx/ag71xx.h>
 #include <soc/timer.h>
 
+static char eth_name[32];
+
 static struct ag71xx_mdio am;
 static struct ag71xx_phy ag_phy;
 static struct ag71xx_switch ag_sw;
@@ -32,9 +34,49 @@ static struct ag71xx_eth ag_eth;
 static struct ar7xxx_eth_fifos ag_fifos;
 static struct ag71xx_platform_data ag_pdata;
 
-int board_network_init(void)
+struct rt_event board_eth_send_event;
+
+void board_eth_recv_register_cb(void (*cb)(void *),void *para)
 {
+	ag_eth.eth_reg_recv_cb(&ag_eth, cb, para);
+}
+
+void board_eth_send_active(void)
+{
+	rt_event_send(&board_eth_send_event, 1);
+}
+
+void board_eth_recv(rt_uint8_t *ip_buffer,rt_uint32_t *ip_length)
+{
+	rt_uint8_t *buffer;
+	rt_int32_t length;
+	
+	length = ag_eth.eth_recv(&ag_eth, 0, &buffer);
+	if(length == -1)
+		*ip_length = 0;
+	else
+	{
+		rt_memcpy(ip_buffer, buffer, length);
+		*ip_length = length;
+	
+		ag_eth.eth_free_pkt(&ag_eth, buffer, length);
+	}
+}
+
+void board_eth_send(rt_uint8_t *ip_buffer,rt_uint32_t ip_length)
+{
+	rt_uint32_t flag;
+	while(ag_eth.eth_send(&ag_eth, ip_buffer, ip_length) == -1)
+	{
+		rt_event_recv(&board_eth_send_event, 1, RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,RT_WAITING_FOREVER, &flag);
+	}
+}
+
+void board_network_init(void)
+{
+#ifdef AG71XX_DEBUG
 	struct ag71xx_debug ag_dbg;
+#endif
 	
 	ag71xx_mdio_struct_init(&am);
 	ar7240sw_phy_struct_init(&ag_phy,&ag_sw);
@@ -84,6 +126,7 @@ int board_network_init(void)
 	ag_pdata.mac_addr[4] = 22;
 	ag_pdata.mac_addr[5] = 22;
 	
+#ifdef AG71XX_DEBUG	
 	rt_memset(&ag_dbg,0,sizeof(struct ag71xx_debug));
 	
 	ag_dbg.debug_mdio[1] = &am;
@@ -93,6 +136,7 @@ int board_network_init(void)
 	ag_dbg.debug_eth[1] = &ag_eth;
 	
 	ag71xx_debug_init(&ag_dbg);
+#endif
 
 	ag_gmac.gmac_init(&ag_gmac);
 	am.mdio_init(&am);
@@ -100,41 +144,14 @@ int board_network_init(void)
 	ag_phy.phy_init(ag_phy.am_bus);
 	
 	ag_eth.eth_init(&ag_eth);
+	
+	rt_sprintf(eth_name,"AG71XX");
+	rtboot_data.eth_name = eth_name;
+}
+
+void board_network_start(void)
+{
+	rt_event_init(&board_eth_send_event, "board eth recv event", RT_IPC_FLAG_FIFO);
+	ag_eth.eth_reg_send_cb(&ag_eth, (void *)board_eth_send_active, 0);
 	ag_eth.eth_start(&ag_eth);
-	
-	//mdelay(4000);
-	
-	return 0;
-}
-
-void board_eth_recv_register_event(struct rt_event *event,rt_uint32_t id)
-{
-	ag_eth.eth_regis_recv_event(&ag_eth, event,id);
-}
-
-void board_eth_send_register_event(struct rt_event *event,rt_uint32_t id)
-{
-	ag_eth.eth_regis_send_event(&ag_eth, event,id);
-}
-
-void board_eth_recv(rt_uint8_t *ip_buffer,rt_uint32_t *ip_length)
-{
-	rt_uint8_t *buffer;
-	rt_int32_t length;
-	
-	length = ag_eth.eth_recv(&ag_eth, 0, &buffer);
-	if(length == -1)
-		*ip_length = 0;
-	else
-	{
-		rt_memcpy(ip_buffer, buffer, length);
-		*ip_length = length;
-	
-		ag_eth.eth_free_pkt(&ag_eth, buffer, length);
-	}
-}
-
-rt_int32_t board_eth_send(rt_uint8_t *ip_buffer,rt_uint32_t ip_length)
-{
-	return ag_eth.eth_send(&ag_eth, ip_buffer, ip_length);
 }

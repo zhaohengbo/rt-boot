@@ -8,7 +8,7 @@
  * 2018-09-10     heyuanjie87   first version
  */
 
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 
 #define MTDTONAND(x)    ((rt_nand_t*)(x))
 #define NOTALIGNED(x)   ((x & (chip->page_size - 1)) != 0)

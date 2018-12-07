@@ -1,13 +1,12 @@
 include $(TOPDIR)/config.mk
 
-LIB	= libfix.a
+LIB	= liblwip-eth.a
 
 START	=
 OBJS	=
 SOBJS	=
 
-OBJS	+= fix_gcc.o
-OBJS	+= fix_rtt.o
+OBJS	+= lwip-eth.o
 
 all:	.depend $(START) $(LIB)
 

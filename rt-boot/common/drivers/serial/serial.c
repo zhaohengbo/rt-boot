@@ -25,7 +25,7 @@
 
 #include <kernel/rthw.h>
 #include <kernel/rtthread.h>
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 
 // #define DEBUG_ENABLE
 #define DEBUG_LEVEL         DBG_LOG

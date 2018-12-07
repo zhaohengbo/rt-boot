@@ -11,7 +11,7 @@
 
 #include <kernel/rthw.h>
 #include <kernel/rtthread.h>
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 
 #define CAN_LOCK(can)   rt_mutex_take(&(can->lock), RT_WAITING_FOREVER)
 #define CAN_UNLOCK(can) rt_mutex_release(&(can->lock))

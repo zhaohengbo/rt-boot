@@ -16,6 +16,9 @@
 #include <soc/qca953x/qca953x_irq.h>
 #include <soc/qca953x/qca953x_reset.h>
 
+static char soc_name[32];
+static char clock_info[128];
+
 void soc_early_init(void)
 {	
 	arch_early_init();
@@ -32,8 +35,19 @@ void soc_late_init(void)
 	/* init operating system timer */	
     arch_timer_init();
 	
-	qca953x_all_led_on();
+	qca953x_gpio_init();
 
+	rt_sprintf(soc_name,"QCA953X");
+	rtboot_data.soc_name = soc_name;
+	
+    rt_sprintf(clock_info,"CPU:%dMhz,DDR:%dMhz,AHB:%dMhz,REF:%dMhz,SPI:%dMhz"
+               ,rtboot_data.cpu_clk/1000/1000
+               ,rtboot_data.ddr_clk/1000/1000
+               ,rtboot_data.ahb_clk/1000/1000
+               ,rtboot_data.ref_clk/1000/1000
+               ,rtboot_data.spi_clk/1000/1000
+               );
+	rtboot_data.clock_info = clock_info;
 }
 
 void soc_deinit(void)

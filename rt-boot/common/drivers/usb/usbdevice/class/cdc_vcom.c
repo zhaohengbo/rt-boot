@@ -15,7 +15,7 @@
 #include <kernel/rthw.h>
 #include <kernel/rtthread.h>
 #include <rtservice.h>
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 #include <drivers/drivers/serial.h>
 #include "drivers/usb_device.h"
 #include "cdc.h"

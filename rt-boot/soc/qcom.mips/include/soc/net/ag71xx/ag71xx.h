@@ -1,6 +1,8 @@
 #ifndef __AG71XX_H__
 #define __AG71XX_H__
 
+//#define AG71XX_DEBUG
+
 #ifndef AG71XX_DEBUG
 #define ag71xx_error_printf(fmt,args...) rt_kprintf(fmt,##args)
 #define ag71xx_debug_printf(fmt,args...)
@@ -271,17 +273,17 @@ struct ag71xx_eth {
 	
 	rt_int32_t (*eth_init)(struct ag71xx_eth *ag_eth);
 	rt_int32_t (*eth_send)(struct ag71xx_eth *ag_eth, void *packet, rt_int32_t length);
-	void (*eth_regis_send_event)(struct ag71xx_eth *ag_eth, struct rt_event *event,rt_uint32_t id);
+	void (*eth_reg_send_cb)(struct ag71xx_eth *ag_eth, void (*cb)(void *), void *para);
 	rt_int32_t (*eth_recv)(struct ag71xx_eth *ag_eth, rt_int32_t flags, rt_uint8_t **packetp);
-	void (*eth_regis_recv_event)(struct ag71xx_eth *ag_eth, struct rt_event *event,rt_uint32_t id);
+	void (*eth_reg_recv_cb)(struct ag71xx_eth *ag_eth, void (*cb)(void *), void *para);
 	rt_int32_t (*eth_free_pkt)(struct ag71xx_eth *ag_eth, rt_uint8_t *packet, rt_int32_t length);
 	rt_int32_t (*eth_start)(struct ag71xx_eth *ag_eth);
 	void (*eth_stop)(struct ag71xx_eth *ag_eth);
 	
-	struct rt_event *eth_send_event;
-	rt_uint32_t eth_send_event_id;
-	struct rt_event *eth_recv_event;
-	rt_uint32_t eth_recv_event_id;
+	void (*send_cb)(void *para);
+	void *send_cb_para;
+	void (*recv_cb)(void *para);
+	void *recv_cb_para;
 	
 	struct ag71xx_mdio *mdio;
 	struct ag71xx_gmac *gmac;
@@ -291,6 +293,7 @@ struct ag71xx_eth {
 	struct ag71xx_platform_data *pdata;
 };
 
+#ifdef AG71XX_DEBUG
 struct ag71xx_debug {
 	struct ag71xx_mdio *debug_mdio[2];
     struct ag71xx_phy *debug_phy_mdio;
@@ -298,11 +301,14 @@ struct ag71xx_debug {
 	struct ag71xx_gmac *debug_gmac[2];
 	struct ag71xx_eth *debug_eth[2];
 };
+#endif
 
 void ag71xx_mdio_struct_init(struct ag71xx_mdio *am);
 void ar7240sw_phy_struct_init(struct ag71xx_phy *ag_phy,struct ag71xx_switch *ag_sw);
 void ag71xx_gmac_struct_init(struct ag71xx_gmac *ag_gmac);
 void ag71xx_eth_struct_init(struct ag71xx_eth *ag_eth);
+#ifdef AG71XX_DEBUG
 void ag71xx_debug_init(struct ag71xx_debug *ag_dbg);
+#endif
 
 #endif

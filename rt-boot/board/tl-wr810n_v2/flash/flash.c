@@ -32,6 +32,8 @@ static struct rt_spi_device spi_flash_device;
 static rt_spi_flash_device_t flash_chip_device;
 static const sfud_flash *sfud_dev;
 
+static char flash_info[64];
+
 ALIGN(RT_ALIGN_SIZE)
 static char board_flash_thread_stack[0x1000];
 struct rt_thread board_flash_thread;
@@ -50,7 +52,8 @@ rt_int32_t board_flash_get_status(void)
 
 void board_flash_firmware_notisfy(void)
 {
-	board_flash_status = 0;
+	if(board_flash_status > 0)
+		board_flash_status = 0;
 	rt_event_send(&board_flash_event, (1 << BOARD_FLASH_EVENT_FIRMWARE));
 }
 
@@ -78,6 +81,16 @@ static void board_flash_thread_entry(void* parameter)
 	
 	switch(flash_size)
 	{
+		case 16:
+			firmware_start = 0x20000;
+			firmware_length = 0xFC0000;
+            //uboot_start = 0x00000;
+            //uboot_length = 0x20000;
+            //art_start = 0xFE0000;
+            //art_length = 0x20000;
+            //full_start = 0x0;
+            //full_length = 0x1000000;
+			break;
 		case 8:
 			firmware_start = 0x20000;
 			firmware_length = 0x7C0000;
@@ -88,7 +101,28 @@ static void board_flash_thread_entry(void* parameter)
             //full_start = 0x0;
             //full_length = 0x800000;
 			break;
+		case 4:
+			firmware_start = 0x20000;
+			firmware_length = 0x3C0000;
+            //uboot_start = 0x00000;
+            //uboot_length = 0x20000;
+            //art_start = 0x3E0000;
+            //art_length = 0x20000;
+            //full_start = 0x0;
+            //full_length = 0x400000;
+			break;
+		case 2:
+			firmware_start = 0x20000;
+			firmware_length = 0x1C0000;
+            //uboot_start = 0x00000;
+            //uboot_length = 0x20000;
+            //art_start = 0x1E0000;
+            //art_length = 0x20000;
+            //full_start = 0x0;
+            //full_length = 0x200000;
+			break;
 		default:
+			board_flash_status = -1;
 			return;
 	}
 	while(1)
@@ -105,7 +139,7 @@ static void board_flash_thread_entry(void* parameter)
 			rt_uint8_t *buffer;
 			int fd;
 			int read_length;
-			int write_off = firmware_start;
+			int write_off;
 			board_flash_status = 0;
 			buffer = rt_malloc(0x1000);
 			if(buffer)
@@ -117,7 +151,18 @@ static void board_flash_thread_entry(void* parameter)
 				}
 				else
 				{
-					sfud_erase(sfud_dev, firmware_start, firmware_length);
+					write_off = firmware_start;
+					
+					while (write_off < (firmware_start + firmware_length))
+					{
+						sfud_erase(sfud_dev, write_off, 0x1000);
+						
+						board_flash_status = ((write_off - firmware_start)*100 / firmware_length) / 2;
+						
+						write_off+=0x1000;
+					}
+					
+					write_off = firmware_start;
 					
 					while (1)
     				{
@@ -128,7 +173,7 @@ static void board_flash_thread_entry(void* parameter)
 						sfud_write(sfud_dev,write_off,read_length,buffer);
 						write_off+=read_length;
 						
-						board_flash_status = (write_off - firmware_start)*100 / firmware_length;
+						board_flash_status = ((write_off - firmware_start)*100 / firmware_length) / 2 + 50;
     				}
 					board_flash_status = 100;
 					close(fd);
@@ -168,7 +213,7 @@ static rt_err_t rt_hw_spi_flash_attach(void)
 	return RT_EOK;
 }
 
-rt_err_t soc_flash_init(void)
+rt_err_t board_flash_init(void)
 {
 	rt_err_t result;
 	result = rt_hw_spi_flash_attach();
@@ -180,7 +225,10 @@ rt_err_t soc_flash_init(void)
     if (flash_chip_device == RT_NULL)
 		return RT_ERROR;
 	sfud_dev = (sfud_flash_t)flash_chip_device->user_data;
-	rt_kprintf("SPI-FLASH:%dMB\n",sfud_dev->chip.capacity / 1024 / 1024);
+
+	rt_sprintf(flash_info,"%dMB[SPI-FLASH]",sfud_dev->chip.capacity / 1024 / 1024);
+	rtboot_data.flash_info = flash_info;
+	
 	board_flash_thread_init();
 	return RT_EOK;
 }

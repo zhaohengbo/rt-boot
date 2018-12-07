@@ -10,7 +10,7 @@
 
 #include <kernel/rthw.h>
 #include <kernel/rtthread.h>
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 
 #include "audio_pipe.h"
 

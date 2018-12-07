@@ -31,11 +31,6 @@ void rt_hw_console_output(const char *str)
     qca953x_lsuart_puts(str);
 }
 
-int rt_hw_console_tstc(void)
-{
-    return qca953x_lsuart_tstc();
-}
-
 struct rt_device soc_console_dev;
 
 static rt_err_t rt_qca953x_lsuart_open(rt_device_t dev, rt_uint16_t oflag)
@@ -103,7 +98,7 @@ static rt_err_t rt_qca953x_lsuart_init (rt_device_t dev)
 	qca953x_interrupt_install(QCA953X_UART_INT, rt_qca953x_lsuart_irq_handler,0, "qca953x_lsuart_handler");
 	
     qca953x_interrupt_mask(QCA953X_UART_INT);
-	
+
 	qca_soc_reg_read_set(QCA_LSUART_IER_REG, QCA_LSUART_IER_ERBFI_MASK);
 	
     return RT_EOK;

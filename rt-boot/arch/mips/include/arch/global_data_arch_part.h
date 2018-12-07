@@ -1,14 +1,15 @@
 	/* system memory information */
+	rt_uint32_t system_memstart;
 	rt_uint32_t system_memsize;
+	rt_uint32_t system_memend;
 	rt_uint32_t boot_param_pointer;
 	rt_uint32_t rtboot_length;
 	rt_uint32_t relocation_ebase;
 	rt_uint32_t malloc_start_base;
 	rt_uint32_t malloc_end_base;
-	rt_uint32_t ramfs_start_base;
-	rt_uint32_t ramfs_end_base;
 	rt_uint32_t relocation_base;
 	rt_uint32_t start_stack_base;
+	rt_uint32_t end_stack_base;
 	/* relocation information */
 	rt_uint32_t old_gp;
 	rt_uint32_t new_gp;

@@ -9,7 +9,7 @@
  * 2014-08-03     bernard       fix some compiling warning
  */
 
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 
 static rt_size_t i2c_bus_device_read(rt_device_t dev,
                                      rt_off_t    pos,

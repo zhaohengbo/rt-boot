@@ -11,7 +11,7 @@
 #include <drivers/drivers/pin.h>
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
+#include <finsh/finsh.h>
 #endif
 
 static struct rt_device_pin _hw_pin;

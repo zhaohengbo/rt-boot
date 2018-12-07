@@ -13,7 +13,7 @@
 #include <kernel/rthw.h>
 #include <kernel/rtthread.h>
 #include <rtservice.h>
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 
 #include "drivers/usb_common.h"
 #include "drivers/usb_device.h"

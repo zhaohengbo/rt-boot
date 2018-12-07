@@ -15,7 +15,7 @@
  * 2017-11-25     ZYH               fix it and add OS descriptor
  */
 
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 #include "cdc.h"
 #include "rndis.h"
 #include "ndis.h"

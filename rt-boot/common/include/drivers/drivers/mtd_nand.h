@@ -16,7 +16,7 @@
 #ifndef __MTD_NAND_H__
 #define __MTD_NAND_H__
 
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 
 struct rt_mtd_nand_driver_ops;
 #define RT_MTD_NAND_DEVICE(device)  ((struct rt_mtd_nand_device*)(device))

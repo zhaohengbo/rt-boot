@@ -8,7 +8,7 @@
  * 2012-04-25     weety         first version
  */
 
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 
 #ifdef RT_I2C_BIT_DEBUG
 #define bit_dbg(fmt, ...)   rt_kprintf(fmt, ##__VA_ARGS__)

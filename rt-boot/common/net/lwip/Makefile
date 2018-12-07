@@ -55,7 +55,6 @@ OBJS	+= core/timeouts.o
 OBJS	+= core/udp.o
 OBJS	+= netif/ethernet.o
 OBJS	+= netif/ethernetif.o
-OBJS	+= lwip-eth.o
 
 all:	.depend $(START) $(LIB)
 

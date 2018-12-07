@@ -19,6 +19,8 @@
 #include <soc/net/ag71xx/ag71xx.h>
 #include <soc/timer.h>
 
+#ifdef AG71XX_DEBUG
+
 struct ag71xx_debug ag_debug;
 
 static void mdio(uint8_t argc, char **argv) 
@@ -387,3 +389,5 @@ void ag71xx_debug_init(struct ag71xx_debug *ag_dbg)
 {
 	rt_memcpy(&ag_debug,ag_dbg,sizeof(struct ag71xx_debug));
 }
+
+#endif

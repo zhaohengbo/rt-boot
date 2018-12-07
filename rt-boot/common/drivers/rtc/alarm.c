@@ -10,7 +10,7 @@
  */
 
 #include <kernel/rtthread.h>
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 
 #define RT_RTC_YEARS_MAX         137
 #define RT_ALARM_DELAY             2

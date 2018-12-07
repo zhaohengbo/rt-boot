@@ -61,7 +61,7 @@ static rt_err_t qca953x_spi_configure(struct rt_spi_device *device,
 	return RT_EOK;
 }
 
-rt_err_t soc_spi_init(void)
+rt_err_t board_spi_init(void)
 {
 	qca953x_spi_ops.configure = qca953x_spi_configure;
 	qca953x_spi_ops.xfer = qca953x_spi_xfer;

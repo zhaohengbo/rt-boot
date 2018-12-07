@@ -9,7 +9,7 @@
 #ifndef _BORAD_FLASH_H_
 #define _BORAD_FLASH_H_
 
-rt_err_t soc_flash_init(void);
+rt_err_t board_flash_init(void);
 rt_int32_t board_flash_get_status(void);
 void board_flash_firmware_notisfy(void);
 

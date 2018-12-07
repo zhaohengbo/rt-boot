@@ -12,7 +12,7 @@
 #define __DRV_PWM_H_INCLUDE__
 
 #include <kernel/rtthread.h>
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 
 #define PWM_CMD_ENABLE      (128 + 0)
 #define PWM_CMD_DISABLE     (128 + 1)

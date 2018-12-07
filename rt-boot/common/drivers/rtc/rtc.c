@@ -172,7 +172,7 @@ INIT_COMPONENT_EXPORT(rt_rtc_ntp_sync_init);
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 
 void list_date(void)
 {

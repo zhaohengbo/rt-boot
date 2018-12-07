@@ -13,7 +13,7 @@
  * Pipe Device
  */
 #include <kernel/rtthread.h>
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 
 #ifndef RT_PIPE_BUFSZ
 #define PIPE_BUFSZ    512

@@ -8,7 +8,7 @@
  * 2017-12-23     Bernard           first version
  */
 
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 #include <kernel/rtthread.h>
 
 static const struct rt_clock_cputime_ops *_cputime_ops  = RT_NULL;

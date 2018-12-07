@@ -102,7 +102,7 @@ int linux_loader(rt_uint32_t load_addr,rt_uint32_t unc_len)
 		break;
 	case TPL_IH_VERSION_V3:
 	default:
-		rt_kprintf("unsupported image header0x%08x\n",data);
+		rt_kprintf("unsupported image header : 0x%08x\n",data);
 		return 1;
 	}
 
@@ -167,3 +167,9 @@ int linux_loader(rt_uint32_t load_addr,rt_uint32_t unc_len)
 
 	return 0;
 }
+
+void autoboot_linux(void)
+{
+	board_autoboot_linux();
+}
+MSH_CMD_EXPORT(autoboot_linux, try boot firmware);

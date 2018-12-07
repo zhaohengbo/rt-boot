@@ -8,7 +8,7 @@
  * 2017-11-19     ZYH               first version
  */
 
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 #include "cdc.h"
 
 

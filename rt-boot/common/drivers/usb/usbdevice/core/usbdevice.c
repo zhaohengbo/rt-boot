@@ -10,7 +10,7 @@
  */
 
 #include <kernel/rtthread.h>
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 #include <rtservice.h>
 
 #ifdef RT_USING_USB_DEVICE

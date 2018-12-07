@@ -24,7 +24,7 @@ int board_linux_loader(image_header_t *hdr)
 	return 0;
 }
 
-void board_boot_linux(void)
+void board_autoboot_linux(void)
 {
 	arch_dcache_invalidate(0x9F000000,0x1000000);
 	
@@ -38,4 +38,3 @@ void board_boot_linux(void)
 	rt_kprintf("Starting Linux Kernel...\n");
 	arch_linux_jump(0);
 }
-MSH_CMD_EXPORT(board_boot_linux, try boot firmware);

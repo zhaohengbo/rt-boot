@@ -154,10 +154,10 @@ static rt_int32_t ag71xx_eth_send(struct ag71xx_eth *ag_eth, void *packet, rt_in
 	return 0;
 }
 
-static void ag71xx_eth_regis_send_event(struct ag71xx_eth *ag_eth, struct rt_event *event,rt_uint32_t id)
+static void ag71xx_eth_reg_send_cb(struct ag71xx_eth *ag_eth, void (*cb)(void *), void *para)
 {
-	ag_eth->eth_send_event = event;
-	ag_eth->eth_send_event_id = id;
+	ag_eth->send_cb = cb;
+	ag_eth->send_cb_para = para;
 }
 
 static rt_int32_t ag71xx_eth_recv(struct ag71xx_eth *ag_eth, rt_int32_t flags, rt_uint8_t **packetp)
@@ -207,10 +207,10 @@ static rt_int32_t ag71xx_eth_free_pkt(struct ag71xx_eth *ag_eth, rt_uint8_t *pac
 	return 0;
 }
 
-static void ag71xx_eth_regis_recv_event(struct ag71xx_eth *ag_eth, struct rt_event *event,rt_uint32_t id)
+static void ag71xx_eth_reg_recv_cb(struct ag71xx_eth *ag_eth, void (*cb)(void *), void *para)
 {
-	ag_eth->eth_recv_event = event;
-	ag_eth->eth_recv_event_id = id;
+	ag_eth->recv_cb = cb;
+	ag_eth->recv_cb_para = para;
 }
 
 static rt_int32_t ag71xx_eth_start(struct ag71xx_eth *ag_eth)
@@ -280,9 +280,9 @@ static void ag71xx_eth_irq_handler(int vector,void * para)
 				ag71xx_eth_wr(ag_eth, AG71XX_REG_TX_STATUS, TX_STATUS_PS);
 			}
 			
-			if(ag_eth->eth_send_event)
+			if(ag_eth->send_cb)
 			{
-				rt_event_send(ag_eth->eth_send_event, (1 << ag_eth->eth_send_event_id));
+                ag_eth->send_cb(ag_eth->send_cb_para);
 			}
 		}
 		
@@ -298,9 +298,9 @@ static void ag71xx_eth_irq_handler(int vector,void * para)
 				ag71xx_eth_wr(ag_eth, AG71XX_REG_RX_STATUS, RX_STATUS_PR);
 			}
 			
-			if(ag_eth->eth_recv_event)
+            if(ag_eth->recv_cb)
 			{
-				rt_event_send(ag_eth->eth_recv_event, (1 << ag_eth->eth_recv_event_id));
+                ag_eth->recv_cb(ag_eth->recv_cb_para);
 			}
 		}
 	}
@@ -382,8 +382,8 @@ void ag71xx_eth_struct_init(struct ag71xx_eth *ag_eth)
 {
 	ag_eth->eth_init = ag71xx_eth_init;
 	ag_eth->eth_send = ag71xx_eth_send;
-	ag_eth->eth_regis_send_event = ag71xx_eth_regis_send_event;
-	ag_eth->eth_regis_recv_event = ag71xx_eth_regis_recv_event;
+    ag_eth->eth_reg_send_cb = ag71xx_eth_reg_send_cb;
+    ag_eth->eth_reg_recv_cb = ag71xx_eth_reg_recv_cb;
 	ag_eth->eth_recv = ag71xx_eth_recv;
 	ag_eth->eth_free_pkt = ag71xx_eth_free_pkt;
 	ag_eth->eth_start = ag71xx_eth_start;

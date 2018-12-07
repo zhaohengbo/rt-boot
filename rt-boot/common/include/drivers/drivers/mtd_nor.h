@@ -11,7 +11,7 @@
 #ifndef __MTD_NOR_H__
 #define __MTD_NOR_H__
 
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 
 struct rt_mtd_nor_driver_ops;
 #define RT_MTD_NOR_DEVICE(device)	((struct rt_mtd_nor_device*)(device))

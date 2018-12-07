@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <title>RT-BOOT Web恢复终端</title>
 <link rel="stylesheet" href="/style.css" type="text/css" />
+<script type="text/javascript" src="/ajax.js"></script>
 </head>
 
 <body>
@@ -15,28 +16,60 @@
 			<ul id="navbar"></ul>
 		</div>
 		<div id="page">
-			<table class="system_info">
+	<table class="system_info">
 	<tr>
 		<td class="th">CPU</td>
-		<td>AR7XXX/AR9XXX</td>
+		<td id="soc_info">Fetching...</td>
+	</tr>
+	<tr class="g">
+		<td class="th">Flash</td>
+		<td id="flash_info">Fetching...</td>
 	</tr>
 	<tr class="g">
 		<td class="th">内存</td>
-		<td>64MB</td>
+		<td id="ram_info">Fetching...</td>
 	</tr>
 	<tr class="g">
 		<td class="th">以太网</td>
-		<td>AG71XX</td>
+		<td id="eth_info">Fetching...</td>
 	</tr>
 	<tr>
 		<td class="th">时钟频率</td>
-		<td>Clock: 650MHz</td>
+		<td id="clock_info">Fetching...</td>
 	</tr>
 	<tr class="ed">
 		<td class="th">版本</td>
-		<td>1.0</td>
+		<td id="version_info">Fetching...</td>
 	</tr>
-</table>
+	<script type="text/javascript">
+		var soc_info_ele = document.getElementById("soc_info");
+		var flash_info_ele = document.getElementById("flash_info");
+		var ram_info_ele = document.getElementById("ram_info");
+		var eth_info_ele = document.getElementById("eth_info");
+		var clock_info_ele = document.getElementById("clock_info");
+		var verison_info_ele = document.getElementById("version_info");
+		function fetch_info(url)
+		{
+			var info_data = RequestURL(url);
+			if (info_data == "CE") {
+                return "通信错误";
+            }
+            if (status == "BE") {
+                return "浏览器不支持 Ajax!";
+            }
+            if (status == "SE") {
+                return "RT-BOOT 内部错误!";
+            }
+			return info_data;
+		}
+		soc_info_ele.innerHTML = fetch_info("/cgi/soc_info.html");
+        flash_info_ele.innerHTML = fetch_info("/cgi/flash_info.html");
+		ram_info_ele.innerHTML = fetch_info("/cgi/ram_info.html");
+		eth_info_ele.innerHTML = fetch_info("/cgi/eth_info.html");
+		clock_info_ele.innerHTML = fetch_info("/cgi/clock_info.html");
+		verison_info_ele.innerHTML = fetch_info("/cgi/version_info.html");
+	</script>
+	</table>
 		</div>
 		<div class="clearfloat"> </div>
 	</div>

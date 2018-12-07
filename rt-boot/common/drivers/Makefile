@@ -18,6 +18,8 @@ OBJS	+= spi/spi_core.o
 OBJS	+= spi/spi_dev.o
 OBJS	+= spi/spi_flash_sfud.o
 
+OBJS	+= misc/pin.o
+
 all:	.depend $(START) $(LIB)
 
 $(LIB):	$(OBJS) $(SOBJS)

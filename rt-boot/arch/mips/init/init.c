@@ -11,12 +11,17 @@
 #include <arch/cache.h>
 #include <arch/vector.h>
 #include <arch/coprocessor.h>
+#include <arch/addrspace.h>
 
 register rt_uint32_t $GP __asm__ ("$28");
+static char ram_size[16];
 
 /* Here, we need to part the memory */
 void arch_early_init(void)
 {	
+	rtboot_data.system_memstart = K0BASE;
+	rtboot_data.system_memend = K0BASE + rtboot_data.system_memsize;
+	
 	rtboot_data.rtboot_length = (rt_uint32_t)&rtboot_end - CFG_MONITOR_BASE;
 	/*
 	 * Now that we have DRAM mapped and working, we can
@@ -75,12 +80,8 @@ void arch_early_init(void)
 	
 	rt_memset((void *)(rtboot_data.start_stack_base),0,0x8);
 	
-	rtboot_data.ramfs_end_base = rtboot_data.start_stack_base - 0x4000;
-	rtboot_data.ramfs_end_base &= ~(4096 - 1);
-	
-	rtboot_data.ramfs_start_base = rtboot_data.system_memsize/2 + 0x80000000;
-	if(rtboot_data.ramfs_end_base < rtboot_data.ramfs_start_base)
-		rtboot_data.ramfs_start_base = rtboot_data.ramfs_end_base;
+	rtboot_data.end_stack_base = rtboot_data.start_stack_base - 0x4000;
+	rtboot_data.end_stack_base &= ~(4096 - 1);
 	
 	arch_cache_init();
 }
@@ -109,6 +110,9 @@ void arch_late_init(void)
     /* init hardware fpu */
     rt_hw_fpu_init();
 #endif
+	
+	rt_sprintf(ram_size,"%dMBytes",rtboot_data.system_memsize/1024/1024);
+	rtboot_data.ram_size = ram_size;
 }
 
 void arch_deinit(void)

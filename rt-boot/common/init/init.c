@@ -11,6 +11,8 @@
 #include <arch/relocation.h>
 #include <board/init.h>
 
+static char version_info[64];
+
 /* Here, we need to do early init */
 void system_early_init(rt_uint32_t bootflag)
 {
@@ -27,9 +29,15 @@ void rtthread_startup(void)
      * NOTE: please initialize heap inside board initialization.
      */
     rt_hw_board_init();
-
-    /* show RT-Thread version */
-    rt_show_version();
+	
+	rt_sprintf(version_info,"Version:1.0(%s)",__DATE__);
+	rtboot_data.version_info = version_info;
+	
+	rt_kprintf("\nRT-Boot For Embedded Routers\n");
+	rt_kprintf("Copyright (C) 2018 ZhaoXiaowei\n");
+	rt_kprintf("%s\n",rtboot_data.version_info);
+	
+	rt_kprintf("Starting RTOS kernel...\n");
 
     /* timer system initialization */
     rt_system_timer_init();

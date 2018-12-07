@@ -6,9 +6,9 @@
  * SPDX-License-Identifier: GPL-2.0
  */
 
-#ifndef _BORAD_SPI_H_
-#define _BORAD_SPI_H_
+#ifndef _BORAD_GPIO_H_
+#define _BORAD_GPIO_H_
 
-int board_spi_init(void);
+void gpio_thread_init(void);
 
 #endif /* _SOC_COMMON_H_ */

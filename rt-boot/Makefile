@@ -233,6 +233,7 @@ LIBS += common/dfs/libdfs.a
 LIBS += common/finsh/libfinsh.a
 LIBS += common/libs/liblibs.a
 LIBS += common/net/lwip/liblwip.a
+LIBS += common/net/lwip-eth/liblwip-eth.a
 LIBS += common/net/lwip-dhcpd/liblwip-dhcpd.a
 LIBS += common/net/lwip-telnetd/liblwip-telnetd.a
 LIBS += common/net/lwip-httpd/liblwip-httpd.a

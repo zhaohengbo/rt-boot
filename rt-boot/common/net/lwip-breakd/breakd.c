@@ -19,7 +19,7 @@ static void breakd_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip
 			rt_memcpy((char *)q->payload,"RT-BOOT:ABORTED",15);
 			if(q != RT_NULL)
 			{
-				board_break_net_notisfy();
+                boot_break_net_notisfy();
 				//rt_kprintf("Break Boot:got user-absort-msg from udp socket\n");
 				udp_sendto(pcb, q, recv_addr, port);
 				pbuf_free(q);

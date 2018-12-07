@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <kernel/rthw.h>
 #include <kernel/rtthread.h>
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 
 #include <drivers/drivers/audio.h>
 

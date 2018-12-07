@@ -10,7 +10,7 @@
 #include <kernel/rthw.h>
 #include <kernel/rtthread.h>
 #include <rtservice.h>
-#include <drivers/drivers/rtdevice.h>
+#include <drivers/rtdevice.h>
 #include <drivers/drivers/usb_device.h>
 #include "winusb.h"
 struct winusb_device

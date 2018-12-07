@@ -669,7 +669,7 @@ static void sf(uint8_t argc, char **argv) {
                             result = sfud_read(sfud_dev, addr + i, size - i, read_data);
                         }
                         /* data check */
-                        if (memcmp(write_data, read_data, read_size))
+                        if (rt_memcmp(write_data, read_data, read_size))
                         {
                             rt_kprintf("Data check ERROR! Please check you flash by other command.\n");
                             result = SFUD_ERR_READ;

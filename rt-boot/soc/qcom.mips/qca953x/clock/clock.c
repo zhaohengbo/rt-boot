@@ -9,6 +9,7 @@
 #include <soc/qca953x/qca953x_map.h>
 #include <soc/qca953x/qca953x_clock.h>
 #include <soc/qca953x/qca953x_reset.h>
+#include <soc/qca953x/qca953x_spi.h>
 
 rt_uint32_t qca953x_get_xtal_hz(void)
 {
@@ -52,7 +53,7 @@ static rt_uint32_t qca953x_get_pll(rt_uint32_t ref_clk,
 
 void qca953x_clock_info_init(void)
 {
-	rt_uint32_t qca_ahb_clk, qca_cpu_clk, qca_ddr_clk, qca_ref_clk;
+	rt_uint32_t qca_ahb_clk, qca_cpu_clk, qca_ddr_clk, qca_ref_clk, qca_spi_clk;
 	rt_uint32_t nint, outdiv, refdiv;
 	rt_uint32_t nfrac, nfracdiv;
 	rt_uint32_t reg_val, temp;
@@ -205,11 +206,25 @@ void qca953x_clock_info_init(void)
 		qca_ahb_clk = cpu_pll / temp;
 	}
 
+	/* First disable SPI */
+	qca_soc_reg_read_set(QCA_SPI_FUNC_SEL_REG,
+						QCA_SPI_FUNC_SEL_FUNC_SEL_MASK);
+
+	/* SPI clock = AHB clock / ((SPI clock divider + 1) * 2) */
+	reg_val = (qca_soc_reg_read(QCA_SPI_CTRL_REG) & QCA_SPI_CTRL_CLK_DIV_MASK)
+			   >> QCA_SPI_CTRL_CLK_DIV_SHIFT;
+
+	qca_spi_clk = qca_ahb_clk / ((reg_val + 1) * 2);
+
+	/* Re-enable SPI */
+	qca_soc_reg_read_clear(QCA_SPI_FUNC_SEL_REG,
+							   QCA_SPI_FUNC_SEL_FUNC_SEL_MASK);
 	/* Return values */
 	rtboot_data.cpu_clk = qca_cpu_clk;
 	rtboot_data.ddr_clk = qca_ddr_clk;
 	rtboot_data.ahb_clk = qca_ahb_clk;
 	rtboot_data.ref_clk = qca_ref_clk;
+	rtboot_data.spi_clk = qca_spi_clk;
 	
 	rtboot_data.system_frequency = rtboot_data.cpu_clk;
 }

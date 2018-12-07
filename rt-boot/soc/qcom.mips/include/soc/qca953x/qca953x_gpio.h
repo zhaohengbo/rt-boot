@@ -283,6 +283,6 @@
 #define QCA_GPIO_FUNC_CLK_OBS7_EN_SHIFT		9
 #define QCA_GPIO_FUNC_CLK_OBS7_EN_MASK		BIT(QCA_GPIO_FUNC_CLK_OBS7_EN_SHIFT)
 
-void qca953x_all_led_on(void);
+void qca953x_gpio_init(void);
 
 #endif /* _SOC_COMMON_H_ */
