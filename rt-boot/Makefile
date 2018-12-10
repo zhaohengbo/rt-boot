@@ -232,6 +232,7 @@ LIBS += common/drivers/libdrivers.a
 LIBS += common/dfs/libdfs.a
 LIBS += common/finsh/libfinsh.a
 LIBS += common/libs/liblibs.a
+LIBS += common/env/libenv.a
 LIBS += common/net/lwip/liblwip.a
 LIBS += common/net/lwip-eth/liblwip-eth.a
 LIBS += common/net/lwip-dhcpd/liblwip-dhcpd.a

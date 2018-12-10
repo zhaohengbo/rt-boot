@@ -25,6 +25,8 @@
 #include <dfs/filesystems/dfs_romfs.h>
 #include <dfs/filesystems/dfs_ramfs.h>
 
+#include <env/env.h>
+
 static struct rt_event boot_break_event;
 
 #define BOOT_BREAK_BY_UART 0
@@ -144,6 +146,7 @@ void rt_thread_main_thread_entry(void* parameter)
 	gpio_thread_init();
 	board_spi_init();
 	board_flash_init();
+	env_init();
 	
 	rt_kprintf("\nSystem Info:\n");
 	

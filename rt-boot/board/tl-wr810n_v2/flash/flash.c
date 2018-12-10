@@ -45,6 +45,31 @@ static rt_int32_t board_flash_status;
 #define BOARD_FLASH_EVENT_ART 2
 #define BOARD_FLASH_EVENT_FULL 3
 
+rt_uint32_t board_get_env_flag(void)
+{
+	return 1;
+}
+
+rt_uint32_t board_get_env_length(void)
+{
+	return 0x2000;
+}
+
+void board_get_env_read(rt_uint8_t * buffer)
+{
+	if (sfud_dev == RT_NULL)
+		return;
+	sfud_read(sfud_dev, 0x1D000, 0x2000, buffer);
+}
+
+void board_get_env_write(rt_uint8_t * buffer)
+{
+	if (sfud_dev == RT_NULL)
+		return;
+	sfud_erase(sfud_dev, 0x1D000, 0x2000);
+	sfud_write(sfud_dev, 0x1D000, 0x2000, buffer);
+}
+
 rt_int32_t board_flash_get_status(void)
 {
 	return board_flash_status;
