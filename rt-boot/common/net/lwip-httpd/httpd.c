@@ -149,7 +149,7 @@ static void httpd_thread_entry(void* parameter)
 						if(cgi_flag)
 							send_len = rt_sprintf((char *)send_buf,"HTTP/1.1 200 OK\r\nServer: lwip/2.1.3\r\nCache-Control: no-store, no-cache, must-revalidate\r\nContent-type: text/%s; charset=UTF-8\r\n\r\n",file_type);
 						else
-							send_len = rt_sprintf((char *)send_buf,"HTTP/1.0 200 OK\r\nServer: lwip/2.1.3\r\nContent-type: text/%s; charset=UTF-8\r\n\r\n",file_type);
+							send_len = rt_sprintf((char *)send_buf,"HTTP/1.1 200 OK\r\nServer: lwip/2.1.3\r\nContent-type: text/%s; charset=UTF-8\r\n\r\n",file_type);
 						send(client_fd, send_buf, send_len, 0);
 					}
 					else
@@ -157,7 +157,7 @@ static void httpd_thread_entry(void* parameter)
 						if(cgi_flag)
 							send_len = rt_sprintf((char *)send_buf,"HTTP/1.1 200 OK\r\nServer: lwip/2.1.3\r\nCache-Control: no-store, no-cache, must-revalidate\r\nContent-type: text/html; charset=UTF-8\r\n\r\n");
 						else
-							send_len = rt_sprintf((char *)send_buf,"HTTP/1.0 200 OK\r\nServer: lwip/2.1.3\r\nContent-type: text/html; charset=UTF-8\r\n\r\n");
+							send_len = rt_sprintf((char *)send_buf,"HTTP/1.1 200 OK\r\nServer: lwip/2.1.3\r\nContent-type: text/html; charset=UTF-8\r\n\r\n");
 						send(client_fd, send_buf, send_len, 0);
 					}
 					while (1)
@@ -176,6 +176,7 @@ static void httpd_thread_entry(void* parameter)
 				char *start = RT_NULL;
 				char *end = RT_NULL;
 				char *boundary_value = RT_NULL;
+				int boundary_end_length = 0;
 				int fd;
 				rt_uint32_t upload_total = 0,upload = 0;
 				recv_buf[recv_len] = '\0';
@@ -210,6 +211,8 @@ static void httpd_thread_entry(void* parameter)
 									boundary_value[end - start + 2] = 0;
 									
 									PRINT("POST：");PRINTLN(boundary_value);
+									
+									boundary_end_length = rt_strlen(boundary_value) + 6;
 									
 									if ((recv_len = recv(client_fd, recv_buf, RECV_BUF_LEN, 0)) > 0)
 									{
@@ -291,6 +294,7 @@ static void httpd_thread_entry(void* parameter)
 													
 													if(fd >=0)
 													{
+														int found_end = 0;
 														PRINT("Start Receiving:");
 														// move pointer over CR LF CR LF
 														end += 4;
@@ -301,7 +305,20 @@ static void httpd_thread_entry(void* parameter)
 														{
 															while((recv_len = recv(client_fd, recv_buf, RECV_BUF_LEN, 0)) > 0)
 															{
-																write(fd, recv_buf, recv_len);
+																if(!found_end)
+																{
+																	if((upload + recv_len) > (upload_total - boundary_end_length))
+																	{
+																		int tmp_len;
+																		tmp_len = upload_total - boundary_end_length - upload;
+																		write(fd, recv_buf, tmp_len);
+																		found_end = 1;
+																	}
+																	else
+																	{
+																		write(fd, recv_buf, recv_len);
+																	}
+																}
 																PRINT("#");
 																upload += (unsigned int)recv_len;
 																if(upload >= upload_total)
@@ -341,12 +358,12 @@ static void httpd_thread_entry(void* parameter)
 				fd = open("/rom/upgrading.html", 0, O_RDONLY);
 				if (fd < 0)
     			{
-					send_len = rt_sprintf((char *)send_buf,"HTTP/1.0 500 Http Server Error\r\nServer: lwip/2.1.3\r\nContent-type: text/html; charset=UTF-8\r\n\r\n");
+					send_len = rt_sprintf((char *)send_buf,"HTTP/1.1 500 Http Server Error\r\nServer: lwip/2.1.3\r\nContent-type: text/html; charset=UTF-8\r\n\r\n");
 					send(client_fd, send_buf, send_len, 0);
     			}
 				else
 				{
-					send_len = rt_sprintf((char *)send_buf,"HTTP/1.0 200 OK\r\nServer: lwip/2.1.3\r\nContent-type: text/html; charset=UTF-8\r\n\r\n");
+					send_len = rt_sprintf((char *)send_buf,"HTTP/1.1 200 OK\r\nServer: lwip/2.1.3\r\nContent-type: text/html; charset=UTF-8\r\n\r\n");
 					send(client_fd, send_buf, send_len, 0);
 					while (1)
     				{

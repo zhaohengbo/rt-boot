@@ -73,6 +73,7 @@ static void sysfs_init(void)
 		else
 			rt_kprintf("RAM File System initialzation failed!\n");
 	}
+	board_flash_fs_init();
 }
 
 static void boot_break(void)

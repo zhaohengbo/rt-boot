@@ -21,11 +21,11 @@
 #include <drivers/rtdevice.h>
 
 #ifndef DFS_FILESYSTEMS_MAX
-#define DFS_FILESYSTEMS_MAX     2
+#define DFS_FILESYSTEMS_MAX     3
 #endif
 
 #ifndef DFS_FD_MAX
-#define DFS_FD_MAX              4
+#define DFS_FD_MAX              5
 #endif
 
 /*
@@ -44,7 +44,7 @@
 #endif
 
 #ifndef DFS_FILESYSTEM_TYPES_MAX
-#define DFS_FILESYSTEM_TYPES_MAX 2
+#define DFS_FILESYSTEM_TYPES_MAX 3
 #endif
 
 #define DFS_FS_FLAG_DEFAULT     0x00    /* default flag */

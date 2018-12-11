@@ -6,7 +6,7 @@
 #include <main/main.h>
 
 ALIGN(RT_ALIGN_SIZE)
-static char gpio_thread_stack[0x1000];
+static char gpio_thread_stack[0x200];
 struct rt_thread gpio_thread;
 
 static void gpio_thread_entry(void* parameter)

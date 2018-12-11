@@ -22,4 +22,6 @@ rt_uint32_t board_get_env_length(void);
 void board_get_env_read(rt_uint8_t * buffer);
 void board_get_env_write(rt_uint8_t * buffer);
 
+void board_flash_fs_init(void);
+
 #endif /* _SOC_COMMON_H_ */

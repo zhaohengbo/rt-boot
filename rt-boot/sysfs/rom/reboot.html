@@ -15,22 +15,19 @@
 			<ul id="navbar"></ul>
 		</div>
 		<div id="page">
-			<div id="about">
-	RT-BOOT Web恢复终端 v1.0<br />
-	联系作者: 1826902167(明德无敌赵晓薇)<br />
-    <br />
-    源代码：http://github.com/zhaohengbo/rt-boot/</a><br />
-    <br />
-    <div id="bootloader_copyright">
-        本项目使用MIT协议,您可以随意修改或商用而无需提供修改副本
+    <div id="freq_notice">
+        单击 [重启] 按钮以重启路由，注意本界面不会自动刷新<br />
     </div>
-</div>
+    <div class="operate">
+        <button type="button" onClick="window.open('/cgi/reboot.html')">重启</button>
+    </div>
+</form>
 		</div>
 		<div class="clearfloat"> </div>
 	</div>
 	<script type="text/javascript">
 		var nav_str = "/index.html|系统信息,/upgrade.html|固件更新,/backup.html|固件备份,/reboot.html|重启,/about.html|关于";
-		var nav_page = "/about.html";
+		var nav_page = "/reboot.html";
 		var nav_list = nav_str.split(",");
 		var navbar = document.getElementById("navbar");
 

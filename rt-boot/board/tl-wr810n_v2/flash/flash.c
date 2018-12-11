@@ -19,10 +19,17 @@
 #include <drivers/rtdevice.h>
 #include <drivers/drivers/spi_flash.h>
 #include <drivers/drivers/spi_flash_sfud.h>
+
+#include <dfs/dfs.h>
+#include <dfs/dfs_fs.h>
 #include <dfs/dfs_posix.h>
+#include <dfs/filesystems/dfs_romfs.h>
+#include <dfs/filesystems/dfs_romfs.h>
 
 #include <global/global.h>
 #include <soc/qca953x/qca953x_map.h>
+
+#include <arch/cache.h>
 
 #define SPI_BUS_NAME                "SPI0"
 #define SPI_FLASH_DEVICE_NAME       "SPI00"
@@ -33,6 +40,17 @@ static rt_spi_flash_device_t flash_chip_device;
 static const sfud_flash *sfud_dev;
 
 static char flash_info[64];
+
+static struct romfs_dirent _romfs_flash[] = {
+	{ROMFS_DIRENT_FILE, "firmware.bin", (rt_uint8_t *)0, 0},
+	{ROMFS_DIRENT_FILE, "uboot.bin", (rt_uint8_t *)0, 0},
+	{ROMFS_DIRENT_FILE, "art.bin", (rt_uint8_t *)0, 0},
+	{ROMFS_DIRENT_FILE, "full.bin", (rt_uint8_t *)0, 0},
+};
+
+const struct romfs_dirent romfs_flash_root = {
+    ROMFS_DIRENT_DIR, "/", (rt_uint8_t *)_romfs_flash, sizeof(_romfs_flash)/sizeof(_romfs_flash[0])
+};
 
 ALIGN(RT_ALIGN_SIZE)
 static char board_flash_thread_stack[0x1000];
@@ -58,8 +76,14 @@ rt_uint32_t board_get_env_length(void)
 void board_get_env_read(rt_uint8_t * buffer)
 {
 	if (sfud_dev == RT_NULL)
-		return;
-	sfud_read(sfud_dev, 0x1D000, 0x2000, buffer);
+	{
+		arch_dcache_invalidate(0x9F01D000,0x2000);
+		rt_memcpy(buffer,(void *)0x9F01D000,0x2000);
+	}
+	else
+	{
+		sfud_read(sfud_dev, 0x1D000, 0x2000, buffer);
+	}
 }
 
 void board_get_env_write(rt_uint8_t * buffer)
@@ -279,6 +303,62 @@ static void board_flash_thread_init(void)
                    sizeof(board_flash_thread_stack),9,6);
 
     rt_thread_startup(&board_flash_thread);
+}
+
+void board_flash_fs_init(void)
+{
+	int flash_size;
+	flash_size = sfud_dev->chip.capacity / 1024 / 1024;
+	if (sfud_dev == RT_NULL)
+	{
+		return;
+	}
+	switch(flash_size)
+	{
+		case 16:
+			_romfs_flash[0].data = (rt_uint8_t *)0x9F020000;
+			_romfs_flash[0].size = 0xFC0000;
+			_romfs_flash[1].data = (rt_uint8_t *)0x9F000000;
+			_romfs_flash[1].size = 0x20000;
+			_romfs_flash[2].data = (rt_uint8_t *)0x9FFE0000;
+			_romfs_flash[2].size = 0x20000;
+			_romfs_flash[3].data = (rt_uint8_t *)0x9F000000;
+			_romfs_flash[3].size = 0x1000000;
+			break;
+		case 8:
+			_romfs_flash[0].data = (rt_uint8_t *)0x9F020000;
+			_romfs_flash[0].size = 0x7C0000;
+			_romfs_flash[1].data = (rt_uint8_t *)0x9F000000;
+			_romfs_flash[1].size = 0x20000;
+			_romfs_flash[2].data = (rt_uint8_t *)0x9F7E0000;
+			_romfs_flash[2].size = 0x20000;
+			_romfs_flash[3].data = (rt_uint8_t *)0x9F000000;
+			_romfs_flash[3].size = 0x800000;
+			break;
+		case 4:
+			_romfs_flash[0].data = (rt_uint8_t *)0x9F020000;
+			_romfs_flash[0].size = 0x3C0000;
+			_romfs_flash[1].data = (rt_uint8_t *)0x9F000000;
+			_romfs_flash[1].size = 0x20000;
+			_romfs_flash[2].data = (rt_uint8_t *)0x9F3E0000;
+			_romfs_flash[2].size = 0x20000;
+			_romfs_flash[3].data = (rt_uint8_t *)0x9F000000;
+			_romfs_flash[3].size = 0x400000;
+			break;
+		case 2:
+			_romfs_flash[0].data = (rt_uint8_t *)0x9F020000;
+			_romfs_flash[0].size = 0x1C0000;
+			_romfs_flash[1].data = (rt_uint8_t *)0x9F000000;
+			_romfs_flash[1].size = 0x20000;
+			_romfs_flash[2].data = (rt_uint8_t *)0x9F1E0000;
+			_romfs_flash[2].size = 0x20000;
+			_romfs_flash[3].data = (rt_uint8_t *)0x9F000000;
+			_romfs_flash[3].size = 0x200000;
+			break;
+		default:
+			return;
+	}
+	dfs_mount(RT_NULL, "/rom/map", "rom", 0, &romfs_flash_root);
 }
 
 static rt_err_t rt_hw_spi_flash_attach(void)

@@ -4,6 +4,7 @@
 
 #include <global/global.h>
 #include <board/flash.h>
+#include <reboot/reboot.h>
 
 static char buff[128];
 
@@ -114,5 +115,9 @@ void httpd_cgi_handler(char * cgi_file_name)
 		len = rt_sprintf(buff,"%s",rtboot_data.version_info);
 		write(fd, buff, len);
 		close(fd);
+    }
+	else if(rt_strstr(cgi_file_name, "reboot") != RT_NULL)
+    {
+        system_reboot();
     }
 }
