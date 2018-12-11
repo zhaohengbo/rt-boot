@@ -1,26 +1,12 @@
 include $(TOPDIR)/config.mk
 
-LIB	= liblibs.a
+LIB	= liblwip-tftp.a
 
 START	=
 OBJS	=
 SOBJS	=
 
-OBJS	+= sfud/sfud.o
-OBJS	+= sfud/sfud_sfdp.o
-
-OBJS	+= tinycrypt/tiny_aes.o
-OBJS	+= tinycrypt/tiny_base64.o
-OBJS	+= tinycrypt/tiny_md5.o
-OBJS	+= tinycrypt/tiny_sha1.o
-OBJS	+= tinycrypt/tiny_sha2.o
-
-OBJS	+= lzma/LzmaDecode.o
-OBJS	+= lzma/LzmaWrapper.o
-
-OBJS	+= crc32/crc32.o
-
-OBJS	+= aes/aes_core.o
+OBJS	+= tftp_client.o
 
 all:	.depend $(START) $(LIB)
 

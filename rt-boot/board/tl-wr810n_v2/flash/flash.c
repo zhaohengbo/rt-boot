@@ -158,41 +158,41 @@ static void board_flash_thread_entry(void* parameter)
 	{
 		case 16:
 			firmware_start = 0x20000;
-			firmware_length = 0xFC0000;
+			firmware_length = 0xFD0000;
             uboot_start = 0x00000;
             uboot_length = 0x20000;
-            art_start = 0xFE0000;
-            art_length = 0x20000;
+            art_start = 0xFF0000;
+            art_length = 0x10000;
             full_start = 0x0;
             full_length = 0x1000000;
 			break;
 		case 8:
 			firmware_start = 0x20000;
-			firmware_length = 0x7C0000;
+			firmware_length = 0x7D0000;
             uboot_start = 0x00000;
             uboot_length = 0x20000;
-            art_start = 0x7E0000;
-            art_length = 0x20000;
+            art_start = 0x7F0000;
+            art_length = 0x10000;
             full_start = 0x0;
             full_length = 0x800000;
 			break;
 		case 4:
 			firmware_start = 0x20000;
-			firmware_length = 0x3C0000;
+			firmware_length = 0x3D0000;
             uboot_start = 0x00000;
             uboot_length = 0x20000;
-            art_start = 0x3E0000;
-            art_length = 0x20000;
+            art_start = 0x3F0000;
+            art_length = 0x10000;
             full_start = 0x0;
             full_length = 0x400000;
 			break;
 		case 2:
 			firmware_start = 0x20000;
-			firmware_length = 0x1C0000;
+			firmware_length = 0x1D0000;
             uboot_start = 0x00000;
             uboot_length = 0x20000;
-            art_start = 0x1E0000;
-            art_length = 0x20000;
+            art_start = 0x1F0000;
+            art_length = 0x10000;
             full_start = 0x0;
             full_length = 0x200000;
 			break;
@@ -316,43 +316,43 @@ void board_flash_fs_init(void)
 	switch(flash_size)
 	{
 		case 16:
-			_romfs_flash[0].data = (rt_uint8_t *)0x9F020000;
-			_romfs_flash[0].size = 0xFC0000;
-			_romfs_flash[1].data = (rt_uint8_t *)0x9F000000;
+			_romfs_flash[0].data = (rt_uint8_t *)0xBF020000;
+			_romfs_flash[0].size = 0xFD0000;
+			_romfs_flash[1].data = (rt_uint8_t *)0xBF000000;
 			_romfs_flash[1].size = 0x20000;
-			_romfs_flash[2].data = (rt_uint8_t *)0x9FFE0000;
-			_romfs_flash[2].size = 0x20000;
-			_romfs_flash[3].data = (rt_uint8_t *)0x9F000000;
+			_romfs_flash[2].data = (rt_uint8_t *)0xBFFF0000;
+			_romfs_flash[2].size = 0x10000;
+			_romfs_flash[3].data = (rt_uint8_t *)0xBF000000;
 			_romfs_flash[3].size = 0x1000000;
 			break;
 		case 8:
-			_romfs_flash[0].data = (rt_uint8_t *)0x9F020000;
-			_romfs_flash[0].size = 0x7C0000;
-			_romfs_flash[1].data = (rt_uint8_t *)0x9F000000;
+			_romfs_flash[0].data = (rt_uint8_t *)0xBF020000;
+			_romfs_flash[0].size = 0x7D0000;
+			_romfs_flash[1].data = (rt_uint8_t *)0xBF000000;
 			_romfs_flash[1].size = 0x20000;
-			_romfs_flash[2].data = (rt_uint8_t *)0x9F7E0000;
-			_romfs_flash[2].size = 0x20000;
-			_romfs_flash[3].data = (rt_uint8_t *)0x9F000000;
+			_romfs_flash[2].data = (rt_uint8_t *)0xBF7F0000;
+			_romfs_flash[2].size = 0x10000;
+			_romfs_flash[3].data = (rt_uint8_t *)0xBF000000;
 			_romfs_flash[3].size = 0x800000;
 			break;
 		case 4:
-			_romfs_flash[0].data = (rt_uint8_t *)0x9F020000;
-			_romfs_flash[0].size = 0x3C0000;
-			_romfs_flash[1].data = (rt_uint8_t *)0x9F000000;
+			_romfs_flash[0].data = (rt_uint8_t *)0xBF020000;
+			_romfs_flash[0].size = 0x3D0000;
+			_romfs_flash[1].data = (rt_uint8_t *)0xBF000000;
 			_romfs_flash[1].size = 0x20000;
-			_romfs_flash[2].data = (rt_uint8_t *)0x9F3E0000;
-			_romfs_flash[2].size = 0x20000;
-			_romfs_flash[3].data = (rt_uint8_t *)0x9F000000;
+			_romfs_flash[2].data = (rt_uint8_t *)0xBF3F0000;
+			_romfs_flash[2].size = 0x10000;
+			_romfs_flash[3].data = (rt_uint8_t *)0xBF000000;
 			_romfs_flash[3].size = 0x400000;
 			break;
 		case 2:
-			_romfs_flash[0].data = (rt_uint8_t *)0x9F020000;
-			_romfs_flash[0].size = 0x1C0000;
-			_romfs_flash[1].data = (rt_uint8_t *)0x9F000000;
+			_romfs_flash[0].data = (rt_uint8_t *)0xBF020000;
+			_romfs_flash[0].size = 0x1D0000;
+			_romfs_flash[1].data = (rt_uint8_t *)0xBF000000;
 			_romfs_flash[1].size = 0x20000;
-			_romfs_flash[2].data = (rt_uint8_t *)0x9F1E0000;
-			_romfs_flash[2].size = 0x20000;
-			_romfs_flash[3].data = (rt_uint8_t *)0x9F000000;
+			_romfs_flash[2].data = (rt_uint8_t *)0xBF1F0000;
+			_romfs_flash[2].size = 0x10000;
+			_romfs_flash[3].data = (rt_uint8_t *)0xBF000000;
 			_romfs_flash[3].size = 0x200000;
 			break;
 		default:
