@@ -235,10 +235,10 @@ LIBS += common/finsh/libfinsh.a
 LIBS += common/libs/liblibs.a
 LIBS += common/env/libenv.a
 LIBS += common/net/lwip/liblwip.a
+LIBS += common/net/webnet/libwebnet.a
 LIBS += common/net/lwip-eth/liblwip-eth.a
 LIBS += common/net/lwip-dhcpd/liblwip-dhcpd.a
 LIBS += common/net/lwip-telnetd/liblwip-telnetd.a
-LIBS += common/net/lwip-httpd/liblwip-httpd.a
 LIBS += common/net/lwip-breakd/liblwip-breakd.a
 LIBS += common/net/lwip-tftp/liblwip-tftp.a
 

@@ -4,9 +4,9 @@
 #include <kernel/rtconfig.h>
 
 #define ERRNO                       1
-#define LWIP_NOASSERT				1
+#define LWIP_NOASSERT				0
 
-#define LWIP_SOCKET_SELECT			0
+#define LWIP_SOCKET_SELECT			1
 #define LWIP_SOCKET_POLL			0
 
 #define LWIP_IPV4                   1
@@ -19,8 +19,8 @@
 
 #define NO_SYS                      0
 #define LWIP_SOCKET                 1
-#define LWIP_NETCONN                0
-#define LWIP_ALTCP					0
+#define LWIP_NETCONN                1
+#define LWIP_ALTCP					1
 
 #ifdef RT_LWIP_IGMP
 #define LWIP_IGMP                   1

@@ -34,6 +34,8 @@ void rt_qsort(void *base, rt_size_t nmemb, rt_size_t size, int (*compar)(const v
 
 int rt_tolower(int c);
 int rt_toupper(int c);
+int rt_isxdigit(int c);
+int rt_isupper(int c);
 
 int rt_strncasecmp(const char *cs, const char *ct, rt_size_t count);
 char *rt_strcpy(char *dest, const char *src);

@@ -216,30 +216,32 @@ static void board_flash_thread_entry(void* parameter)
 		{
 			flash_start = firmware_start;
 			flash_length = firmware_length;
-			open_file = "/ram/firmware.bin";
+			open_file = "/tmp/firmware.bin";
 		}
 		else if(board_flash_event_flag & (1 << BOARD_FLASH_EVENT_UBOOT))
 		{
 			flash_start = uboot_start;
 			flash_length = uboot_length;
-			open_file = "/ram/uboot.bin";
+			open_file = "/tmp/uboot.bin";
 		}
 		else if(board_flash_event_flag & (1 << BOARD_FLASH_EVENT_ART))
 		{
 			flash_start = art_start;
 			flash_length = art_length;
-			open_file = "/ram/art.bin";
+			open_file = "/tmp/art.bin";
 		}
 		else if(board_flash_event_flag & (1 << BOARD_FLASH_EVENT_FULL))
 		{
 			flash_start = full_start;
 			flash_length = full_length;
-			open_file = "/ram/full.bin";
+			open_file = "/tmp/full.bin";
 		}
 		else
 		{
 			continue;
 		}
+		
+		rt_kprintf("1\n");
 		
 		{
 			rt_uint8_t *buffer;
@@ -250,9 +252,11 @@ static void board_flash_thread_entry(void* parameter)
 			buffer = rt_malloc(0x1000);
 			if(buffer)
 			{
+				rt_kprintf("2\n");
 				fd = open(open_file, 0, O_RDONLY);
 				if(fd < 0)
 				{
+					rt_kprintf("3\n");
 					board_flash_status = -1;
 				}
 				else
@@ -358,7 +362,7 @@ void board_flash_fs_init(void)
 		default:
 			return;
 	}
-	dfs_mount(RT_NULL, "/rom/map", "rom", 0, &romfs_flash_root);
+	dfs_mount(RT_NULL, "/www/map", "rom", 0, &romfs_flash_root);
 }
 
 static rt_err_t rt_hw_spi_flash_attach(void)

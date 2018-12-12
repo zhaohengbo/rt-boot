@@ -16,9 +16,9 @@
 
 #include <net/lwip-dhcpd/dhcp_server.h>
 #include <net/lwip-telnetd/telnetd.h>
-#include <net/lwip-httpd/httpd.h>
 #include <net/lwip-breakd/breakd.h>
 #include <net/lwip-eth/lwip-eth.h>
+#include <net/webnet/wn_main.h>
 
 #include <dfs/dfs.h>
 #include <dfs/dfs_fs.h>
@@ -68,7 +68,7 @@ static void sysfs_init(void)
 	ramfs =(struct dfs_ramfs*) dfs_ramfs_create((rt_uint8_t *)ramfs_start, ramfs_size);
 	if(ramfs != RT_NULL)
 	{
-		if (dfs_mount(RT_NULL, "/ram", "ram", 0, ramfs) == 0)
+		if (dfs_mount(RT_NULL, "/tmp", "ram", 0, ramfs) == 0)
 			rt_kprintf("RAM File System initialized!\n");
 		else
 			rt_kprintf("RAM File System initialzation failed!\n");
@@ -168,7 +168,7 @@ void rt_thread_main_thread_entry(void* parameter)
 	rt_kprintf("Starting Recovery File System...\n");
 	sysfs_init();
 	rt_kprintf("Starting Http Recover Server...\n");
-	http_server();
+	httpd_init();
 	rt_kprintf("Starting Build-in Shell...\n\n");
 #ifdef RT_USING_FINSH
     /* init finsh */

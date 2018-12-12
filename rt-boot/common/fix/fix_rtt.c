@@ -299,6 +299,16 @@ static inline unsigned char __toupper(unsigned char c)
 	return c;
 }
 
+int rt_isxdigit(int c)
+{
+	return isxdigit(c);
+}
+
+int rt_isupper(int c)
+{
+	return isupper(c);
+}
+
 int rt_tolower(int c) 
 {
 	return __tolower(c);

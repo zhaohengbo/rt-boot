@@ -131,6 +131,8 @@
 #define LWIP_IP_ACCEPT_UDP_PORT(port) ((port) == 67)
 #define IP_SOF_BROADCAST 1
 #define IP_SOF_BROADCAST_RECV 1
+//#define RT_LWIP_DEBUG
+//#define RT_LWIP_SOCKETS_DEBUG
 
 /* Static IPv4 Address */
 
@@ -139,7 +141,7 @@
 #define RT_LWIP_MSKADDR "255.255.255.0"
 #define RT_LWIP_UDP
 #define RT_LWIP_TCP
-#define RT_MEMP_NUM_NETCONN 8
+#define RT_MEMP_NUM_NETCONN 16
 #define RT_LWIP_PBUF_NUM 4
 #define RT_LWIP_RAW_PCB_NUM 4
 #define RT_LWIP_UDP_PCB_NUM 4
@@ -177,7 +179,19 @@
 
 
 /* IoT - internet of things */
-
+#define WEBNET_USING_ASP
+//#define WEBNET_USING_AUTH
+#define WEBNET_USING_CGI
+//#define WEBNET_USING_INDEX
+//#define WEBNET_USING_ALIAS
+//#define WEBNET_USING_LOG
+#define WEBNET_USING_UPLOAD
+//#define WEBNET_USING_SSI
+//#define WEBNET_USING_DAV
+#define WEBNET_PORT 80
+#define WEBNET_ROOT "/www"
+#define WEBNET_CONN_MAX 4
+#define WEBNET_CACHE_LEVEL 0
 
 /* Wi-Fi */
 

@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<title>RT-BOOT Web恢复终端</title>
 	<link rel="stylesheet" href="/style.css" type="text/css" />
+	<script type="text/javascript" src="/nvbar.js"></script>
 </head>
 <body>
 	<div id="container">
@@ -21,25 +22,25 @@
 		<div id="fw_files">
 			<div id="fw_files_generic">
 				<p>您即将更新您的设备固件<br>从硬盘中选择您的新固件文件并点击 <strong>"上传"</strong> 按钮<br>请注意,请尽量保持设备电源正常运行,否则设备有一定概率会发生损坏</p>
-				<form method="post" enctype="multipart/form-data">
+				<form method="post" enctype="multipart/form-data" action="/upload">
 				<input type="file" name="fw_file" id="fw_file" class="fw_upload">
 				<input type="submit" value="上传"></form>
 			</div>
 			<div id="fw_files_uboot">
 				<p>您即将更新您的引导固件<br>从硬盘中选择您的新固件文件并点击 <strong>"上传"</strong> 按钮<br>请注意,请尽量保持设备电源正常运行,否则设备有一定概率会发生损坏</p>
-				<form method="post" enctype="multipart/form-data">
+				<form method="post" enctype="multipart/form-data" action="/upload">
 				<input type="file" name="uboot_file" id="uboot_file" class="fw_upload">
 				<input type="submit" value="上传"></form>
 			</div>
 			<div id="fw_files_art">
 				<p>您即将更新您的无线校准固件<br>从硬盘中选择您的新固件文件并点击 <strong>"上传"</strong> 按钮<br>请注意,请尽量保持设备电源正常运行,否则设备有一定概率会发生损坏</p>
-				<form method="post" enctype="multipart/form-data">
+				<form method="post" enctype="multipart/form-data" action="/upload">
 				<input type="file" name="art_file" id="art_file" class="fw_upload">
 				<input type="submit" value="上传"></form>
 			</div>
 			<div id="fw_files_fullflash">
 				<p>您即将更新您的整体固件<br>从硬盘中选择您的新固件文件并点击 <strong>"上传"</strong> 按钮<br>请注意,请尽量保持设备电源正常运行,否则设备有一定概率会发生损坏</p>
-				<form method="post" enctype="multipart/form-data">
+				<form method="post" enctype="multipart/form-data" action="/upload">
 				<input type="file" name="full_file" id="full_file" class="fw_upload">
 				<input type="submit" value="上传"></form>
 			</div>
@@ -185,29 +186,6 @@
 		</script>
 		</div>
 		<script type="text/javascript">
-		var nav_str = "/index.html|系统信息,/upgrade.html|固件更新,/backup.html|固件备份,/reboot.html|重启,/about.html|关于";
-		var nav_page = "/upgrade.html";
-		var nav_list = nav_str.split(",");
-		var navbar = document.getElementById("navbar");
-		for (var i = 0; i < nav_list.length; i++) 
-		{
-			if (!nav_list[i].indexOf("|"))
-				continue;
-			var nav_val = nav_list[i].split("|");
-			var li = document.createElement("li");
-			if (nav_page == nav_val[0]) 
-			{
-				li.className = "current_nav";
-				li.appendChild(document.createTextNode(nav_val[1]));
-			} 
-			else 
-			{
-				var a = document.createElement("a");
-				a.appendChild(document.createTextNode(nav_val[1]));
-				a.setAttribute("href", nav_val[0]);
-				li.appendChild(a);
-			}
-			navbar.appendChild(li);
-		}
+		create_nvbar("/upgrade.html");
 		</script>
 </body></html>
