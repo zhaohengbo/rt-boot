@@ -81,7 +81,7 @@ int webnet_module_alias(struct webnet_session* session, int event)
 
                 rt_snprintf(map_path, WEBNET_PATH_MAX, "%s/%s",
                             _alias_items[index].new_path,
-                            request->path + strlen(_alias_items[index].old_path));
+                            request->path + rt_strlen(_alias_items[index].old_path));
 
                 /* set new path */
                 wn_free(request->path);
