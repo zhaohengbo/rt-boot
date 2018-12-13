@@ -129,7 +129,7 @@ char *
 lwip_strnistr(const char *buffer, const char *token, size_t n)
 {
   const char *p;
-  size_t tokenlen = strlen(token);
+  size_t tokenlen = rt_strlen(token);
   if (tokenlen == 0) {
     return LWIP_CONST_CAST(char *, buffer);
   }

@@ -277,7 +277,7 @@ void webnet_session_set_header(struct webnet_session *session, const char* mimet
 {
     static const char* fmt = "HTTP/1.1 %d %s\r\n%s";
     static const char* content = "Content-Type: %s\r\nContent-Length: %ld\r\nConnection: %s\r\n\r\n";
-    static const char* content_nolength = "Content-Type: %s\r\nConnection: %s\r\n\r\n";
+    static const char* content_nolength = "Content-Type: %s\r\nConnection: %s\r\nCache-Control: no-store, no-cache, must-revalidate\r\n\r\n";
     static const char* auth = "WWW-Authenticate: Basic realm=%s\r\n";
 
     char *ptr, *end_buffer;
@@ -297,7 +297,11 @@ void webnet_session_set_header(struct webnet_session *session, const char* mimet
     if (length >= 0)
     {
         offset = rt_snprintf(ptr, end_buffer - ptr, content, mimetype, length,
+#ifdef WEBNET_USING_KEEPALIVE
                              session->request->connection == WEBNET_CONN_CLOSE? "close" : "Keep-Alive");
+#else
+                             "close");
+#endif
         ptr += offset;
     }
     else
@@ -571,6 +575,9 @@ void webnet_sessions_handle_fds(fd_set *readset, fd_set *writeset)
                         _webnet_session_badrequest(session, session->request->result_code);
                     }
                 }
+#ifdef WEBNET_USING_KEEPALIVE
+#warning webnet simply close socket here,it is not a good idea as some browser will be confused(keep alive but closed?)
+#endif
                 /* close this session */
                 webnet_session_close(session);
             }

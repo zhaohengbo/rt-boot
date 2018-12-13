@@ -339,13 +339,31 @@ int webnet_module_system_dofile(struct webnet_session *session)
 
     /* send Content-Type. */
     webnet_session_printf(session,
-                          "Content-Type: %s\r\n",
+                          "Content-Type: %s; charset=utf-8\r\n",
                           mimetype);
 
     /* send Content-Length. */
     webnet_session_printf(session,
                           "Content-Length: %ld\r\n",
                           file_length);
+#ifdef WEBNET_USING_KEEPALIVE
+	if(session->request->connection == WEBNET_CONN_KEEPALIVE)
+	{
+		webnet_session_printf(session,
+                          "Connection: %s\r\n",
+                          "Keep-Alive");
+	}
+	else
+	{
+		webnet_session_printf(session,
+                          "Connection: %s\r\n",
+                          "close");
+	}
+#else
+	webnet_session_printf(session,
+						"Connection: %s\r\n",
+                        "close");
+#endif
 
 #ifdef WEBNET_USING_GZIP
     if (request->support_gzip)
@@ -354,7 +372,7 @@ int webnet_module_system_dofile(struct webnet_session *session)
         webnet_session_printf(session, "Content-Encoding: gzip\r\n");
     }
 #endif /* WEBNET_USING_GZIP */
-
+	
     /* send Access-Control-Allow-Origin. */
     webnet_session_printf(session, "Access-Control-Allow-Origin:*\r\n");
 
@@ -378,8 +396,9 @@ int webnet_module_system_dofile(struct webnet_session *session)
         session->session_ops = &_dofile_ops;
     }
     return WEBNET_MODULE_FINISHED;
-
+#ifdef WEBNET_USING_RANGE
 _error_exit:
+#endif
     if (fd >= 0)
     {
         close(fd);

@@ -31,6 +31,8 @@ rt_uint32_t rt_thread_switch_interrupt_flag;
 static struct rt_irq_desc irq_handle_table[8];
 /*static*/ rt_uint32_t rt_hw_system_stack[0x1000];
 
+rt_uint32_t mips_irq_mask;
+
 /**
  * @addtogroup Loongson LS1B
  */
@@ -71,6 +73,7 @@ void rt_hw_interrupt_init(void)
     rt_interrupt_from_thread = 0;
     rt_interrupt_to_thread = 0;
     rt_thread_switch_interrupt_flag = 0;
+	mips_irq_mask = 0;
 	rt_system_stack = (rt_uint32_t)&(rt_hw_system_stack) + sizeof(rt_hw_system_stack) - 4;
 }
 
@@ -82,12 +85,18 @@ void rt_hw_interrupt_mask(int vector)
 {
     /* mask interrupt */
     volatile rt_uint32_t c0_status;
+	rt_base_t level;
 	
 	if((vector < 0) || (vector > 7))
 		return;
+	level = rt_hw_interrupt_disable();
 	c0_status = read_c0_status();
-	c0_status |= 1<<(vector + 8);
+	mips_irq_mask |= 1<<(vector + 8);
+	mips_irq_mask &= 0x0000FF00;
+	c0_status &= 0xFFFF00FF;
+	c0_status |= mips_irq_mask;
 	write_c0_status(c0_status);
+	rt_hw_interrupt_enable(level);
 }
 
 /**
@@ -97,12 +106,18 @@ void rt_hw_interrupt_mask(int vector)
 void rt_hw_interrupt_umask(int vector)
 {
 	volatile rt_uint32_t c0_status;
+	rt_base_t level;
 	
 	if((vector < 0) || (vector > 7))
 		return;
+	level = rt_hw_interrupt_disable();
 	c0_status = read_c0_status();
-	c0_status &= ~(1<<(vector + 8)); 
+	mips_irq_mask &= ~(1<<(vector + 8));
+	mips_irq_mask &= 0x0000FF00;
+	c0_status &= 0xFFFF00FF;
+	c0_status |= mips_irq_mask;
 	write_c0_status(c0_status);
+	rt_hw_interrupt_enable(level);
 }
 
 /**
@@ -115,9 +130,11 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
                                          void *param, const char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;
+	rt_base_t level;
 
     if (vector >= 0 && vector < 8)
     {
+		level = rt_hw_interrupt_disable();
         old_handler = irq_handle_table[vector].handler;
 
 #ifdef RT_USING_INTERRUPT_INFO
@@ -125,6 +142,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
 #endif /* RT_USING_INTERRUPT_INFO */
         irq_handle_table[vector].handler = handler;
         irq_handle_table[vector].param = param;
+		rt_hw_interrupt_enable(level);
     }
 
     return old_handler;

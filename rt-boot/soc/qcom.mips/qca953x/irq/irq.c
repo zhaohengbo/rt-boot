@@ -34,9 +34,13 @@ static void qca953x_interrupt_handler(int vector, void *param)
  */
 void qca953x_interrupt_mask(int vector)
 {
+	rt_base_t level;
+	
 	if((vector < 0) || (vector > 7))
 		return;
+	level = rt_hw_interrupt_disable();
 	qca_soc_reg_read_set(QCA_RST_MISC_INTERRUPT_MASK_REG,1<<vector);
+	rt_hw_interrupt_enable(level);
 }
 
 /**
@@ -45,9 +49,13 @@ void qca953x_interrupt_mask(int vector)
  */
 void qca953x_interrupt_umask(int vector)
 {
+	rt_base_t level;
+	
 	if((vector < 0) || (vector > 31))
 		return;
+	level = rt_hw_interrupt_disable();
 	qca_soc_reg_read_clear(QCA_RST_MISC_INTERRUPT_MASK_REG,1<<vector);
+	rt_hw_interrupt_enable(level);
 }
 
 /**
@@ -60,9 +68,11 @@ rt_isr_handler_t qca953x_interrupt_install(int vector, rt_isr_handler_t handler,
                                          void *param, char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;
+	rt_base_t level;
 
     if (vector >= 0 && vector < 32)
     {
+		level = rt_hw_interrupt_disable();
         old_handler = qca953x_irq_handle_table[vector].handler;
 
 #ifdef RT_USING_INTERRUPT_INFO
@@ -70,6 +80,7 @@ rt_isr_handler_t qca953x_interrupt_install(int vector, rt_isr_handler_t handler,
 #endif /* RT_USING_INTERRUPT_INFO */
         qca953x_irq_handle_table[vector].handler = handler;
         qca953x_irq_handle_table[vector].param = param;
+		rt_hw_interrupt_enable(level);
     }
 
     return old_handler;

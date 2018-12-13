@@ -29,14 +29,17 @@ rt_hw_interrupt_disable:
     mtc0    v1, CP0_STATUS
 	ehb
     jr      ra
-    nop
+    and		v0, 1
 
 /*
  * void rt_hw_interrupt_enable(rt_base_t level)
  */
     .globl rt_hw_interrupt_enable
 rt_hw_interrupt_enable:
-    mtc0    a0, CP0_STATUS
+	mfc0    v0, CP0_STATUS
+	and		a0, 1
+	or		v0, a0
+    mtc0    v0, CP0_STATUS
 	ehb
     jr      ra
     nop

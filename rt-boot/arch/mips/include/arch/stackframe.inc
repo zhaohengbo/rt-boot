@@ -69,6 +69,7 @@
 
 #define PT_SIZE		((((PT_EPC) + LONGSIZE) + (PTRSIZE-1)) & ~(PTRSIZE-1))
 
+		.global mips_irq_mask
 
 		.macro	SAVE_AT
 		.set	push
@@ -182,8 +183,11 @@
 		.set	reorder
 		.set	noat
 		lw		v0, PT_STATUS(sp)
-		li      v1, 0xFFFFFFF9
+		li      v1, 0xFFFF00F9
 		and     v0, v1
+		la		v1, mips_irq_mask
+		lw		v1, 0(v1)
+		or      v0, v1
 		ori     v0, 3
 		mtc0	v0, CP0_STATUS
 		ehb

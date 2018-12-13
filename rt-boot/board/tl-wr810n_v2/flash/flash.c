@@ -241,8 +241,6 @@ static void board_flash_thread_entry(void* parameter)
 			continue;
 		}
 		
-		rt_kprintf("1\n");
-		
 		{
 			rt_uint8_t *buffer;
 			int fd;
@@ -252,11 +250,9 @@ static void board_flash_thread_entry(void* parameter)
 			buffer = rt_malloc(0x1000);
 			if(buffer)
 			{
-				rt_kprintf("2\n");
 				fd = open(open_file, 0, O_RDONLY);
 				if(fd < 0)
 				{
-					rt_kprintf("3\n");
 					board_flash_status = -1;
 				}
 				else

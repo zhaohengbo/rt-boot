@@ -27,6 +27,7 @@ rt_uint32_t rt_thread_switch_interrupt_flag;
 rt_uint32_t rt_system_stack;
 
 register rt_uint32_t $GP __asm__ ("$28");
+extern rt_uint32_t mips_irq_mask;
 
 /**
  * This function will initialize thread stack
@@ -47,8 +48,9 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
     if (g_sr == 0)
     {
     	g_sr = read_c0_status();
-    	g_sr &= 0xfffffffe;
-    	g_sr |= 0x8001;
+    	g_sr &= 0xffff00fe;
+		g_sr |= mips_irq_mask;
+    	g_sr |= 0x1;
 
 		g_gp = $GP;
     }

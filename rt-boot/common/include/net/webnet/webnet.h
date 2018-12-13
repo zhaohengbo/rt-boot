@@ -67,24 +67,24 @@ extern "C" {
 #define wn_strdup                      rt_strdup
 #endif
 
-#ifndef WEBNET_USING_RANGE
-#define WEBNET_USING_RANGE
-#endif
+//#ifndef WEBNET_USING_RANGE
+//#define WEBNET_USING_RANGE
+//#endif
     
-#ifndef WEBNET_USING_KEEPALIVE
-#define WEBNET_USING_KEEPALIVE
-#endif
+//#ifndef WEBNET_USING_KEEPALIVE
+//#define WEBNET_USING_KEEPALIVE
+//#endif
 
-#ifndef WEBNET_USING_COOKIE
-#define WEBNET_USING_COOKIE
-#endif
+//#ifndef WEBNET_USING_COOKIE
+//#define WEBNET_USING_COOKIE
+//#endif
 
 #define WEBNET_VERSION                 "2.0.0"      /* webnet version string */
 #define WEBNET_VERSION_NUM             0x20000      /* webnet version number */
 #define WEBNET_THREAD_NAME             "webnet"	    /* webnet thread name */
 
 #define WEBNET_THREAD_STACKSIZE        (4 * 1024)   /* webnet thread stack size */
-#define WEBNET_PRIORITY                14           /* webnet thread priority */
+#define WEBNET_PRIORITY                20           /* webnet thread priority */
 #define WEBNET_PATH_MAX                256          /* maxiaml path length in webnet */
 #define WEBNET_SERVER                  "Server: webnet "WEBNET_VERSION"\r\n"
 
