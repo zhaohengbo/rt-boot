@@ -17,6 +17,10 @@
 		</div>
 		<div id="page">
 	<table class="system_info">
+	<tr>
+		<td class="th">Board</td>
+		<td><% board_info %></td>
+	</tr>
 	<tr class="g">
 		<td class="th">CPU</td>
 		<td><% soc_info %></td>

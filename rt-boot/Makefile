@@ -241,6 +241,7 @@ LIBS += common/net/lwip-dhcpd/liblwip-dhcpd.a
 LIBS += common/net/lwip-telnetd/liblwip-telnetd.a
 LIBS += common/net/lwip-breakd/liblwip-breakd.a
 LIBS += common/net/lwip-tftp/liblwip-tftp.a
+LIBS += common/net/lwip-http/liblwip-http.a
 
 LIBS_SHARED  = 
 ifdef SOC

@@ -132,6 +132,9 @@
 #define IP_SOF_BROADCAST 1
 #define IP_SOF_BROADCAST_RECV 1
 //#define RT_LWIP_DEBUG
+//#define RT_LWIP_TCP_INPUT_DEBUG
+//#define RT_LWIP_TCP_DEBUG
+//#define RT_LWIP_TCP_OUTPUT_DEBUG
 //#define RT_LWIP_SOCKETS_DEBUG
 //#define RT_LWIP_API_MSG_DEBUG
 //#define RT_LWIP_TCPIP_DEBUG
@@ -193,7 +196,7 @@
 //#define WEBNET_USING_DAV
 #define WEBNET_PORT 80
 #define WEBNET_ROOT "/www"
-#define WEBNET_CONN_MAX 4
+#define WEBNET_CONN_MAX 16
 #define WEBNET_CACHE_LEVEL 0
 
 /* Wi-Fi */
