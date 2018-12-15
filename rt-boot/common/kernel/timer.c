@@ -525,7 +525,7 @@ void rt_timer_check(void)
 
             /* re-get tick */
             current_tick = rt_tick_get();
-			
+
             RT_OBJECT_HOOK_CALL(rt_timer_exit_hook, (t));
             RT_DEBUG_LOG(RT_DEBUG_TIMER, ("current tick: %d\n", current_tick));
 

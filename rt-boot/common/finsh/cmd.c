@@ -539,36 +539,35 @@ FINSH_FUNCTION_EXPORT(list_timer, list timer in system);
 MSH_CMD_EXPORT(list_timer, list timer in system);
 
 #ifdef RT_USING_DEVICE
-const char *const device_type_str[] =
-{
-	"Character Device",
-	"Block Device",
-	"Network Interface",
-	"MTD Device",
-	"CAN Device",
-	"RTC",
-	"Sound Device",
-	"Graphic Device",
-	"I2C Bus",
-	"USB Slave Device",
-	"USB Host Bus",
-	"SPI Bus",
-	"SPI Device",
-	"SDIO Bus",
-	"PM Pseudo Device",
-	"Pipe",
-	"Portal Device",
-	"Timer Device",
-	"Miscellaneous Device",
-	"Unknown"
-};
-
 static long _list_device(struct rt_list_node *list)
 {
     int maxlen;
     struct rt_device *device;
     struct rt_list_node *node;
-	const char *item_title = "device";
+    char *const device_type_str[] =
+    {
+        "Character Device",
+        "Block Device",
+        "Network Interface",
+        "MTD Device",
+        "CAN Device",
+        "RTC",
+        "Sound Device",
+        "Graphic Device",
+        "I2C Bus",
+        "USB Slave Device",
+        "USB Host Bus",
+        "SPI Bus",
+        "SPI Device",
+        "SDIO Bus",
+        "PM Pseudo Device",
+        "Pipe",
+        "Portal Device",
+        "Timer Device",
+        "Miscellaneous Device",
+        "Unknown"
+    };
+    const char *item_title = "device";
 	
     maxlen = object_name_maxlen(item_title, list);
 
