@@ -144,7 +144,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
                                           (void *)((char *)thread->stack_addr + thread->stack_size - sizeof(rt_ubase_t)),
                                           (void *)rt_thread_exit);
 #endif
-	
+
     /* priority init */
     RT_ASSERT(priority < RT_THREAD_PRIORITY_MAX);
     thread->init_priority    = priority;

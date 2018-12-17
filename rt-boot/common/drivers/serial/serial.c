@@ -1085,7 +1085,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops serial_ops SECTION("RTDeviceOps") =
+const static struct rt_device_ops serial_ops =
 {
     rt_serial_init,
     rt_serial_open,

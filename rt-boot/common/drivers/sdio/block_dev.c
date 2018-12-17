@@ -343,7 +343,7 @@ static rt_int32_t mmcsd_set_blksize(struct rt_mmcsd_card *card)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops mmcsd_blk_ops SECTION("RTDeviceOps") =
+const static struct rt_device_ops mmcsd_blk_ops =
 {
     rt_mmcsd_init,
     rt_mmcsd_open,

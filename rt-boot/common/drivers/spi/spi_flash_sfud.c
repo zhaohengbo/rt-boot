@@ -298,7 +298,7 @@ sfud_err sfud_spi_port_init(sfud_flash *flash) {
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops flash_device_ops SECTION("RTDeviceOps") =
+const static struct rt_device_ops flash_device_ops =
 {
     RT_NULL,
     RT_NULL,

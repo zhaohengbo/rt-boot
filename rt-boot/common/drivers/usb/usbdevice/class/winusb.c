@@ -264,7 +264,7 @@ static rt_err_t  win_usb_control(rt_device_t dev, int cmd, void *args)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops winusb_device_ops SECTION("RTDeviceOps") =
+const static struct rt_device_ops winusb_device_ops =
 {
     RT_NULL,
     RT_NULL,

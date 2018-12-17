@@ -636,7 +636,7 @@ static void hid_thread_entry(void* parameter)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops hid_device_ops SECTION("RTDeviceOps") =
+const static struct rt_device_ops hid_device_ops =
 {
     RT_NULL,
     RT_NULL,

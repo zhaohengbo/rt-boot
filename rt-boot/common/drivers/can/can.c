@@ -674,7 +674,7 @@ static void cantimeout(void *arg)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops can_device_ops SECTION("RTDeviceOps") =
+const static struct rt_device_ops can_device_ops =
 {
     rt_can_init,
     rt_can_open,

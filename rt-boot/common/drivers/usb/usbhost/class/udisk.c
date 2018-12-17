@@ -164,7 +164,7 @@ static rt_err_t rt_udisk_control(rt_device_t dev, int cmd, void *args)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops udisk_device_ops SECTION("RTDeviceOps") =
+const static struct rt_device_ops udisk_device_ops =
 {
     rt_udisk_init,
     RT_NULL,

@@ -405,7 +405,7 @@ static rt_err_t _audio_dev_control(struct rt_device *dev, int cmd, void *args)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops audio_ops SECTION("RTDeviceOps") =
+const static struct rt_device_ops audio_ops =
 {
     _audio_dev_init,
     _audio_dev_open,

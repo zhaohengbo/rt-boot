@@ -196,7 +196,7 @@ static rt_size_t rt_usbh_adk_write (rt_device_t device, rt_off_t pos, const void
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops adk_device_ops SECTION("RTDeviceOps") =
+const static struct rt_device_ops adk_device_ops =
 {
     RT_NULL;
     RT_NULL;

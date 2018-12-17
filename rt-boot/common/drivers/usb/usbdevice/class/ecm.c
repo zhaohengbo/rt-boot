@@ -343,7 +343,7 @@ static rt_err_t rt_ecm_eth_control(rt_device_t dev, int cmd, void *args)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops ecm_device_ops SECTION("RTDeviceOps") =
+const static struct rt_device_ops ecm_device_ops =
 {
     rt_ecm_eth_init,
     rt_ecm_eth_open,

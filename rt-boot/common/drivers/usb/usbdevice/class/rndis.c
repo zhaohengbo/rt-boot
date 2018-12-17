@@ -1201,7 +1201,7 @@ rt_err_t rt_rndis_eth_tx(rt_device_t dev, struct pbuf* p)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops rndis_device_ops SECTION("RTDeviceOps") =
+const static struct rt_device_ops rndis_device_ops =
 {
     rt_rndis_eth_init,
     rt_rndis_eth_open,

@@ -56,7 +56,7 @@ static rt_err_t _spi_bus_device_control(rt_device_t dev,
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops spi_bus_ops SECTION("RTDeviceOps") =
+const static struct rt_device_ops spi_bus_ops =
 {
     RT_NULL,
     RT_NULL,
@@ -137,7 +137,7 @@ static rt_err_t _spidev_device_control(rt_device_t dev,
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops spi_device_ops SECTION("RTDeviceOps") =
+const static struct rt_device_ops spi_device_ops =
 {
     RT_NULL,
     RT_NULL,

@@ -132,7 +132,7 @@ typedef unsigned long sigset_t;
 #define SIGQUIT      3
 #define SIGILL       4
 #define SIGTRAP      5
-// #define SIGABRT      6
+/* #define SIGABRT      6 */
 #define SIGEMT       7
 #define SIGFPE       8
 #define SIGKILL      9

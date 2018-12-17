@@ -65,7 +65,7 @@ static rt_err_t rt_watchdog_control(struct rt_device *dev,
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops wdt_ops SECTION("RTDeviceOps") SECTION("RTDeviceOps") =
+const static struct rt_device_ops wdt_ops =
 {
     rt_watchdog_init,
     rt_watchdog_open,

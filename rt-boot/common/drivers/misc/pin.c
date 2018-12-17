@@ -63,7 +63,7 @@ static rt_err_t  _pin_control(rt_device_t dev, int cmd, void *args)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops pin_ops SECTION("RTDeviceOps") =
+const static struct rt_device_ops pin_ops =
 {
     RT_NULL,
     RT_NULL,
