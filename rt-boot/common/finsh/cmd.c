@@ -1126,3 +1126,4 @@ FINSH_VAR_EXPORT(dummy, finsh_type_int, dummy variable for finsh)
 #endif
 
 #endif /* RT_USING_FINSH */
+
