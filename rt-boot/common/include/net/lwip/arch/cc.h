@@ -60,7 +60,8 @@
 #define ESHUTDOWN 180
 #endif /* __CC_ARM/__IAR_SYSTEMS_ICC__ */
 #else
-#define LWIP_PROVIDE_ERRNO
+/* libc_errno.h has already provided errno */
+//#define LWIP_PROVIDE_ERRNO
 #endif
 
 #if defined(RT_USING_LIBC) || defined(RT_USING_MINILIBC)
