@@ -119,6 +119,9 @@ enum lwip_internal_netif_client_data_index
 #if LWIP_AUTOIP
    LWIP_NETIF_CLIENT_DATA_INDEX_AUTOIP,
 #endif
+#if LWIP_ACD
+   LWIP_NETIF_CLIENT_DATA_INDEX_ACD,
+#endif
 #if LWIP_IGMP
    LWIP_NETIF_CLIENT_DATA_INDEX_IGMP,
 #endif
@@ -245,14 +248,20 @@ typedef u8_t netif_addr_idx_t;
 #define NETIF_ADDR_IDX_MAX 0x7F
 #endif
 
+#if LWIP_NETIF_HWADDRHINT || LWIP_VLAN_PCP
+ #define LWIP_NETIF_USE_HINTS              1
+ struct netif_hint {
 #if LWIP_NETIF_HWADDRHINT
-#define LWIP_NETIF_USE_HINTS              1
-struct netif_hint {
-  netif_addr_idx_t addr_hint;
-};
-#else /* LWIP_NETIF_HWADDRHINT */
-#define LWIP_NETIF_USE_HINTS              0
-#endif /* LWIP_NETIF_HWADDRHINT */
+   u8_t addr_hint;
+#endif
+#if LWIP_VLAN_PCP
+  /** VLAN hader is set if this is >= 0 (but must be <= 0xFFFF) */
+  s32_t tci;
+#endif
+ };
+#else /* LWIP_NETIF_HWADDRHINT || LWIP_VLAN_PCP */
+ #define LWIP_NETIF_USE_HINTS              0
+#endif /* LWIP_NETIF_HWADDRHINT || LWIP_VLAN_PCP*/
 
 /** Generic data structure used for all lwIP network interfaces.
  *  The following fields should be filled in by the initialization
@@ -345,7 +354,7 @@ struct netif {
   u8_t flags;
   /** descriptive abbreviation */
   char name[2];
-  /** number of this interface. Used for @ref if_api and @ref netifapi_netif, 
+  /** number of this interface. Used for @ref if_api and @ref netifapi_netif,
    * as well as for IPv6 zones */
   u8_t num;
 #if LWIP_IPV6_AUTOCONFIG
@@ -376,6 +385,9 @@ struct netif {
       filter table of the ethernet MAC. */
   netif_mld_mac_filter_fn mld_mac_filter;
 #endif /* LWIP_IPV6 && LWIP_IPV6_MLD */
+#if LWIP_ACD
+  struct acd *acd_list;
+#endif /* LWIP_ACD */
 #if LWIP_NETIF_USE_HINTS
   struct netif_hint *hints;
 #endif /* LWIP_NETIF_USE_HINTS */
@@ -661,6 +673,11 @@ void netif_invoke_ext_callback(struct netif* netif, netif_nsc_reason_t reason, c
 #define netif_remove_ext_callback(callback)
 #define netif_invoke_ext_callback(netif, reason, args)
 #endif
+
+#if LWIP_TESTMODE && LWIP_HAVE_LOOPIF
+struct netif* netif_get_loopif(void);
+#endif
+
 
 #ifdef __cplusplus
 }

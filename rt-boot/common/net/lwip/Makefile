@@ -16,6 +16,7 @@ OBJS	+= api/netifapi.o
 OBJS	+= api/sockets.o
 OBJS	+= api/tcpip.o
 OBJS	+= arch/sys_arch.o
+OBJS	+= core/ipv4/acd.o
 OBJS	+= core/ipv4/autoip.o
 OBJS	+= core/ipv4/dhcp.o
 OBJS	+= core/ipv4/etharp.o

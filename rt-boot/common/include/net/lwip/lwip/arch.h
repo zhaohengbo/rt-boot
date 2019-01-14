@@ -74,7 +74,7 @@
 
 /** Platform specific diagnostic output.\n
  * Note the default implementation pulls in printf, which may
- * in turn pull in a lot of standard libary code. In resource-constrained 
+ * in turn pull in a lot of standard libary code. In resource-constrained
  * systems, this should be defined to something less resource-consuming.
  */
 #ifndef LWIP_PLATFORM_DIAG
@@ -85,7 +85,7 @@
 
 /** Platform specific assertion handling.\n
  * Note the default implementation pulls in printf, fflush and abort, which may
- * in turn pull in a lot of standard libary code. In resource-constrained 
+ * in turn pull in a lot of standard libary code. In resource-constrained
  * systems, this should be defined to something less resource-consuming.
  */
 #ifndef LWIP_PLATFORM_ASSERT
@@ -360,7 +360,7 @@ extern "C" {
  * The file included BEFORE the struct is <net/lwip/arch/bpstruct.h>.\n
  * The file included AFTER the struct is <net/lwip/arch/epstruct.h>.\n
  * This can be used to implement struct packing on MS Visual C compilers, see
- * the Win32 port in the lwIP contrib repository for reference.
+ * the Win32 port in the lwIP/contrib subdir for reference.
  * For examples of packed struct declarations, see include/lwip/prot/ subfolder.\n
  * A port to GCC/clang is included in lwIP, if you use these compilers there is nothing to do here.
  */

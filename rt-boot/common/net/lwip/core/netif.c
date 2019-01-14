@@ -81,6 +81,9 @@
 #if LWIP_DHCP
 #include <net/lwip/lwip/dhcp.h>
 #endif /* LWIP_DHCP */
+#if LWIP_ACD
+#include <net/lwip/lwip/acd.h>
+#endif /* LWIP_ACD */
 #if LWIP_IPV6_DHCP6
 #include <net/lwip/lwip/dhcp6.h>
 #endif /* LWIP_IPV6_DHCP6 */
@@ -140,6 +143,14 @@ static err_t netif_loop_output_ipv6(struct netif *netif, struct pbuf *p, const i
 
 
 static struct netif loop_netif;
+
+#if LWIP_TESTMODE
+struct netif* netif_get_loopif(void)
+{
+  return &loop_netif;
+}
+#endif
+
 
 /**
  * Initialize a lwip network interface structure for a loopback interface
@@ -470,6 +481,10 @@ netif_do_set_ipaddr(struct netif *netif, const ip4_addr_t *ipaddr, ip_addr_t *ol
 
     LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_STATE, ("netif_set_ipaddr: netif address being changed\n"));
     netif_do_ip_addr_changed(old_addr, &new_addr);
+
+#if LWIP_ACD
+    acd_netif_ip_addr_changed(netif, old_addr, &new_addr);
+#endif /* LWIP_ACD */
 
     mib2_remove_ip4(netif);
     mib2_remove_route_ip4(0, netif);
@@ -886,8 +901,11 @@ netif_issue_reports(struct netif *netif, u8_t report_type)
 #if LWIP_IPV4
   if ((report_type & NETIF_REPORT_TYPE_IPV4) &&
       !ip4_addr_isany_val(*netif_ip4_addr(netif))) {
-#if LWIP_ARP
-    /* For Ethernet network interfaces, we would like to send a "gratuitous ARP" */
+#if LWIP_ARP && !LWIP_ACD
+    /* For Ethernet network interfaces:
+     * we would like to send a "gratuitous ARP".
+     * Only needs to be done here if ACD isn't configured.
+     */
     if (netif->flags & (NETIF_FLAG_ETHARP)) {
       etharp_gratuitous(netif);
     }
@@ -996,11 +1014,11 @@ netif_set_link_up(struct netif *netif)
     netif_set_flags(netif, NETIF_FLAG_LINK_UP);
 
 #if LWIP_DHCP
-    dhcp_network_changed(netif);
+    dhcp_network_changed_link_up(netif);
 #endif /* LWIP_DHCP */
 
 #if LWIP_AUTOIP
-    autoip_network_changed(netif);
+    autoip_network_changed_link_up(netif);
 #endif /* LWIP_AUTOIP */
 
     netif_issue_reports(netif, NETIF_REPORT_TYPE_IPV4 | NETIF_REPORT_TYPE_IPV6);
@@ -1032,6 +1050,15 @@ netif_set_link_down(struct netif *netif)
 
   if (netif->flags & NETIF_FLAG_LINK_UP) {
     netif_clear_flags(netif, NETIF_FLAG_LINK_UP);
+
+#if LWIP_AUTOIP
+    autoip_network_changed_link_down(netif);
+#endif /* LWIP_AUTOIP */
+
+#if LWIP_ACD
+    acd_network_changed_link_down(netif);
+#endif /* LWIP_ACD */
+
     NETIF_LINK_CALLBACK(netif);
 #if LWIP_NETIF_EXT_STATUS_CALLBACK
     {

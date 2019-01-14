@@ -41,6 +41,11 @@
 #define LWIP_HDR_INET_H
 
 #include <net/lwip/lwip/opt.h>
+
+#if LWIP_SOCKET_EXTERNAL_HEADERS
+#include LWIP_SOCKET_EXTERNAL_HEADER_INET_H
+#else /* LWIP_SOCKET_EXTERNAL_HEADERS */
+
 #include <net/lwip/lwip/def.h>
 #include <net/lwip/lwip/ip_addr.h>
 #include <net/lwip/lwip/ip6_addr.h>
@@ -165,5 +170,7 @@ extern const struct in6_addr in6addr_any;
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* LWIP_SOCKET_EXTERNAL_HEADERS */
 
 #endif /* LWIP_HDR_INET_H */

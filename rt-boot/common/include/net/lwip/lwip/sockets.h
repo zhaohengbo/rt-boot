@@ -41,6 +41,10 @@
 
 #include <net/lwip/lwip/opt.h>
 
+#if LWIP_SOCKET_EXTERNAL_HEADERS
+#include LWIP_SOCKET_EXTERNAL_HEADER_SOCKETS_H
+#else /* LWIP_SOCKET_EXTERNAL_HEADERS */
+
 #if LWIP_SOCKET /* don't build if not configured for use in lwipopts.h */
 
 #include <net/lwip/lwip/ip_addr.h>
@@ -687,5 +691,7 @@ int lwip_inet_pton(int af, const char *src, void *dst);
 #endif
 
 #endif /* LWIP_SOCKET */
+
+#endif /* LWIP_SOCKET_EXTERNAL_HEADERS */
 
 #endif /* LWIP_HDR_SOCKETS_H */
