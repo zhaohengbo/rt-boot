@@ -478,6 +478,7 @@ err_t
 dns_local_lookup(const char *hostname, ip_addr_t *addr, u8_t dns_addrtype)
 {
   size_t hostnamelen;
+  LWIP_UNUSED_ARG(dns_addrtype);
   if ((addr == NULL) ||
       (!hostname) || (!hostname[0])) {
     return ERR_ARG;

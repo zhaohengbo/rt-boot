@@ -112,7 +112,7 @@ endef
 
 # $(1): file extension
 define img_name
-u-boot_mod__$@__$(shell date +"%Y%m%d")__$(call git_branch_hash)$(if \
+rt-boot__$@__$(shell date +"%Y%m%d")__$(call git_branch_hash)$(if \
 $(filter $(IMG_RAM),1),__RAM-LOAD-ONLY)$(if $(1),.$(1))
 endef
 
