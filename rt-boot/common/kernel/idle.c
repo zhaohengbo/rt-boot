@@ -55,7 +55,7 @@ static rt_uint8_t rt_thread_stack[_CPUS_NR][IDLE_THREAD_STACK_SIZE];
 #define RT_IDEL_HOOK_LIST_SIZE  4
 #endif
 
-static void (*idle_hook_list[RT_IDEL_HOOK_LIST_SIZE])();
+static void (*idle_hook_list[RT_IDEL_HOOK_LIST_SIZE])(void);
 
 /**
  * @ingroup Hook
@@ -228,6 +228,7 @@ void rt_thread_idle_excute(void)
     }
 }
 
+extern void rt_system_power_manager(void);
 static void rt_thread_idle_entry(void *parameter)
 {
 #ifdef RT_USING_SMP
@@ -255,6 +256,9 @@ static void rt_thread_idle_entry(void *parameter)
 #endif
 
         rt_thread_idle_excute();
+#ifdef RT_USING_PM        
+        rt_system_power_manager();
+#endif
     }
 }
 
